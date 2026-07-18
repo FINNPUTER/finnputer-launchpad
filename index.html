@@ -97,6 +97,13 @@
   .hero .fallback small { display: block; font-size: 15px; letter-spacing: 0.36em; color: var(--paper); margin-top: 6px; }
 
   /* ───── header bar ───── */
+  .beta-tag {
+    font-family: var(--display); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.28em; color: var(--brand);
+    border: 1px solid var(--brand-lo); border-radius: 3px;
+    padding: 5px 9px 5px 11px; background: var(--brand-deep);
+    text-transform: uppercase; cursor: default; user-select: none;
+  }
   .top { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
   .ctrls { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
   .chip {
@@ -219,22 +226,41 @@
   .need-list span b { color: var(--paper); font-weight: 600; }
   .fee-live { color: var(--brand) !important; }
   .need-foot { margin-top: 14px; font-size: 10.5px; color: #55634d; letter-spacing: 0.02em; }
+  .beta-inline { color: var(--brand-lo); }
   .need-mobile { display: none; margin-top: 10px; padding: 10px 12px; font-size: 11px; line-height: 1.5;
     color: var(--brand); background: #7bdd340d; border: 1px solid var(--brand-lo); border-radius: 4px; }
   @media (hover: none) and (pointer: coarse) { .need-mobile { display: block; } }
 
-  /* ───── tabs ───── */
-  .tabs { display: flex; gap: 6px; }
+  /* ───── tabs (chain selector) ───── */
+  .tabs { display: flex; gap: 8px; }
   .tab {
-    flex: 1; font-family: var(--mono); font-size: 11px; font-weight: 600;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    background: var(--panel); color: var(--mute);
-    border: 1px solid var(--edge); border-bottom: none;
-    border-radius: 4px 4px 0 0; padding: 12px 8px; cursor: pointer;
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 9px;
+    font-family: var(--display); font-weight: 700; font-size: 12px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--mute); cursor: pointer; position: relative; overflow: hidden;
+    background: linear-gradient(180deg, #0e130c 0%, #090c08 100%);
+    border: 1px solid var(--edge); border-radius: 6px;
+    padding: 15px 10px;
+    transition: color .2s, border-color .2s, box-shadow .2s, background .2s;
   }
-  .tab[aria-selected="true"] { background: var(--brand-deep); color: var(--brand); border-color: var(--brand-lo); }
-  .tab:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
-  .panel-b { border-top: 1px solid var(--edge); padding-top: 26px; }
+  .tab::before {
+    content: ''; position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(ellipse 80% 100% at 50% 120%, var(--tab-glow, #7bdd34) 0%, transparent 70%);
+    transition: opacity .25s; pointer-events: none;
+  }
+  .tab .chain-logo { width: 18px; height: 18px; flex: none; opacity: .55; transition: opacity .2s; }
+  .tab:hover { color: var(--paper); border-color: var(--edge-lit); }
+  .tab:hover .chain-logo { opacity: .85; }
+  .tab[aria-selected="true"] {
+    color: #fff; border-color: var(--tab-accent, var(--brand-lo));
+    box-shadow: 0 0 0 1px var(--tab-accent, var(--brand-lo)) inset, 0 6px 24px -8px var(--tab-glow, #7bdd34);
+  }
+  .tab[aria-selected="true"]::before { opacity: .28; }
+  .tab[aria-selected="true"] .chain-logo { opacity: 1; }
+  #tab-rh  { --tab-glow: #6fdc3a; --tab-accent: #4e8a2a; }
+  #tab-sol { --tab-glow: #9945ff; --tab-accent: #7a35cc; }
+  .tab:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .panel-b { padding-top: 26px; }
   .panel-b[hidden] { display: none; }
 
   /* ───── form ───── */
@@ -360,6 +386,27 @@
   .sol-status[data-tone="ok"]  { color: var(--brand); }
   .sol-status[data-tone="bad"] { color: var(--coral); }
 
+  /* ───── claim ───── */
+  .claim-box { border: 1px solid var(--edge); border-radius: 4px; background: var(--panel); padding: 18px; }
+  .claim-intro { font-size: 12.5px; color: var(--mute); line-height: 1.6; margin-bottom: 16px; }
+  .claim-x-note { margin-top: 16px; font-size: 11px; color: #55634d; line-height: 1.55; }
+  .claim-x-note a { color: var(--brand-lo); }
+  .claim-row {
+    display: flex; align-items: center; gap: 14px; padding: 13px 0;
+    border-bottom: 1px solid #131c0f;
+  }
+  .claim-row:last-of-type { border-bottom: none; }
+  .claim-tok { flex: 1; min-width: 0; font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: 0.04em; }
+  .claim-tok small { display: block; font-family: var(--mono); font-weight: 400; font-size: 10.5px; color: var(--mute); letter-spacing: 0; }
+  .claim-amt { font-family: var(--mono); font-weight: 600; font-size: 13px; color: var(--brand); white-space: nowrap; }
+  .claim-btn {
+    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: #041003; background: linear-gradient(180deg, var(--brand-hi), #5cc41f); border: none;
+    border-radius: 4px; padding: 8px 14px; cursor: pointer; box-shadow: 0 2px 0 #2c6b18;
+  }
+  .claim-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #2c6b18; }
+  .claim-btn:disabled { opacity: .5; cursor: default; }
+
   /* ───── feed ───── */
   .group-h {
     display: flex; align-items: center; gap: 10px;
@@ -434,7 +481,14 @@
     body { padding-bottom: 60px; }
     .wrap { padding: 0 14px; }
     .hero { padding: 10px 12px 0; margin-bottom: 20px; }
-    .top { margin-bottom: 16px; }
+    .beta-tag {
+    font-family: var(--display); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.28em; color: var(--brand);
+    border: 1px solid var(--brand-lo); border-radius: 3px;
+    padding: 5px 9px 5px 11px; background: var(--brand-deep);
+    text-transform: uppercase; cursor: default; user-select: none;
+  }
+  .top { margin-bottom: 16px; }
     .ctrls { width: 100%; }
     .chip { flex: 1; justify-content: center; }
     #connect { flex: 1; }
@@ -460,6 +514,7 @@
 <div class="wrap">
 
   <div class="top">
+    <div class="beta-tag" title="Early release — launches are new and lightly tested. Start small.">BETA</div>
     <div class="ctrls">
       <div class="chip" id="chainChip"><i class="led"></i><span id="chainTxt">No chain</span></div>
       <button class="key" id="connect">Connect wallet</button>
@@ -476,8 +531,8 @@
   <div id="guard"></div>
 
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" id="tab-rh"  aria-selected="true"  aria-controls="p-rh">Robinhood Chain</button>
-    <button class="tab" role="tab" id="tab-sol" aria-selected="false" aria-controls="p-sol">Solana</button>
+    <button class="tab" role="tab" id="tab-rh"  aria-selected="true"  aria-controls="p-rh"><svg class="chain-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 20c0-8 5-14 12-16-1 9-5 14-12 16z" fill="#6fdc3a"/><path d="M6 20l7-8" stroke="#0a0d09" stroke-width="1.4" stroke-linecap="round"/></svg>Robinhood Chain</button>
+    <button class="tab" role="tab" id="tab-sol" aria-selected="false" aria-controls="p-sol"><svg class="chain-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="solg" x1="2" y1="20" x2="22" y2="4" gradientUnits="userSpaceOnUse"><stop stop-color="#9945FF"/><stop offset="1" stop-color="#14F195"/></linearGradient></defs><g fill="url(#solg)"><path d="M5 7.5a.9.9 0 0 1 .64-.27h12.2c.4 0 .6.48.32.76l-2.16 2.13a.9.9 0 0 1-.64.27H3.16c-.4 0-.6-.48-.32-.76z"/><path d="M5 16.5a.9.9 0 0 1 .64-.27h12.2c.4 0 .6.48.32.76l-2.16 2.13a.9.9 0 0 1-.64.27H3.16c-.4 0-.6-.48-.32-.76z" transform="translate(1.6 -4.5)"/><path d="M18.36 12a.9.9 0 0 0-.64-.27H5.5c-.4 0-.6.48-.32.76l2.16 2.13c.17.17.4.27.64.27h12.2c.4 0 .6-.48.32-.76z"/></g></svg>Solana</button>
   </div>
 
   <div class="need" id="need-rh">
@@ -487,7 +542,7 @@
       <li><b>ETH on Robinhood Chain</b><span>You need at least <b id="rhFeeLive" class="fee-live">the creation fee</b> plus a little gas. No ETH on 4663 yet? Bridge over first.</span></li>
       <li><b>A name, ticker and image</b><span>Fill the form below. The image is pinned automatically — no IPFS knowledge needed.</span></li>
     </ol>
-    <p class="need-foot">You sign the launch yourself. This page never holds your keys.</p>
+    <p class="need-foot">You sign the launch yourself. This page never holds your keys. <b class="beta-inline">Beta — start with a small test launch.</b></p>
     <p class="need-mobile">On a phone? Open this page inside your wallet app's browser (MetaMask → Browser) — normal Safari/Chrome can't reach your wallet.</p>
   </div>
 
@@ -498,7 +553,7 @@
       <li><b>SOL in that wallet</b><span>Keep at least <b class="fee-live">~0.05 SOL</b> for the network tip, rent and fees — more if you want an initial buy.</span></li>
       <li><b>A name, ticker and image</b><span>Fill the form. On Solana the image and metadata are hosted for you — nothing to pin.</span></li>
     </ol>
-    <p class="need-foot">You sign every transaction yourself. This page never holds your keys.</p>
+    <p class="need-foot">You sign every transaction yourself. This page never holds your keys. <b class="beta-inline">Beta — start with a small test launch.</b></p>
     <p class="need-mobile">On a phone? Open this page inside your wallet app's browser (Phantom → the compass/browser icon) — normal Safari/Chrome can't reach your wallet.</p>
   </div>
 
@@ -624,6 +679,14 @@
   <div class="sec-wrap" style="margin-top:56px;"><div class="sec">Launched through FINNPUTER</div></div>
   <div id="feed"><p class="empty">Reading the chain…</p></div>
 
+  <div class="sec-wrap" style="margin-top:56px;"><div class="sec">Claim your fees</div></div>
+  <div class="claim-box">
+    <p class="claim-intro">Connect your wallet to see fees waiting for you across tokens launched here on Robinhood Chain. Fee-share accrues on every trade — claim any time.</p>
+    <button class="key" id="claimScan" disabled>Connect wallet to check</button>
+    <div id="claimResults"></div>
+    <p class="claim-x-note">Earning through an <b>X account</b> instead of a wallet? Your fees live in the wallet Bags created for that handle — connect your X account at <a href="https://bags.fm" target="_blank" rel="noopener">bags.fm</a> to claim them.</p>
+  </div>
+
   <footer>
     BagsFactory 0xe8Cc4431adF8b5A847C113EF0c6af9043219Cb37 · Chain 4663 · Fees read live from the factory.<br>
     You sign every transaction yourself. This page never holds your keys. Nothing here is investment advice.
@@ -672,6 +735,7 @@ const factoryAbi = parseAbi([
   'function creationFee() view returns (uint256)',
   'function partnerFeeBps() view returns (uint16)',
   'function curveForToken(address token) view returns (address)',
+  'function feeShareForToken(address token) view returns (address)',
   'function getTokens(uint256 offset, uint256 limit) view returns (address[])',
   'function allTokensLength() view returns (uint256)',
   'event TokenCreated(address indexed token, address indexed curve, address indexed creator, address feeShare, address partner, bytes32 poolId, string name, string symbol, string metadataURI)',
@@ -688,6 +752,12 @@ const curveAbi = parseAbi([
   'function thresholdQuote() view returns (uint256)',
   'function realQuoteReserves() view returns (uint256)',
   'function getVirtualReserves() view returns (uint256 vToken, uint256 vQuote)',
+]);
+
+const feeShareAbi = parseAbi([
+  'function claim(bool unwrap)',
+  'function claimable(address user) view returns (uint256)',
+  'function getClaimers() view returns (address[] addrs, uint16[] bps)',
 ]);
 
 const publicClient = createPublicClient({ chain: robinhood, transport: http(), batch: { multicall: true } });
@@ -944,6 +1014,7 @@ async function connect() {
   }
 }
 function armButton() {
+  if (typeof armClaimButton === 'function') armClaimButton();
   const b = $('launch');
   if (!account)                   { b.disabled = true; b.textContent = 'Connect wallet'; return; }
   if (!partnerSet)                { b.disabled = true; b.textContent = 'Set partner address'; return; }
@@ -1268,6 +1339,87 @@ async function loadFeed() {
   }
 }
 loadFeed();
+
+/* ══════════════════ CLAIM (Robinhood fee-share) ══════════════════ */
+// Reads what the connected wallet can claim across tokens launched here, and
+// lets them claim per token. Wallet-based only — X-account fees live in a
+// Bags-controlled wallet the user claims at bags.fm. The user signs each claim.
+async function scanClaims() {
+  const box = $('claimResults');
+  if (!account) { box.innerHTML = ''; return; }
+  if (walletChainId !== CHAIN_ID) {
+    box.innerHTML = '<p class="empty">Switch to Robinhood Chain to check claimable fees.</p>';
+    return;
+  }
+  box.innerHTML = '<p class="empty">Scanning tokens for claimable fees…</p>';
+  try {
+    const len = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'allTokensLength' });
+    if (len === 0n) { box.innerHTML = '<p class="empty">No tokens on the factory yet.</p>'; return; }
+    const limit = BigInt(Math.min(60, Number(len)));
+    const tokens = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'getTokens', args: [len - limit, limit] });
+
+    // resolve fee-share contract per token, then read claimable for this wallet
+    const shares = await Promise.all(tokens.map(t =>
+      publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'feeShareForToken', args: [t] }).catch(() => null)));
+
+    const rows = [];
+    await Promise.all(tokens.map(async (token, i) => {
+      const share = shares[i];
+      if (!share || share === zeroAddress) return;
+      try {
+        const amt = await publicClient.readContract({ address: share, abi: feeShareAbi, functionName: 'claimable', args: [account] });
+        if (amt > 0n) {
+          const [name, symbol] = await Promise.all([
+            publicClient.readContract({ address: token, abi: erc20Abi, functionName: 'name' }).catch(() => ''),
+            publicClient.readContract({ address: token, abi: erc20Abi, functionName: 'symbol' }).catch(() => '?'),
+          ]);
+          rows.push({ token, share, amt, name, symbol });
+        }
+      } catch {}
+    }));
+
+    if (rows.length === 0) {
+      box.innerHTML = '<p class="empty">Nothing claimable for this wallet right now — in the last ' + Number(limit) + ' tokens.</p>';
+      return;
+    }
+    rows.sort((a, b) => (b.amt > a.amt ? 1 : -1));
+    box.innerHTML = rows.map((r, i) => `
+      <div class="claim-row">
+        <div class="claim-tok">$${r.symbol}<small>${r.name} · ${shorten(r.token)}</small></div>
+        <div class="claim-amt">${fmtEth(r.amt)}</div>
+        <button class="claim-btn" data-share="${r.share}" data-i="${i}">Claim</button>
+      </div>`).join('');
+
+    box.querySelectorAll('.claim-btn').forEach(btn => btn.addEventListener('click', async () => {
+      const share = btn.dataset.share;
+      btn.disabled = true; btn.textContent = 'Confirm…';
+      try {
+        // claim(true) → unwraps WETH to native ETH
+        const { request } = await publicClient.simulateContract({
+          account, address: share, abi: feeShareAbi, functionName: 'claim', args: [true],
+        });
+        const hash = await walletClient.writeContract(request);
+        btn.textContent = 'Claiming…';
+        await publicClient.waitForTransactionReceipt({ hash });
+        btn.textContent = 'Claimed ✓';
+        setTimeout(scanClaims, 1500);
+      } catch (e) {
+        btn.disabled = false; btn.textContent = 'Claim';
+        alert(e.shortMessage || e.message || 'Claim failed');
+      }
+    }));
+  } catch (e) {
+    console.error(e);
+    box.innerHTML = '<p class="empty">Could not read the chain. The public RPC is rate-limited — try again in a moment.</p>';
+  }
+}
+
+function armClaimButton() {
+  const b = $('claimScan');
+  if (!account) { b.disabled = true; b.textContent = 'Connect wallet to check'; $('claimResults').innerHTML = ''; return; }
+  b.disabled = false; b.textContent = 'Check claimable fees';
+}
+$('claimScan').addEventListener('click', scanClaims);
 
 /* ══════════════════ SOLANA (any wallet + Bags via proxy) ══════════════════ */
 // The proxy builds the launch transactions with the Bags SDK; the user's own
