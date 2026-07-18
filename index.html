@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FINNPUTER Launchpad — on Robinhood Chain</title>
+<meta name="description" content="Launch a coin on Robinhood Chain and keep 1% of every trade, forever. Bonding curve to Uniswap v4." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23030503'/%3E%3Crect x='5' y='4' width='22' height='6' rx='3' fill='%23de6b5e'/%3E%3Crect x='6' y='11' width='20' height='15' rx='2' fill='%23000' stroke='%237bdd34'/%3E%3Ctext x='16' y='21' font-size='9' fill='%23eaf6ff' text-anchor='middle' font-family='monospace'%3E^ ^%3C/text%3E%3C/svg%3E" />
+<!-- Every link you post anywhere renders from these. Without them it looks like a dead URL. -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="FINNPUTER" />
+<meta property="og:title" content="FINNPUTER Launchpad — on Robinhood Chain" />
+<meta property="og:description" content="Launch a coin on Robinhood Chain and keep 1% of every trade, forever." />
+<meta property="og:url" content="https://launchpad.finnputerdex.com" />
+<meta property="og:image" content="https://launchpad.finnputerdex.com/banner.webp" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@FINNPUTER28" />
+<meta name="twitter:title" content="FINNPUTER Launchpad — on Robinhood Chain" />
+<meta name="twitter:description" content="Launch a coin on Robinhood Chain and keep 1% of every trade, forever." />
+<meta name="twitter:image" content="https://launchpad.finnputerdex.com/banner.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* sampled from the banner artwork */
+    --brand:      #7bdd34;   /* FINNPUTER green */
+    --brand-hi:   #a6f75f;
+    --brand-lo:   #3d7a1c;
+    --brand-deep: #14300c;
+    --coral:      #de6b5e;   /* the beanie */
+    --coral-hi:   #f08878;
+    --face:       #eaf6ff;   /* the smiley: white, not green */
+    --face-glow:  #8fd4ff;
+    --void:       #030503;   /* banner background */
+    --panel:      #0a0f08;
+    --panel-hi:   #111a0e;
+    --edge:       #1e3016;
+    --edge-lit:   #2f5622;
+    --paper:      #d3e2cd;
+    --mute:       #6a7c64;
+    --display: 'Chakra Petch', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    /* the LAUNCHPAD bracket: pointed ends */
+    --bracket: polygon(13px 0, calc(100% - 13px) 0, 100% 50%, calc(100% - 13px) 100%, 13px 100%, 0 50%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--void);
+    color: var(--paper);
+    font-family: var(--mono); font-size: 14px; line-height: 1.6;
+    min-height: 100vh; padding: 0 0 90px;
+    -webkit-font-smoothing: antialiased;
+    position: relative; overflow-x: hidden;
+  }
+  /* the grid floor from the banner */
+  body::before {
+    content: ''; position: fixed; inset: auto 0 0 0; height: 46vh; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(#7bdd3400 0%, #7bdd3412 100%),
+      repeating-linear-gradient(90deg, #7bdd3417 0 1px, transparent 1px 62px),
+      repeating-linear-gradient(0deg,  #7bdd3417 0 1px, transparent 1px 62px);
+    transform: perspective(340px) rotateX(62deg);
+    transform-origin: bottom center;
+    background-position: 0 0, 0 0, 0 0;
+    animation: floor 2.6s linear infinite;
+    opacity: .5;
+    mask-image: linear-gradient(to top, #000 20%, transparent 100%);
+  }
+  @keyframes floor { to { background-position: 0 0, 0 0, 0 62px; } }
+  .wrap { max-width: 740px; margin: 0 auto; padding: 0 16px; position: relative; z-index: 1; }
+
+  /* ───── banner hero ───── */
+  .hero {
+    margin: 0 auto 26px; max-width: 980px; padding: 0 8px;
+    position: relative; overflow: hidden;
+    transition: transform .5s cubic-bezier(.2,.7,.2,1);
+    will-change: transform;
+  }
+  .hero img { width: 100%; height: auto; display: block; }
+  /* one power-on sweep across the glass, then it stays out of the way */
+  .hero::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(102deg, transparent 42%, #7bdd341f 47%, #eaf6ff1c 50%, #7bdd341f 53%, transparent 58%);
+    transform: translateX(-110%);
+    animation: sweep 1.9s .35s cubic-bezier(.4,0,.2,1) 1 both;
+  }
+  @keyframes sweep { to { transform: translateX(110%); } }
+  .hero .fallback {
+    display: none; font-family: var(--display); font-weight: 700;
+    font-size: 38px; letter-spacing: 0.1em; color: var(--brand);
+    text-align: center; padding: 42px 0 12px; text-shadow: 0 0 30px #7bdd3459;
+  }
+  .hero .fallback small { display: block; font-size: 15px; letter-spacing: 0.36em; color: var(--paper); margin-top: 6px; }
+
+  /* ───── header bar ───── */
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
+  .ctrls { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    border: 1px solid var(--edge); border-radius: 3px;
+    padding: 8px 11px; color: var(--mute); background: var(--panel); white-space: nowrap;
+  }
+  .led { width: 6px; height: 6px; border-radius: 50%; background: #2b3527; flex: none; }
+  .chip[data-s="ok"] { color: var(--brand); border-color: var(--brand-lo); }
+  .chip[data-s="ok"] .led { background: var(--brand); box-shadow: 0 0 9px var(--brand); }
+  .chip[data-s="bad"] { color: var(--coral); border-color: #6d3229; }
+  .chip[data-s="bad"] .led { background: var(--coral); box-shadow: 0 0 9px var(--coral); }
+
+  /* ───── keys ───── */
+  .key {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--paper);
+    background: linear-gradient(180deg, #1a2614 0%, #0d140a 100%);
+    border: 1px solid var(--edge-lit); border-radius: 4px;
+    padding: 11px 18px; cursor: pointer;
+    box-shadow: 0 3px 0 #050703, 0 1px 0 #3b6b2b inset;
+    transition: transform .06s, box-shadow .06s, color .12s, border-color .12s;
+  }
+  .key:hover:not(:disabled) { color: var(--brand); border-color: var(--brand-lo); }
+  .key:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 #050703, 0 1px 0 #3b6b2b inset; }
+  .key:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+  .key:disabled { opacity: .34; cursor: not-allowed; }
+
+  /* the launch key wears the LAUNCHPAD bracket */
+  .key-go {
+    width: 100%; padding: 19px; font-family: var(--display); font-weight: 700;
+    font-size: 15px; letter-spacing: 0.22em; color: #041003;
+    background: linear-gradient(180deg, var(--brand-hi) 0%, #5cc41f 100%);
+    border: none; border-radius: 0; clip-path: var(--bracket);
+    box-shadow: none; filter: drop-shadow(0 0 22px #7bdd3466);
+  }
+  .key-go:hover:not(:disabled) { color: #041003; background: linear-gradient(180deg, #c2ff86 0%, #74dd2e 100%); }
+  .key-go:active:not(:disabled) { transform: translateY(2px); }
+  .key-go:focus-visible { outline: none; box-shadow: inset 0 0 0 3px #041003; }
+  .key-go:disabled { background: #1a2614; color: #4d5a47; filter: none; }
+  .key-sm { padding: 7px 12px; font-size: 11px; box-shadow: 0 2px 0 #050703; }
+  .key-sm:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 0 0 #050703; }
+
+  /* ───── console strip: the mascot's screen as status light ───── */
+  .console {
+    display: flex; align-items: center; gap: 14px;
+    background: #000; border: 1px solid var(--edge);
+    padding: 12px 16px; margin-bottom: 34px; border-radius: 4px;
+    box-shadow: 0 0 30px -8px #7bdd3426 inset;
+  }
+  .mini {
+    width: 46px; height: 34px; flex: none; border-radius: 4px;
+    background: #000; border: 1px solid #1a2416;
+    display: grid; place-items: center; overflow: hidden;
+  }
+  .face {
+    font-family: var(--display); font-weight: 700; font-size: 17px;
+    letter-spacing: 0.08em; color: var(--face);
+    text-shadow: 0 0 10px var(--face-glow), 0 0 22px #8fd4ff80;
+    animation: flick 6s infinite steps(1);
+  }
+  .status { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .status[data-tone="ok"]  { color: var(--brand); }
+  .status[data-tone="bad"] { color: var(--coral); }
+  @keyframes flick { 0%,96%,100%{opacity:1} 97%{opacity:.7} 98%{opacity:1} 99%{opacity:.85} }
+  @media (prefers-reduced-motion: reduce) {
+    .face, body::before, .hero::after { animation: none !important; }
+    .hero { transform: none !important; }
+    * { transition: none !important }
+  }
+
+  /* ───── thesis ───── */
+  .thesis { font-family: var(--display); font-weight: 600; font-size: 26px; line-height: 1.26; text-align: center; margin: 0 auto 8px; max-width: 34ch; }
+  .thesis em { font-style: normal; color: var(--brand); }
+  .sub { text-align: center; color: var(--mute); font-size: 12.5px; margin-bottom: 36px; }
+
+  /* ───── bracket section headers ───── */
+  .sec {
+    font-family: var(--display); font-weight: 700; font-size: 11.5px;
+    letter-spacing: 0.24em; text-transform: uppercase; color: var(--brand);
+    background: var(--brand-deep); clip-path: var(--bracket);
+    padding: 10px 26px; text-align: center; margin-bottom: 18px;
+    border: none; position: relative;
+  }
+  .sec-wrap { position: relative; margin-bottom: 18px; }
+  .sec-wrap::before {
+    content: ''; position: absolute; inset: 0; background: var(--brand);
+    clip-path: var(--bracket); opacity: .55;
+  }
+  .sec-wrap .sec { position: relative; margin: 0; transform: scale(.994); }
+
+  /* ───── ledger ───── */
+  .ledger { border: 1px solid var(--edge); border-radius: 3px; margin-bottom: 36px; overflow: hidden; background: var(--panel); }
+  .ledger-h { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute); padding: 9px 14px; border-bottom: 1px solid var(--edge); background: var(--panel-hi); }
+  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 11px 14px; border-bottom: 1px solid #131c0f; font-size: 13px; }
+  .row:last-child { border-bottom: none; }
+  .row b { font-weight: 500; }
+  .row span { color: var(--mute); font-size: 11.5px; }
+  .row .amt { font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; }
+  .row.you .amt { color: var(--brand); }
+  .row.pad .amt { color: var(--coral); }
+  .row.vault .amt { color: var(--mute); }
+
+  /* ───── tabs ───── */
+  .tabs { display: flex; gap: 6px; }
+  .tab {
+    flex: 1; font-family: var(--mono); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    background: var(--panel); color: var(--mute);
+    border: 1px solid var(--edge); border-bottom: none;
+    border-radius: 4px 4px 0 0; padding: 12px 8px; cursor: pointer;
+  }
+  .tab[aria-selected="true"] { background: var(--brand-deep); color: var(--brand); border-color: var(--brand-lo); }
+  .tab:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+  .panel-b { border-top: 1px solid var(--edge); padding-top: 26px; }
+  .panel-b[hidden] { display: none; }
+
+  /* ───── form ───── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* image + identity, the way a person actually thinks about a coin */
+  .coin-grid { display: grid; grid-template-columns: 150px 1fr; gap: 14px; margin-bottom: 15px; }
+  @media (max-width: 560px) { .coin-grid { grid-template-columns: 1fr; } }
+  .coin-fields { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+  .drop {
+    position: relative; display: grid; place-items: center; cursor: pointer;
+    min-height: 150px; border: 1px dashed var(--edge-lit); border-radius: 4px;
+    background: #000; overflow: hidden; transition: border-color .14s, background .14s;
+  }
+  .drop:hover, .drop.over { border-color: var(--brand); background: #7bdd340a; }
+  .drop:focus-within { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .drop-cue {
+    display: flex; flex-direction: column; align-items: center; gap: 9px;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute);
+    text-align: center; padding: 10px;
+  }
+  .drop-cue b { font-size: 20px; color: var(--brand-lo); font-weight: 400; line-height: 1; }
+  .drop img { display: none; width: 100%; height: 100%; object-fit: cover; }
+  .drop.has img { display: block; }
+  .drop.has .drop-cue {
+    position: absolute; inset: auto 0 0 0; background: #000000cc;
+    padding: 6px; font-size: 9px; gap: 0;
+  }
+  .drop.has .drop-cue b { display: none; }
+
+  textarea {
+    width: 100%; font-family: var(--mono); font-size: 13.5px; resize: vertical;
+    background: #000; color: var(--paper);
+    border: 1px solid var(--edge); border-radius: 3px; padding: 12px;
+  }
+  textarea:focus { outline: none; border-color: var(--brand-lo); box-shadow: 0 0 0 3px #7bdd3417; }
+  textarea::placeholder { color: #3e4a39; }
+
+  details { border: 1px solid var(--edge); border-radius: 3px; margin-bottom: 15px; background: var(--panel); }
+  summary {
+    cursor: pointer; padding: 12px 14px; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute);
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: ' ▾'; color: var(--brand-lo); }
+  details[open] summary::after { content: ' ▴'; }
+  summary:hover { color: var(--brand); }
+  summary:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+  .details-body { padding: 0 14px 14px; }
+  .details-body .field:last-child { margin-bottom: 0; }
+
+  .field { margin-bottom: 15px; }
+  label { display: block; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); margin-bottom: 6px; }
+  input {
+    width: 100%; font-family: var(--mono); font-size: 13.5px;
+    background: #000; color: var(--paper);
+    border: 1px solid var(--edge); border-radius: 3px; padding: 12px;
+  }
+  input:focus { outline: none; border-color: var(--brand-lo); box-shadow: 0 0 0 3px #7bdd3417; }
+  input::placeholder { color: #3e4a39; }
+  .hint { font-size: 11px; color: var(--mute); margin-top: 5px; line-height: 1.5; }
+
+  .claimer-row { display: grid; grid-template-columns: 1fr 92px 38px; gap: 8px; margin-bottom: 8px; }
+  .pct-input { position: relative; }
+  .pct-input input { padding-right: 26px; text-align: right; }
+  .pct-input span {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    color: var(--mute); font-size: 12px; pointer-events: none;
+  }
+  .claimer-row .key { padding: 0; font-size: 16px; }
+  .bps-tally { font-size: 11px; color: var(--mute); margin-top: 9px; }
+  .bps-tally.bad { color: var(--coral); }
+  .bps-tally.ok  { color: var(--brand-lo); }
+
+  /* ───── notices / output ───── */
+  .notice { border-left: 2px solid var(--coral); background: #de6b5e0f; padding: 13px 15px; margin-bottom: 22px; font-size: 12.5px; line-height: 1.65; }
+  .notice b { color: var(--coral-hi); font-weight: 600; }
+  code { background: #00000080; padding: 1px 5px; border-radius: 2px; font-size: 11.5px; color: var(--paper); }
+
+  .out { display: none; border: 1px solid var(--brand-lo); border-radius: 3px; padding: 16px; margin-top: 22px; font-size: 12.5px; background: #7bdd3408; }
+  .out.show { display: block; }
+  .out.err { border-color: var(--coral); background: #de6b5e0a; }
+  .out h4 { font-family: var(--display); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brand); margin-bottom: 12px; }
+  .out.err h4 { color: var(--coral-hi); }
+  .kv { display: grid; grid-template-columns: 78px 1fr; gap: 4px 12px; font-size: 11.5px; word-break: break-all; }
+  .kv dt { color: var(--mute); }
+  .kv a { color: var(--brand); }
+
+  .todo { list-style: none; font-size: 12.5px; line-height: 1.85; }
+  .todo li { padding-left: 22px; position: relative; }
+  .todo li::before { content: '▸'; position: absolute; left: 2px; color: var(--brand-lo); }
+  .todo li span { color: var(--mute); }
+
+  /* ───── feed ───── */
+  .group-h {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--mute); margin: 22px 0 4px;
+  }
+  .group-h::after { content: ''; flex: 1; height: 1px; background: var(--edge); }
+  .group-h b { color: var(--brand-lo); font-weight: 600; }
+  .feed-item {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    padding: 13px 0; border-bottom: 1px solid #131c0f;
+    background: none; border-left: 0; border-right: 0; border-top: 0;
+    text-align: left; cursor: pointer; font-family: var(--mono);
+  }
+  .feed-item:hover .tick { color: var(--brand); }
+  .feed-item:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
+  .pfp {
+    width: 34px; height: 34px; flex: none; border-radius: 4px;
+    background: #10160d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233f8a2c' stroke-width='1.5'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Cpath d='m3 16 5-5 4 4 3-3 6 6'/%3E%3C/svg%3E") center/16px no-repeat;
+    object-fit: cover; border: 1px solid var(--edge);
+  }
+  .tick { font-family: var(--display); font-weight: 700; font-size: 14px; letter-spacing: 0.05em; flex: 1; min-width: 0; color: var(--paper); transition: color .12s; }
+  .tick small { display: block; font-family: var(--mono); font-weight: 400; font-size: 10.5px; color: var(--mute); letter-spacing: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bar { width: 84px; height: 4px; background: #16220f; border-radius: 2px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--brand); box-shadow: 0 0 8px #7bdd3480; transition: width .8s cubic-bezier(.2,.8,.2,1); }
+  .pct { font-size: 11px; color: var(--mute); width: 66px; text-align: right; }
+  .pct.grad { color: var(--coral); }
+  .empty { color: var(--mute); font-size: 12.5px; padding: 20px 0; }
+
+  /* the curve: not decoration — it is the token's own math, read on-chain */
+  .curve-panel { border-bottom: 1px solid #131c0f; padding: 4px 0 20px; }
+  .curve-panel svg { width: 100%; height: auto; display: block; }
+  .curve-line { fill: none; stroke: var(--brand); stroke-width: 2; stroke-linecap: round;
+    stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.1s cubic-bezier(.3,.8,.3,1) forwards; }
+  .curve-area { fill: url(#curveFill); opacity: 0; animation: fadein .5s .55s forwards; }
+  .curve-ahead { fill: none; stroke: var(--edge-lit); stroke-width: 1.5; stroke-dasharray: 3 4; }
+  .curve-dot { opacity: 0; animation: pop .45s .85s cubic-bezier(.2,1.5,.4,1) forwards; transform-origin: center; }
+  .curve-dot circle:first-child { animation: halo 2.2s 1.3s ease-out infinite; transform-origin: center; }
+  .curve-target { stroke: var(--coral); stroke-width: 1; stroke-dasharray: 2 3; opacity: .55; }
+  @keyframes draw   { to { stroke-dashoffset: 0; } }
+  @keyframes fadein { to { opacity: 1; } }
+  @keyframes pop    { to { opacity: 1; } }
+  @keyframes halo   { 0% { r: 4; opacity: .8 } 100% { r: 13; opacity: 0 } }
+  .curve-stats { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 12px; font-size: 11px; }
+  .curve-stats div span { display: block; color: var(--mute); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 3px; }
+  .curve-stats div b { font-weight: 600; color: var(--paper); font-size: 12.5px; }
+  .curve-stats div.hl b { color: var(--brand); }
+  /* The partner fee is baked into the curve at launch, so a trade anywhere
+     still pays us. Sending buyers to the Bags page costs nothing and gives
+     them a chart, slippage control and a trade history we do not have. */
+  .trade-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .trade-link {
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #041003; background: linear-gradient(180deg, var(--brand-hi), #5cc41f);
+    padding: 10px 16px; border-radius: 4px;
+    box-shadow: 0 3px 0 #2c6b18; transition: transform .06s, box-shadow .06s;
+  }
+  .trade-link:active { transform: translateY(3px); box-shadow: 0 0 0 #2c6b18; }
+  .trade-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+  .trade-alt {
+    display: inline-flex; align-items: center; text-decoration: none;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute);
+    border: 1px solid var(--edge-lit); border-radius: 4px; padding: 10px 16px;
+  }
+  .trade-alt:hover { color: var(--brand); border-color: var(--brand-lo); }
+
+  footer { margin-top: 54px; padding-top: 18px; border-top: 1px solid var(--edge); font-size: 10.5px; color: #45513f; line-height: 1.8; word-break: break-all; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img id="banner" src="banner.webp" width="1600" height="533" alt="FINNPUTER Launchpad on Robinhood Chain" />
+  <div class="fallback" id="bannerFallback">FINNPUTER<small>LAUNCHPAD · ON ROBINHOOD CHAIN</small></div>
+</div>
+
+<div class="wrap">
+
+  <div class="top">
+    <div class="ctrls">
+      <div class="chip" id="chainChip"><i class="led"></i><span id="chainTxt">No chain</span></div>
+      <button class="key" id="connect">Connect wallet</button>
+    </div>
+  </div>
+
+  <div class="console">
+    <div class="mini"><div class="face" id="face">^&nbsp;&nbsp;^</div></div>
+    <div class="status" id="status">Wallet not connected</div>
+  </div>
+
+  <h1 class="thesis">Launch a coin on Robinhood Chain and keep <em>1% of every trade</em>, forever.</h1>
+  <p class="sub">Bonding curve → Uniswap v4. Locked liquidity. No cut taken from your side.</p>
+
+  <div class="ledger">
+    <div class="ledger-h">Where every 2% trade fee goes</div>
+    <div class="row you"><div><b>Your fee claimers</b><br><span>Claimable any time, both phases</span></div><div class="amt">1.00%</div></div>
+    <div class="row pad"><div><b>FINNPUTER</b><br><span>Partner share of the protocol half</span></div><div class="amt" id="padCut">0.25%</div></div>
+    <div class="row vault"><div><b>Bags vault</b><br><span>Protocol remainder</span></div><div class="amt" id="vaultCut">0.75%</div></div>
+  </div>
+
+  <div id="guard"></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-rh"  aria-selected="true"  aria-controls="p-rh">Robinhood Chain</button>
+    <button class="tab" role="tab" id="tab-sol" aria-selected="false" aria-controls="p-sol">Solana</button>
+  </div>
+
+  <div class="panel-b" id="p-rh" role="tabpanel" aria-labelledby="tab-rh">
+    <div class="coin-grid">
+      <label class="drop" id="drop">
+        <input type="file" id="f-image" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+        <img id="preview" alt="" />
+        <div class="drop-cue"><b>▲</b>Upload image</div>
+      </label>
+      <div class="coin-fields">
+        <div class="field" style="margin:0"><label for="f-name">Name</label><input id="f-name" placeholder="Finnputer Cat" maxlength="64" /></div>
+        <div class="field" style="margin:0"><label for="f-symbol">Ticker</label><input id="f-symbol" placeholder="FCAT" maxlength="16" /></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="f-desc">Description</label>
+      <textarea id="f-desc" rows="3" maxlength="500" placeholder="What is this token?"></textarea>
+    </div>
+
+    <details>
+      <summary>Social links (optional)</summary>
+      <div class="details-body">
+        <div class="field"><label for="f-web">Website</label><input id="f-web" placeholder="https://…" /></div>
+        <div class="field"><label for="f-tw">X / Twitter</label><input id="f-tw" placeholder="https://x.com/…" /></div>
+        <div class="field"><label for="f-tg">Telegram</label><input id="f-tg" placeholder="https://t.me/…" /></div>
+      </div>
+    </details>
+
+    <div class="field">
+      <label for="f-buy">Initial buy — ETH (optional)</label>
+      <input id="f-buy" placeholder="0.01" inputmode="decimal" />
+      <p class="hint">Leave empty for no buy. A large enough first buy can graduate the token in the same transaction.</p>
+    </div>
+    <div class="field">
+      <label>Fee claimers — must total 100%</label>
+      <div id="claimers"></div>
+      <button class="key key-sm" id="addClaimer">+ Add claimer</button>
+      <div class="bps-tally" id="tally">0.00 / 100%</div>
+      <p class="hint">1–100 claimers, each unique and non-zero. None may equal the partner address.<br>Smallest share is 0.01%. Give the last claimer the rounding remainder so it lands on exactly 100.</p>
+    </div>
+    <details>
+      <summary>Advanced — bring your own metadata URI</summary>
+      <div class="details-body">
+        <div class="field">
+          <input id="f-uri" placeholder="https://ipfs.io/ipfs/…" />
+          <p class="hint">Only if you already pinned the JSON yourself. Overrides the image upload above.</p>
+        </div>
+      </div>
+    </details>
+
+    <button class="key key-go" id="launch" disabled>Connect wallet</button>
+    <div class="out" id="out"></div>
+  </div>
+
+  <div class="panel-b" id="p-sol" role="tabpanel" aria-labelledby="tab-sol" hidden>
+    <div class="notice">
+      <b>Not wired up yet.</b> Solana launches run through the Bags REST API, not through contracts —
+      a different wallet stack and a server that holds the API key. This is a placeholder, not a disabled feature.
+    </div>
+    <ul class="todo">
+      <li>Phantom / Solana wallet adapter <span>— separate from the EVM connection above</span></li>
+      <li>Bags API key on the server <span>— never in this file; the page is public</span></li>
+      <li>Partner config <span>— one partner key per wallet, created once</span></li>
+      <li>Fee-share configuration <span>— required for every Solana launch</span></li>
+      <li>Launch flow <span>— token info + image upload → build transaction → sign → send</span></li>
+    </ul>
+    <p class="hint" style="margin-top:18px;">One upside: on Solana, Bags handles the image and metadata upload — no pinning on your side.</p>
+  </div>
+
+  <div class="sec-wrap" style="margin-top:56px;"><div class="sec">Launched through FINNPUTER</div></div>
+  <div id="feed"><p class="empty">Reading the chain…</p></div>
+
+  <footer>
+    BagsFactory 0xe8Cc4431adF8b5A847C113EF0c6af9043219Cb37 · Chain 4663 · Fees read live from the factory.<br>
+    You sign every transaction yourself. This page never holds your keys. Nothing here is investment advice.
+  </footer>
+</div>
+
+<script type="module">
+import {
+  createPublicClient, createWalletClient, custom, http, defineChain,
+  parseAbi, parseEther, formatEther, isAddress, getAddress, parseEventLogs, zeroAddress, erc20Abi
+} from 'https://esm.sh/viem@2.21.0';
+
+/* ══════════════════════════════════════════════════════════════════
+   CONFIG
+   Your partner wallet is baked into every launch and IMMUTABLE
+   afterwards. Leave it at zero and you earn nothing, permanently.
+   Dedicated EVM wallet only — a Solana address will not work.
+   ══════════════════════════════════════════════════════════════════ */
+const PARTNER = '0x9536cfe8bEbA85d09CBE1a24369441031a7b58b1';
+
+// Your Railway proxy, no trailing slash. It pins the token image and metadata
+// so nobody has to know what an IPFS CID is. Leave it empty and the upload is
+// disabled — the "Advanced" URI field still works.
+const PROXY_BASE = '';
+
+const ADDR = { factory: '0xe8Cc4431adF8b5A847C113EF0c6af9043219Cb37' };
+const EXPLORER = 'https://robinhoodchain.blockscout.com';
+// Every RH token launched through the factory gets a Bags page for free:
+// chart, buy/sell, slippage, trade history. Our partner cut is snapshotted
+// into the curve at launch, so trades made there still pay us.
+const BAGS_APP = 'https://bags.fm';
+const CHAIN_ID = 4663, CHAIN_HEX = '0x1237', FEED_SIZE = 25;
+
+const robinhood = defineChain({
+  id: CHAIN_ID,
+  name: 'Robinhood Chain',
+  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+  rpcUrls: { default: { http: ['https://rpc.mainnet.chain.robinhood.com'] } },
+  blockExplorers: { default: { name: 'Blockscout', url: EXPLORER } },
+  contracts: { multicall3: { address: '0xcA11bde05977b3631167028862bE2a173976CA11' } },
+});
+
+const factoryAbi = parseAbi([
+  'function create(string name, string symbol, string metadataURI, address partner, address[] claimers, uint16[] bps) payable returns (address token, address curve)',
+  'function createAndBuy(string name, string symbol, string metadataURI, address partner, address[] claimers, uint16[] bps) payable returns (address token, address curve)',
+  'function creationFee() view returns (uint256)',
+  'function partnerFeeBps() view returns (uint16)',
+  'function curveForToken(address token) view returns (address)',
+  'function getTokens(uint256 offset, uint256 limit) view returns (address[])',
+  'function allTokensLength() view returns (uint256)',
+  'event TokenCreated(address indexed token, address indexed curve, address indexed creator, address feeShare, address partner, bytes32 poolId, string name, string symbol, string metadataURI)',
+  'error BagsFactory_InsufficientCreationFee()',
+  'error BagsFactory_NoClaimers()',
+  'error BagsFactory_InvalidClaimers()',
+  'error BagsFactory_BuyFailed(address curve, uint256 value)',
+]);
+const curveAbi = parseAbi([
+  'function partner() view returns (address)',
+  'function bondingProgress() view returns (uint256)',
+  'function migrated() view returns (bool)',
+  'function currentPrice() view returns (uint256)',
+  'function thresholdQuote() view returns (uint256)',
+  'function realQuoteReserves() view returns (uint256)',
+  'function getVirtualReserves() view returns (uint256 vToken, uint256 vQuote)',
+]);
+
+const publicClient = createPublicClient({ chain: robinhood, transport: http(), batch: { multicall: true } });
+let walletClient = null, account = null, walletChainId = null;
+
+const $ = (id) => document.getElementById(id);
+const shorten = (a) => a.slice(0, 6) + '…' + a.slice(-4);
+
+/* banner falls back to type if the webp is missing */
+$('banner').onerror = () => { $('banner').style.display = 'none'; $('bannerFallback').style.display = 'block'; };
+
+/* Depth without a 3D engine: the artwork is already lit and shaded,
+   so a few degrees of tilt is all it needs. Skipped on touch. */
+const hero = document.querySelector('.hero');
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(pointer: fine)').matches) {
+  addEventListener('pointermove', (e) => {
+    const x = e.clientX / innerWidth - 0.5;
+    const y = e.clientY / innerHeight - 0.5;
+    hero.style.transform = `perspective(1100px) rotateY(${x * 3.2}deg) rotateX(${-y * 1.6}deg)`;
+  }, { passive: true });
+  document.addEventListener('pointerleave', () => { hero.style.transform = ''; });
+}
+
+/* the mascot's screen mirrors what the machine is doing */
+const FACES = { idle:'^&nbsp;&nbsp;^', live:'^&nbsp;o&nbsp;^', working:'o&nbsp;&nbsp;o', signing:'&gt;&nbsp;&nbsp;&lt;', win:'^&nbsp;O&nbsp;^', fail:'x&nbsp;&nbsp;x' };
+function setFace(kind, text, tone) {
+  $('face').innerHTML = FACES[kind];
+  $('status').textContent = text;
+  $('status').dataset.tone = tone || '';
+}
+
+/* image dropzone */
+const drop = $('drop'), fileInput = $('f-image');
+function showPreview(file) {
+  if (!file) return;
+  $('preview').src = URL.createObjectURL(file);
+  drop.classList.add('has');
+  drop.querySelector('.drop-cue').textContent = file.name;
+}
+fileInput.addEventListener('change', () => showPreview(fileInput.files[0]));
+['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', (e) => {
+  const f = e.dataTransfer?.files?.[0];
+  if (f && f.type.startsWith('image/')) { fileInput.files = e.dataTransfer.files; showPreview(f); }
+});
+
+/* tabs */
+['tab-rh','tab-sol'].forEach(t => $(t).addEventListener('click', () => {
+  ['tab-rh','tab-sol'].forEach(id => $(id).setAttribute('aria-selected', String(id === t)));
+  $('p-rh').hidden  = t !== 'tab-rh';
+  $('p-sol').hidden = t !== 'tab-sol';
+}));
+
+/* chain badge — the visible proof of which network you are on */
+function paintChain() {
+  const chip = $('chainChip'), txt = $('chainTxt');
+  if (walletChainId === null) { chip.dataset.s = ''; txt.textContent = 'No chain'; return; }
+  if (walletChainId === CHAIN_ID) { chip.dataset.s = 'ok'; txt.textContent = 'Robinhood 4663'; }
+  else { chip.dataset.s = 'bad'; txt.textContent = 'Wrong chain: ' + walletChainId; }
+}
+async function readChain() {
+  if (!window.ethereum) return;
+  try { walletChainId = parseInt(await window.ethereum.request({ method: 'eth_chainId' }), 16); }
+  catch { walletChainId = null; }
+  paintChain(); armButton();
+}
+
+/* partner guard */
+const partnerSet = isAddress(PARTNER) && PARTNER.toLowerCase() !== zeroAddress;
+if (!partnerSet) {
+  $('guard').innerHTML = `<div class="notice"><b>Partner address not set.</b> Every launch from this page
+    would pay <code>address(0)</code> — you would earn nothing, and it cannot be fixed after launch.
+    Set <code>PARTNER</code> at the top of the script, then redeploy.</div>`;
+  $('padCut').textContent = '0.00%'; $('vaultCut').textContent = '1.00%';
+}
+
+/* live fee figures */
+let creationFee = null;
+(async () => {
+  try {
+    const [fee, bps] = await Promise.all([
+      publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'creationFee' }),
+      publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'partnerFeeBps' }),
+    ]);
+    creationFee = fee;
+    if (partnerSet) {
+      const pad = Number(bps) / 10000;
+      $('padCut').textContent = pad.toFixed(2) + '%';
+      $('vaultCut').textContent = (1 - pad).toFixed(2) + '%';
+    }
+  } catch (e) { console.error('Could not read factory config', e); }
+})();
+
+/* claimers */
+// The user thinks in percent; the factory only speaks basis points.
+// 1 bps = 0.01%, so the mapping is exact to two decimals. Convert as late
+// as possible so what the tally shows is literally what gets signed.
+const toBps = (pct) => Math.round((Number(pct) || 0) * 100);
+const claimers = [{ address: '', pct: 100 }];
+function renderClaimers() {
+  $('claimers').innerHTML = claimers.map((c, i) => `
+    <div class="claimer-row">
+      <input data-i="${i}" data-k="address" placeholder="0x… wallet" value="${c.address}" />
+      <div class="pct-input"><input data-i="${i}" data-k="pct" placeholder="0" inputmode="decimal" value="${c.pct}" /><span>%</span></div>
+      <button class="key" data-rm="${i}" ${claimers.length === 1 ? 'disabled' : ''} title="Remove">×</button>
+    </div>`).join('');
+  $('claimers').querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
+    const c = claimers[+el.dataset.i];
+    c[el.dataset.k] = el.dataset.k === 'pct' ? el.value.replace(',', '.') : el.value.trim();
+    tally();
+  }));
+  $('claimers').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
+    claimers.splice(+b.dataset.rm, 1); renderClaimers();
+  }));
+  tally();
+}
+function tally() {
+  // Sum the bps, not the percents — floats drift and the contract counts bps.
+  const bps = claimers.reduce((s, c) => s + toBps(c.pct), 0);
+  $('tally').textContent = `${(bps / 100).toFixed(2)} / 100%`;
+  $('tally').className = 'bps-tally ' + (bps === 10000 ? 'ok' : 'bad');
+}
+$('addClaimer').addEventListener('click', () => { claimers.push({ address: '', pct: '' }); renderClaimers(); });
+renderClaimers();
+
+/* client mirror of the factory rules — an on-chain revert still costs gas */
+function validateClaimers() {
+  if (claimers.length === 0) return 'Add at least one fee claimer.';
+  if (claimers.length > 100) return 'At most 100 claimers.';
+  const seen = new Set();
+  for (const c of claimers) {
+    if (!isAddress(c.address)) return `"${c.address || 'empty'}" is not a valid address.`;
+    const k = c.address.toLowerCase();
+    if (k === zeroAddress) return 'The zero address cannot be a claimer.';
+    if (partnerSet && k === PARTNER.toLowerCase()) return 'The partner cannot also be a claimer.';
+    if (seen.has(k)) return 'Claimer addresses must be unique.';
+    seen.add(k);
+    const bps = toBps(c.pct);
+    if (bps < 1)      return 'Every claimer needs a share of at least 0.01%.';
+    if (bps > 10000)  return 'No claimer can take more than 100%.';
+  }
+  const total = claimers.reduce((s, c) => s + toBps(c.pct), 0);
+  if (total !== 10000) {
+    const off = (total - 10000) / 100;
+    return `Shares must add up to exactly 100% — currently ${(total / 100).toFixed(2)}% (${off > 0 ? 'over' : 'under'} by ${Math.abs(off).toFixed(2)}%).`;
+  }
+  return null;
+}
+
+/* wallet */
+async function connect() {
+  if (!window.ethereum) return setFace('fail', 'No EVM wallet found', 'bad');
+  try {
+    setFace('working', 'Waiting for the wallet…');
+    const [a] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    account = getAddress(a);
+    try {
+      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
+    } catch (err) {
+      if (err.code === 4902 || err?.data?.originalError?.code === 4902) {
+        await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{
+          chainId: CHAIN_HEX, chainName: 'Robinhood Chain',
+          nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+          rpcUrls: ['https://rpc.mainnet.chain.robinhood.com'],
+          blockExplorerUrls: [EXPLORER],
+        }] });
+      } else throw err;
+    }
+    // chain pinned here: viem throws ChainMismatchError before signing if the wallet drifted
+    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
+    $('connect').textContent = shorten(account);
+    if (!claimers[0].address) { claimers[0].address = account; renderClaimers(); }
+    await readChain();
+    setFace('live', 'Connected on Robinhood Chain', 'ok');
+  } catch (e) {
+    setFace('fail', e.shortMessage || e.message || 'Wallet connection failed', 'bad');
+  }
+}
+function armButton() {
+  const b = $('launch');
+  if (!account)                   { b.disabled = true; b.textContent = 'Connect wallet'; return; }
+  if (!partnerSet)                { b.disabled = true; b.textContent = 'Set partner address'; return; }
+  if (walletChainId !== CHAIN_ID) { b.disabled = true; b.textContent = 'Switch to Robinhood'; return; }
+  b.disabled = false; b.textContent = 'Launch token';
+}
+$('connect').addEventListener('click', connect);
+window.ethereum?.on?.('accountsChanged', () => location.reload());
+window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
+readChain();
+
+/* launch */
+function showOut(html, isErr) {
+  const o = $('out');
+  o.className = 'out show' + (isErr ? ' err' : '');
+  o.innerHTML = html;
+}
+$('launch').addEventListener('click', async () => {
+  const name = $('f-name').value.trim(), symbol = $('f-symbol').value.trim();
+  const ownURI = $('f-uri').value.trim(), buyRaw = $('f-buy').value.trim();
+  const file = fileInput.files[0];
+
+  if (!name)   return showOut('<h4>Missing name</h4><p>Give the token a name.</p>', true);
+  if (!symbol) return showOut('<h4>Missing ticker</h4><p>Give the token a ticker.</p>', true);
+  if (!ownURI && !file) return showOut('<h4>Missing image</h4><p>Upload an image for the token.</p>', true);
+  if (!ownURI && !PROXY_BASE) return showOut('<h4>Uploads not configured</h4><p>PROXY_BASE is empty, so the image cannot be pinned. Set it, or paste your own metadata URI under Advanced.</p>', true);
+
+  let initialBuyWei = 0n;
+  if (buyRaw) {
+    try { initialBuyWei = parseEther(buyRaw); }
+    catch { return showOut('<h4>Bad initial buy</h4><p>Enter an amount in ETH, e.g. 0.01.</p>', true); }
+  }
+  const bad = validateClaimers();
+  if (bad) return showOut(`<h4>Claimer config rejected</h4><p>${bad}</p>`, true);
+
+  $('launch').disabled = true;
+  try {
+    let metadataURI = ownURI;
+    if (!metadataURI) {
+      setFace('working', 'Uploading image and metadata…');
+      const fd = new FormData();
+      fd.append('image', file);
+      fd.append('name', name);
+      fd.append('symbol', symbol);
+      fd.append('description', $('f-desc').value.trim());
+      fd.append('website', $('f-web').value.trim());
+      fd.append('twitter', $('f-tw').value.trim());
+      fd.append('telegram', $('f-tg').value.trim());
+      const r = await fetch(`${PROXY_BASE}/api/pin`, { method: 'POST', body: fd });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.error || `Upload failed (${r.status}).`);
+      metadataURI = j.metadataURI;
+    }
+
+    setFace('working', 'Reading the creation fee…');
+    // owner-settable global — read live, never cached
+    creationFee = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'creationFee' });
+
+    const args = [name, symbol, metadataURI, getAddress(PARTNER),
+                  claimers.map(c => getAddress(c.address)), claimers.map(c => toBps(c.pct))];
+    const value = creationFee + initialBuyWei;
+    const functionName = initialBuyWei > 0n ? 'createAndBuy' : 'create';
+
+    setFace('working', 'Simulating before you sign…');
+    // simulate first: reverts surface as decoded custom errors instead of spent gas
+    const { request } = await publicClient.simulateContract({ account, address: ADDR.factory, abi: factoryAbi, functionName, args, value });
+
+    setFace('signing', 'Confirm in your wallet');
+    const hash = await walletClient.writeContract(request);
+
+    setFace('working', 'Waiting for confirmation…');
+    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    if (receipt.status !== 'success') throw new Error('The transaction reverted. No token was created.');
+
+    // per-token addresses are not predictable — they only exist in the event
+    const [created] = parseEventLogs({ abi: factoryAbi, logs: receipt.logs, eventName: 'TokenCreated' });
+    if (!created) throw new Error('Confirmed, but no TokenCreated event was found in the receipt.');
+
+    setFace('win', `$${symbol.toUpperCase()} is live`, 'ok');
+    showOut(`<h4>$${symbol.toUpperCase()} launched on Robinhood Chain</h4>
+      <dl class="kv">
+        <dt>Token</dt><dd><a href="${EXPLORER}/address/${created.args.token}" target="_blank" rel="noopener">${created.args.token}</a></dd>
+        <dt>Curve</dt><dd>${created.args.curve}</dd>
+        <dt>Fee share</dt><dd>${created.args.feeShare}</dd>
+        <dt>Partner</dt><dd>${created.args.partner}</dd>
+        <dt>Tx</dt><dd><a href="${EXPLORER}/tx/${hash}" target="_blank" rel="noopener">${shorten(hash)}</a></dd>
+      </dl>
+      <div class="trade-row">
+        <a class="trade-link" href="${BAGS_APP}/${created.args.token}" target="_blank" rel="noopener">Trade ↗</a>
+      </div>
+      <p style="margin-top:12px;color:var(--mute);font-size:11.5px;">Save the token address — it identifies this launch everywhere else.</p>`);
+    loadFeed();
+  } catch (e) {
+    const msg = e.shortMessage || e.details || e.message || 'Launch failed.';
+    setFace('fail', 'Launch failed', 'bad');
+    showOut(`<h4>Launch failed</h4><p style="word-break:break-word;">${msg}</p>${hintFor(msg)}`, true);
+  } finally { armButton(); }
+});
+function hintFor(msg) {
+  const m = String(msg);
+  if (m.includes('ChainMismatch'))           return '<p class="hint">The wallet is on another network. Switch to Robinhood Chain and try again.</p>';
+  if (m.includes('InsufficientCreationFee')) return '<p class="hint">The fee changed between reading and signing. Try again — it is read live.</p>';
+  if (m.includes('InvalidClaimers'))         return '<p class="hint">A claimer is duplicated, zero, equal to the partner, or the shares do not add up to 100%.</p>';
+  if (m.includes('NoClaimers'))              return '<p class="hint">The claimers array was empty.</p>';
+  if (m.includes('BuyFailed'))               return '<p class="hint">The atomic initial buy reverted. Lower the buy amount, or launch without one and buy after.</p>';
+  return '';
+}
+
+/* ── feed ───────────────────────────────────────────────────────────────
+   Grouped by state, with each token's own bonding curve on demand. Every
+   number below is read from the curve contract — nothing is simulated.   */
+
+const curveCache = new Map();
+
+/**
+ * The Bags curve is a constant-product market maker over virtual reserves:
+ *   vToken * vQuote = k   and   price = vQuote / vToken = vQuote² / k
+ * Raising `r` in quote pushes vQuote up, so price(r) = (q0 + r)² / k where
+ * q0 is the virtual quote at zero raised.
+ *
+ * ⚠ The constant-product shape is inferred from getVirtualReserves() +
+ * quoteBuy() existing, not stated in the docs I was shown. The marker, the
+ * raised amount and the target are exact reads; only the shape of the line
+ * between them rests on that assumption. Cross-check one point against
+ * quoteBuy() on the first live token and I will correct it if it drifts.
+ */
+function curveSvg({ vToken, vQuote, realQuote, threshold }) {
+  const vt = Number(formatEther(vToken));
+  const vq = Number(formatEther(vQuote));
+  const raised = Number(formatEther(realQuote));
+  const target = Number(formatEther(threshold));
+  const k = vt * vq;
+  const q0 = Math.max(vq - raised, 1e-18);
+  if (!(k > 0) || !(target > 0)) return '';
+
+  const W = 560, H = 150, PAD = 6;
+  const price = (r) => ((q0 + r) ** 2) / k;
+  const pMax = price(target), pMin = price(0);
+  const span = Math.max(pMax - pMin, 1e-30);
+  const X = (r) => PAD + (r / target) * (W - PAD * 2);
+  const Y = (r) => H - PAD - ((price(r) - pMin) / span) * (H - PAD * 2);
+
+  const N = 72;
+  const pts = Array.from({ length: N + 1 }, (_, i) => {
+    const r = (i / N) * target;
+    return [X(r), Y(r)];
+  });
+  const done = Math.min(Math.max(raised / target, 0), 1);
+  const cut = Math.round(done * N);
+
+  const d = (a) => a.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)} ${y.toFixed(1)}`).join(' ');
+  const behind = pts.slice(0, Math.max(cut + 1, 2));
+  const ahead = pts.slice(Math.max(cut, 0));
+  const cx = X(Math.min(raised, target)), cy = Y(Math.min(raised, target));
+
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Bonding curve, ${(done * 100).toFixed(0)}% to graduation">
+    <defs><linearGradient id="curveFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7bdd34" stop-opacity=".26"/>
+      <stop offset="100%" stop-color="#7bdd34" stop-opacity="0"/>
+    </linearGradient></defs>
+    <line class="curve-target" x1="${W - PAD}" y1="${PAD}" x2="${W - PAD}" y2="${H - PAD}"/>
+    <path class="curve-area" d="${d(behind)} L${cx.toFixed(1)} ${H - PAD} L${PAD} ${H - PAD} Z"/>
+    <path class="curve-ahead" d="${d(ahead)}"/>
+    <path class="curve-line" pathLength="1" d="${d(behind)}"/>
+    <g class="curve-dot" transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})">
+      <circle r="4" fill="#7bdd34" opacity=".8"/>
+      <circle r="4" fill="#7bdd34"/>
+      <circle r="1.6" fill="#041003"/>
+    </g>
+  </svg>`;
+}
+
+const fmtEth = (v) => {
+  const n = Number(formatEther(v));
+  if (n === 0) return '0 ETH';
+  if (n < 0.0001) return n.toExponential(2) + ' ETH';
+  return n.toLocaleString('en-US', { maximumFractionDigits: 4 }) + ' ETH';
+};
+
+async function toggleCurve(token, curve, migrated, btn) {
+  const open = btn.nextElementSibling?.classList?.contains('curve-panel');
+  if (open) { btn.nextElementSibling.remove(); btn.setAttribute('aria-expanded', 'false'); return; }
+  document.querySelectorAll('.curve-panel').forEach(p => p.remove());
+  document.querySelectorAll('.feed-item').forEach(b => b.setAttribute('aria-expanded', 'false'));
+
+  const panel = document.createElement('div');
+  panel.className = 'curve-panel';
+  panel.innerHTML = '<p class="empty">Reading the curve…</p>';
+  btn.after(panel);
+  btn.setAttribute('aria-expanded', 'true');
+
+  try {
+    let data = curveCache.get(curve);
+    if (!data) {
+      const read = (fn) => publicClient.readContract({ address: curve, abi: curveAbi, functionName: fn });
+      const [virt, realQuote, threshold, price] = await Promise.all([
+        read('getVirtualReserves'), read('realQuoteReserves'), read('thresholdQuote'), read('currentPrice'),
+      ]);
+      data = { vToken: virt[0], vQuote: virt[1], realQuote, threshold, price };
+      curveCache.set(curve, data);
+    }
+    const tradeRow = `<div class="trade-row">
+        <a class="trade-link" href="${BAGS_APP}/${token}" target="_blank" rel="noopener">Trade ↗</a>
+        <a class="trade-alt" href="${EXPLORER}/address/${token}" target="_blank" rel="noopener">${shorten(token)}</a>
+      </div>`;
+
+    if (migrated) {
+      // The curve is drained after migration — liquidity lives in a Uniswap v4 pool now.
+      panel.innerHTML = `<div class="curve-stats" style="margin-top:2px">
+          <div class="hl"><span>State</span><b>Graduated to Uniswap v4</b></div>
+          <div><span>Raised on the curve</span><b>${fmtEth(data.threshold)}</b></div>
+          <div><span>Price now</span><b>${fmtEth(data.price)}</b></div>
+        </div>${tradeRow}`;
+      return;
+    }
+
+    const svg = curveSvg(data);
+    panel.innerHTML = (svg || '<p class="empty">This curve has no readable state yet.</p>') + `
+      <div class="curve-stats">
+        <div class="hl"><span>Raised</span><b>${fmtEth(data.realQuote)}</b></div>
+        <div><span>Graduates at</span><b>${fmtEth(data.threshold)}</b></div>
+        <div><span>Price now</span><b>${fmtEth(data.price)}</b></div>
+      </div>${tradeRow}`;
+  } catch (e) {
+    console.error(e);
+    panel.innerHTML = '<p class="empty">Could not read this curve.</p>';
+  }
+}
+
+/* Token images come from the metadataURI written at launch. Best effort:
+   a broken or slow gateway must never hold up the list. */
+async function loadArt(metadataURI, img) {
+  if (!metadataURI) return;
+  try {
+    const ctl = AbortSignal.timeout(6000);
+    const meta = await (await fetch(metadataURI, { signal: ctl })).json();
+    if (meta?.image) img.src = meta.image;
+  } catch { /* placeholder stays */ }
+}
+
+function rowHtml(r) {
+  return `<button class="feed-item" data-token="${r.token}" data-curve="${r.curve}" data-migrated="${r.migrated ? 1 : 0}" aria-expanded="false">
+      <img class="pfp" data-uri="${r.metadataURI || ''}" alt="" />
+      <span class="tick">$${r.symbol}<small>${r.name} · ${shorten(r.token)}</small></span>
+      ${r.migrated
+        ? '<span class="pct grad">graduated</span>'
+        : `<span class="bar"><i style="width:${Math.min(100, r.progress)}%"></i></span><span class="pct">${r.progress}%</span>`}
+    </button>`;
+}
+
+async function loadFeed() {
+  const box = $('feed');
+  if (!partnerSet) { box.innerHTML = '<p class="empty">Set the partner address to track your launches here.</p>'; return; }
+  try {
+    const len = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'allTokensLength' });
+    if (len === 0n) { box.innerHTML = '<p class="empty">No tokens on the factory yet.</p>'; return; }
+
+    const limit = BigInt(Math.min(FEED_SIZE, Number(len)));
+    const tokens = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'getTokens', args: [len - limit, limit] });
+    const curves = await Promise.all(tokens.map(t => publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'curveForToken', args: [t] })));
+
+    const rows = await Promise.all(tokens.map(async (token, i) => {
+      const curve = curves[i];
+      const [partner, progress, migrated, name, symbol] = await Promise.all([
+        publicClient.readContract({ address: curve, abi: curveAbi, functionName: 'partner' }),
+        publicClient.readContract({ address: curve, abi: curveAbi, functionName: 'bondingProgress' }),
+        publicClient.readContract({ address: curve, abi: curveAbi, functionName: 'migrated' }),
+        publicClient.readContract({ address: token, abi: erc20Abi, functionName: 'name' }),
+        publicClient.readContract({ address: token, abi: erc20Abi, functionName: 'symbol' }),
+      ]);
+      return { token, curve, partner, progress: Number(progress), migrated, name, symbol };
+    }));
+
+    const mine = rows.filter(r => r.partner.toLowerCase() === PARTNER.toLowerCase()).reverse();
+    if (mine.length === 0) {
+      box.innerHTML = `<p class="empty">Nothing launched through this pad yet — in the last ${Number(limit)} tokens on the factory.</p>`;
+      return;
+    }
+
+    // metadataURI is not on the curve; pull it from each launch event
+    const logs = await publicClient.getContractEvents({
+      address: ADDR.factory, abi: factoryAbi, eventName: 'TokenCreated', fromBlock: 'earliest',
+    }).catch(() => []);
+    const uriOf = new Map(logs.map(l => [String(l.args.token).toLowerCase(), l.args.metadataURI]));
+    mine.forEach(r => { r.metadataURI = uriOf.get(r.token.toLowerCase()); });
+
+    const bonding = mine.filter(r => !r.migrated);
+    const graduated = mine.filter(r => r.migrated);
+
+    box.innerHTML =
+      (bonding.length   ? `<div class="group-h">Bonding <b>${bonding.length}</b></div>` + bonding.map(rowHtml).join('') : '') +
+      (graduated.length ? `<div class="group-h">Graduated <b>${graduated.length}</b></div>` + graduated.map(rowHtml).join('') : '');
+
+    box.querySelectorAll('.feed-item').forEach(btn => {
+      btn.addEventListener('click', () => toggleCurve(btn.dataset.token, btn.dataset.curve, btn.dataset.migrated === '1', btn));
+    });
+    box.querySelectorAll('.pfp').forEach(img => loadArt(img.dataset.uri, img));
+  } catch (e) {
+    console.error(e);
+    box.innerHTML = '<p class="empty">Could not read the chain. The public RPC is rate-limited — try again in a moment.</p>';
+  }
+}
+loadFeed();
+</script>
+</body>
+</html>
