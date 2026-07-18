@@ -4,20 +4,20 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>FINNPUTER Launchpad — on Robinhood Chain</title>
-<meta name="description" content="Launch a coin on Robinhood Chain and keep 1% of every trade, forever. Bonding curve to Uniswap v4." />
+<meta name="description" content="Launch a token on Robinhood Chain and keep 1% of every trade, forever. Bonding curve to Uniswap v4." />
 <link rel="icon" type="image/png" href="mascot.png" />
 <link rel="apple-touch-icon" href="mascot.png" />
 <!-- Every link you post anywhere renders from these. Without them it looks like a dead URL. -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="FINNPUTER" />
 <meta property="og:title" content="FINNPUTER Launchpad — on Robinhood Chain" />
-<meta property="og:description" content="Launch a coin on Robinhood Chain and keep 1% of every trade, forever." />
+<meta property="og:description" content="Launch a token on Robinhood Chain and keep 1% of every trade, forever." />
 <meta property="og:url" content="https://launchpad.finnputerdex.com" />
 <meta property="og:image" content="https://launchpad.finnputerdex.com/banner.webp" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@FINNPUTER28" />
 <meta name="twitter:title" content="FINNPUTER Launchpad — on Robinhood Chain" />
-<meta name="twitter:description" content="Launch a coin on Robinhood Chain and keep 1% of every trade, forever." />
+<meta name="twitter:description" content="Launch a token on Robinhood Chain and keep 1% of every trade, forever." />
 <meta name="twitter:image" content="https://launchpad.finnputerdex.com/banner.webp" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -148,25 +148,11 @@
     padding: 12px 16px; margin-bottom: 34px; border-radius: 4px;
     box-shadow: 0 0 30px -8px #7bdd3426 inset;
   }
-  .mini {
-    width: 40px; height: 40px; flex: none; border-radius: 6px;
-    background: #000; border: 1px solid #1a2416;
-    display: grid; place-items: center; overflow: hidden;
-  }
-  .mini img { width: 100%; height: 100%; object-fit: cover; }
-  .mini img[hidden] { display: none; }
-  .face {
-    font-family: var(--display); font-weight: 700; font-size: 17px;
-    letter-spacing: 0.08em; color: var(--face);
-    text-shadow: 0 0 10px var(--face-glow), 0 0 22px #8fd4ff80;
-    animation: flick 6s infinite steps(1);
-  }
   .status { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
   .status[data-tone="ok"]  { color: var(--brand); }
   .status[data-tone="bad"] { color: var(--coral); }
-  @keyframes flick { 0%,96%,100%{opacity:1} 97%{opacity:.7} 98%{opacity:1} 99%{opacity:.85} }
   @media (prefers-reduced-motion: reduce) {
-    .face, body::before, .hero::after { animation: none !important; }
+    body::before, .hero::after { animation: none !important; }
     .hero { transform: none !important; }
     * { transition: none !important }
   }
@@ -200,7 +186,7 @@
   .row span { color: var(--mute); font-size: 11.5px; }
   .row .amt { font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; }
   .row.you .amt { color: var(--brand); }
-  .row.pad .amt { color: var(--coral); }
+  .row.pad .amt { color: var(--brand); }
   .row.vault .amt { color: var(--mute); }
 
   /* ───── tabs ───── */
@@ -300,45 +286,6 @@
   .bps-tally.bad { color: var(--coral); }
   .bps-tally.ok  { color: var(--brand-lo); }
 
-  /* ───── the edge: the one thing only FINNPUTER has ───── */
-  .edge {
-    position: relative; margin-bottom: 38px; padding: 24px 20px 20px;
-    border: 1px solid var(--brand-lo); border-radius: 6px;
-    background:
-      radial-gradient(ellipse 70% 100% at 50% 0%, #7bdd3412, transparent 70%),
-      var(--panel);
-    box-shadow: 0 0 40px -14px #7bdd3440;
-  }
-  .edge-badge {
-    position: absolute; top: -10px; left: 20px;
-    font-family: var(--display); font-weight: 700; font-size: 9.5px;
-    letter-spacing: 0.2em; text-transform: uppercase; color: #041003;
-    background: linear-gradient(180deg, var(--brand-hi), #5cc41f);
-    padding: 5px 12px; border-radius: 3px;
-  }
-  .edge-h { font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.2; margin-bottom: 8px; }
-  .edge-sub { color: var(--mute); font-size: 12.5px; line-height: 1.6; margin-bottom: 18px; max-width: 52ch; }
-  .edge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  @media (max-width: 560px) { .edge-grid { grid-template-columns: 1fr; } }
-  .edge-card {
-    border: 1px solid var(--edge); border-radius: 4px; padding: 12px 14px;
-    background: #00000040; position: relative; padding-left: 34px;
-  }
-  .edge-card::before {
-    position: absolute; left: 13px; top: 12px; font-weight: 700; font-size: 12px;
-  }
-  .edge-card.live::before { content: '✓'; color: var(--brand); }
-  .edge-card.soon { opacity: .62; border-style: dashed; }
-  .edge-card.soon::before { content: '○'; color: var(--mute); }
-  .edge-card.soon b::after {
-    content: 'SOON'; margin-left: 8px; font-size: 8.5px; letter-spacing: 0.14em;
-    color: var(--mute); border: 1px solid var(--edge-lit); border-radius: 2px;
-    padding: 1px 5px; vertical-align: middle;
-  }
-  .edge-card b { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 2px; }
-  .edge-card span { font-size: 11px; color: var(--mute); line-height: 1.5; }
-  .edge-foot { font-size: 10.5px; color: #55634d; letter-spacing: 0.02em; }
-
   /* ───── notices / output ───── */
   .notice { border-left: 2px solid var(--coral); background: #de6b5e0f; padding: 13px 15px; margin-bottom: 22px; font-size: 12.5px; line-height: 1.65; }
   .notice b { color: var(--coral-hi); font-weight: 600; }
@@ -357,6 +304,12 @@
   .todo li { padding-left: 22px; position: relative; }
   .todo li::before { content: '▸'; position: absolute; left: 2px; color: var(--brand-lo); }
   .todo li span { color: var(--mute); }
+
+  /* ───── solana panel ───── */
+  .sol-connect { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+  .sol-status { font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute); }
+  .sol-status[data-tone="ok"]  { color: var(--brand); }
+  .sol-status[data-tone="bad"] { color: var(--coral); }
 
   /* ───── feed ───── */
   .group-h {
@@ -445,11 +398,10 @@
   </div>
 
   <div class="console">
-    <div class="mini"><img src="mascot.png" alt="" id="mascotMini" /><div class="face" id="face" hidden>^&nbsp;&nbsp;^</div></div>
     <div class="status" id="status">Wallet not connected</div>
   </div>
 
-  <h1 class="thesis">Launch a coin on Robinhood Chain and keep <em>1% of every trade</em>, forever.</h1>
+  <h1 class="thesis">Launch a token on Robinhood Chain and keep <em>1% of every trade</em>, forever.</h1>
   <p class="sub">Bonding curve → Uniswap v4. Locked liquidity. No cut taken from your side.</p>
 
   <div class="ledger">
@@ -457,19 +409,6 @@
     <div class="row you"><div><b>Your fee claimers</b><br><span>Claimable any time, both phases</span></div><div class="amt">1.00%</div></div>
     <div class="row pad"><div><b>FINNPUTER</b><br><span>Partner share of the protocol half</span></div><div class="amt" id="padCut">0.25%</div></div>
     <div class="row vault"><div><b>Bags vault</b><br><span>Protocol remainder</span></div><div class="amt" id="vaultCut">0.75%</div></div>
-  </div>
-
-  <div class="edge">
-    <div class="edge-badge">Only on FINNPUTER</div>
-    <h2 class="edge-h">A safety scanner no other launchpad has.</h2>
-    <p class="edge-sub">Our on-chain scanner reads the chain so you don't have to trust the copy — bundles, sniper clusters, fresh-wallet rings, holder concentration. It runs live today on Solana; Robinhood Chain support is next.</p>
-    <div class="edge-grid">
-      <div class="edge-card live"><b>Bundle &amp; sniper check</b><span>Flags coordinated first-block buys and bundled wallets.</span></div>
-      <div class="edge-card live"><b>Fresh-wallet cluster</b><span>Detects freshly funded wallets moving together.</span></div>
-      <div class="edge-card live"><b>Holder concentration</b><span>Surfaces how much supply sits in how few hands.</span></div>
-      <div class="edge-card soon"><b>Robinhood Chain scans</b><span>The scanner is Solana-native today. EVM support is being built.</span></div>
-    </div>
-    <p class="edge-foot">Powered by the FINNPUTER x402 scanner — live at api.finnputerdex.com. Robinhood tokens aren't scanned yet; this section won't claim they are until they are.</p>
   </div>
 
   <div id="guard"></div>
@@ -533,18 +472,45 @@
   </div>
 
   <div class="panel-b" id="p-sol" role="tabpanel" aria-labelledby="tab-sol" hidden>
-    <div class="notice">
-      <b>Not wired up yet.</b> Solana launches run through the Bags REST API, not through contracts —
-      a different wallet stack and a server that holds the API key. This is a placeholder, not a disabled feature.
+    <div class="sol-connect">
+      <button class="key" id="solConnect">Connect Phantom</button>
+      <span class="sol-status" id="solStatus">Solana wallet not connected</span>
     </div>
-    <ul class="todo">
-      <li>Phantom / Solana wallet adapter <span>— separate from the EVM connection above</span></li>
-      <li>Bags API key on the server <span>— never in this file; the page is public</span></li>
-      <li>Partner config <span>— one partner key per wallet, created once</span></li>
-      <li>Fee-share configuration <span>— required for every Solana launch</span></li>
-      <li>Launch flow <span>— token info + image upload → build transaction → sign → send</span></li>
-    </ul>
-    <p class="hint" style="margin-top:18px;">One upside: on Solana, Bags handles the image and metadata upload — no pinning on your side.</p>
+
+    <div class="coin-grid">
+      <label class="drop" id="solDrop">
+        <input type="file" id="sol-image" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+        <img id="solPreview" alt="" />
+        <div class="drop-cue"><b>▲</b>Upload image</div>
+      </label>
+      <div class="coin-fields">
+        <div class="field" style="margin:0"><label for="sol-name">Name</label><input id="sol-name" placeholder="Finnputer Cat" maxlength="64" /></div>
+        <div class="field" style="margin:0"><label for="sol-symbol">Ticker</label><input id="sol-symbol" placeholder="FCAT" maxlength="16" /></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="sol-desc">Description</label>
+      <textarea id="sol-desc" rows="3" maxlength="500" placeholder="What is this token?"></textarea>
+    </div>
+
+    <details>
+      <summary>Social links (optional)</summary>
+      <div class="details-body">
+        <div class="field"><label for="sol-web">Website</label><input id="sol-web" placeholder="https://…" /></div>
+        <div class="field"><label for="sol-tw">X / Twitter</label><input id="sol-tw" placeholder="https://x.com/…" /></div>
+        <div class="field"><label for="sol-tg">Telegram</label><input id="sol-tg" placeholder="https://t.me/…" /></div>
+      </div>
+    </details>
+
+    <div class="field">
+      <label for="sol-buy">Initial buy — SOL (optional)</label>
+      <input id="sol-buy" placeholder="0.01" inputmode="decimal" />
+      <p class="hint">Bags handles the image upload on Solana — no pinning needed. Fees paid in SOL, forever.</p>
+    </div>
+
+    <button class="key key-go" id="solLaunch" disabled>Connect Phantom to launch</button>
+    <div class="out" id="solOut"></div>
   </div>
 
   <div class="sec-wrap" style="margin-top:56px;"><div class="sec">Launched through FINNPUTER</div></div>
@@ -637,16 +603,8 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(poin
   document.addEventListener('pointerleave', () => { hero.style.transform = ''; });
 }
 
-/* the mascot's screen mirrors what the machine is doing */
-const FACES = { idle:'^&nbsp;&nbsp;^', live:'^&nbsp;o&nbsp;^', working:'o&nbsp;&nbsp;o', signing:'&gt;&nbsp;&nbsp;&lt;', win:'^&nbsp;O&nbsp;^', fail:'x&nbsp;&nbsp;x' };
-const mascotMini = $('mascotMini');
-if (mascotMini) {
-  mascotMini.onerror = () => { mascotMini.hidden = true; $('face').hidden = false; };
-}
-function setFace(kind, text, tone) {
-  // The render carries the identity; the drawn face is the state light only
-  // when the image is missing. Either way the status text always updates.
-  if ($('face') && !$('face').hidden) $('face').innerHTML = FACES[kind];
+// Status line only — the mascot lives in the banner, not here.
+function setFace(_kind, text, tone) {
   $('status').textContent = text;
   $('status').dataset.tone = tone || '';
 }
@@ -1182,6 +1140,102 @@ async function loadFeed() {
   }
 }
 loadFeed();
-</script>
+
+/* ══════════════════ SOLANA (Phantom + Bags via proxy) ══════════════════ */
+// The proxy builds the launch transactions with the Bags SDK; Phantom signs
+// them here. The server never sees a Solana key. Our finnputer28 partner is
+// injected server-side, so every launch through this pad pays FINNPUTER.
+let solPubkey = null;
+const solProvider = () => (window.solana?.isPhantom ? window.solana : null);
+
+function solSet(text, tone) {
+  $('solStatus').textContent = text;
+  $('solStatus').dataset.tone = tone || '';
+}
+function solArm() {
+  const b = $('solLaunch');
+  if (!solPubkey) { b.disabled = true; b.textContent = 'Connect Phantom to launch'; return; }
+  if (!PROXY_BASE) { b.disabled = true; b.textContent = 'Server not configured'; return; }
+  b.disabled = false; b.textContent = 'Launch on Solana';
+}
+
+async function solConnect() {
+  const p = solProvider();
+  if (!p) { solSet('Phantom not found — install it first', 'bad'); window.open('https://phantom.app/', '_blank'); return; }
+  try {
+    const resp = await p.connect();
+    solPubkey = resp.publicKey.toString();
+    $('solConnect').textContent = solPubkey.slice(0, 4) + '…' + solPubkey.slice(-4);
+    solSet('Connected on Solana', 'ok');
+    solArm();
+  } catch (e) { solSet(e.message || 'Phantom connection failed', 'bad'); }
+}
+$('solConnect').addEventListener('click', solConnect);
+
+/* Solana image preview (Bags hosts the real image from a URL in v1). */
+const solDrop = $('solDrop'), solFile = $('sol-image');
+solFile?.addEventListener('change', () => {
+  const f = solFile.files[0];
+  if (f) { $('solPreview').src = URL.createObjectURL(f); solDrop.classList.add('has'); solDrop.querySelector('.drop-cue').textContent = f.name; }
+});
+
+$('solLaunch').addEventListener('click', async () => {
+  const p = solProvider();
+  if (!p || !solPubkey) return;
+  const name = $('sol-name').value.trim();
+  const symbol = $('sol-symbol').value.trim();
+  const out = $('solOut');
+  const show = (html, err) => { out.className = 'out show' + (err ? ' err' : ''); out.innerHTML = html; };
+
+  if (!name)   return show('<h4>Missing name</h4><p>Give the token a name.</p>', true);
+  if (!symbol) return show('<h4>Missing ticker</h4><p>Give the token a ticker.</p>', true);
+
+  // v1: Bags hosts the image from a URL, so we need a reachable URL. Pinata
+  // upload for Solana is the next step; until then, ask for a URL.
+  let imageUrl = prompt('Paste an image URL for the token (Solana v1 hosts from a URL — file upload comes with Pinata):') || '';
+  if (!imageUrl) return show('<h4>Image URL needed</h4><p>Solana v1 needs an image URL. File-upload for Solana is next.</p>', true);
+
+  $('solLaunch').disabled = true;
+  try {
+    show('<h4>Building launch…</h4><p>Talking to the server.</p>');
+    const body = {
+      name, symbol,
+      description: $('sol-desc').value.trim(),
+      imageUrl,
+      twitter: $('sol-tw').value.trim() || undefined,
+      website: $('sol-web').value.trim() || undefined,
+      telegram: $('sol-tg').value.trim() || undefined,
+      initialBuySol: $('sol-buy').value.trim() || 0,
+      launcher: solPubkey,
+    };
+    const r = await fetch(`${PROXY_BASE}/api/sol/build-launch`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `Build failed (${r.status}).`);
+
+    show('<h4>Sign in Phantom</h4><p>Approve each transaction in order.</p>');
+    const { VersionedTransaction } = await import('https://esm.sh/@solana/web3.js@1.95.0');
+    let lastSig = '';
+    for (const b64 of j.transactions) {
+      const tx = VersionedTransaction.deserialize(Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
+      const signed = await p.signAndSendTransaction(tx);
+      lastSig = signed.signature || signed;
+    }
+
+    show(`<h4>$${symbol.toUpperCase()} launched on Solana</h4>
+      <dl class="kv">
+        <dt>Mint</dt><dd><a href="https://bags.fm/${j.mint}" target="_blank" rel="noopener">${j.mint}</a></dd>
+        <dt>Tx</dt><dd><a href="https://solscan.io/tx/${lastSig}" target="_blank" rel="noopener">${String(lastSig).slice(0,8)}…</a></dd>
+      </dl>
+      <div class="trade-row"><a class="trade-link" href="https://bags.fm/${j.mint}" target="_blank" rel="noopener">Trade ↗</a></div>`);
+  } catch (e) {
+    show(`<h4>Launch failed</h4><p style="word-break:break-word;">${e.message || e}</p>`, true);
+  } finally {
+    solArm();
+  }
+});
+solArm();
+
 </body>
 </html>
