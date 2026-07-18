@@ -75,12 +75,12 @@
 
   /* ───── banner hero ───── */
   .hero {
-    margin: 0 auto 26px; max-width: 980px; padding: 0 8px;
+    margin: 0 auto 26px; max-width: 980px; padding: 14px 16px 0;
     position: relative; overflow: hidden;
     transition: transform .5s cubic-bezier(.2,.7,.2,1);
     will-change: transform;
   }
-  .hero img { width: 100%; height: auto; display: block; }
+  .hero img { width: 100%; height: auto; display: block; border-radius: 8px; }
   /* one power-on sweep across the glass, then it stays out of the way */
   .hero::after {
     content: ''; position: absolute; inset: 0; pointer-events: none;
@@ -97,8 +97,8 @@
   .hero .fallback small { display: block; font-size: 15px; letter-spacing: 0.36em; color: var(--paper); margin-top: 6px; }
 
   /* ───── header bar ───── */
-  .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
-  .ctrls { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .top { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+  .ctrls { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
   .chip {
     display: inline-flex; align-items: center; gap: 7px;
     font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
@@ -143,12 +143,12 @@
 
   /* ───── console strip: the mascot's screen as status light ───── */
   .console {
-    display: flex; align-items: center; gap: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 14px;
     background: #000; border: 1px solid var(--edge);
-    padding: 12px 16px; margin-bottom: 34px; border-radius: 4px;
+    padding: 14px 16px; margin-bottom: 34px; border-radius: 4px;
     box-shadow: 0 0 30px -8px #7bdd3426 inset;
   }
-  .status { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); }
+  .status { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); text-align: center; }
   .status[data-tone="ok"]  { color: var(--brand); }
   .status[data-tone="bad"] { color: var(--coral); }
   @media (prefers-reduced-motion: reduce) {
@@ -213,6 +213,8 @@
   }
   .need-list b { display: block; font-size: 13px; font-weight: 600; color: var(--paper); margin-bottom: 2px; }
   .need-list span { font-size: 11.5px; color: var(--mute); line-height: 1.55; }
+  .need-list span b { color: var(--paper); font-weight: 600; }
+  .fee-live { color: var(--brand) !important; }
   .need-foot { margin-top: 14px; font-size: 10.5px; color: #55634d; letter-spacing: 0.02em; }
   .need-mobile { display: none; margin-top: 10px; padding: 10px 12px; font-size: 11px; line-height: 1.5;
     color: var(--brand); background: #7bdd340d; border: 1px solid var(--brand-lo); border-radius: 4px; }
@@ -422,6 +424,26 @@
   .trade-alt:hover { color: var(--brand); border-color: var(--brand-lo); }
 
   footer { margin-top: 54px; padding-top: 18px; border-top: 1px solid var(--edge); font-size: 10.5px; color: #45513f; line-height: 1.8; word-break: break-all; }
+
+  /* ───── mobile ───── */
+  @media (max-width: 560px) {
+    body { padding-bottom: 60px; }
+    .wrap { padding: 0 14px; }
+    .hero { padding: 10px 12px 0; margin-bottom: 20px; }
+    .top { margin-bottom: 16px; }
+    .ctrls { width: 100%; }
+    .chip { flex: 1; justify-content: center; }
+    #connect { flex: 1; }
+    .thesis { font-size: 21px; line-height: 1.25; }
+    .sub { font-size: 12px; margin-bottom: 28px; }
+    .console { padding: 12px; margin-bottom: 26px; }
+    .tabs { gap: 4px; }
+    .tab { padding: 12px 6px; font-size: 10px; letter-spacing: 0.08em; }
+    .row { padding: 12px; }
+    .ledger-h { padding: 9px 12px; }
+    .key-go { padding: 16px; font-size: 13px; letter-spacing: 0.14em; }
+    footer { margin-top: 40px; }
+  }
 </style>
 </head>
 <body>
@@ -458,7 +480,7 @@
     <div class="need-h">What you need to launch on Robinhood Chain</div>
     <ol class="need-list">
       <li><b>An EVM wallet</b><span>MetaMask, Rabby or any browser wallet. Connect it above and switch to Robinhood Chain (4663).</span></li>
-      <li><b>ETH on Robinhood Chain</b><span>Covers the one-time creation fee plus a little gas. No ETH on 4663 yet? Bridge over first.</span></li>
+      <li><b>ETH on Robinhood Chain</b><span>You need at least <b id="rhFeeLive" class="fee-live">the creation fee</b> plus a little gas. No ETH on 4663 yet? Bridge over first.</span></li>
       <li><b>A name, ticker and image</b><span>Fill the form below. The image is pinned automatically — no IPFS knowledge needed.</span></li>
     </ol>
     <p class="need-foot">You sign the launch yourself. This page never holds your keys.</p>
@@ -469,7 +491,7 @@
     <div class="need-h">What you need to launch on Solana</div>
     <ol class="need-list">
       <li><b>A Solana wallet</b><span>Phantom, Solflare, Backpack or any Solana wallet. Connect it in the Solana tab.</span></li>
-      <li><b>SOL in that wallet</b><span>Roughly 0.05–0.1 SOL covers the network tip, rent and fees. More if you want an initial buy.</span></li>
+      <li><b>SOL in that wallet</b><span>Keep at least <b class="fee-live">~0.05 SOL</b> for the network tip, rent and fees — more if you want an initial buy.</span></li>
       <li><b>A name, ticker and image</b><span>Fill the form. On Solana the image and metadata are hosted for you — nothing to pin.</span></li>
     </ol>
     <p class="need-foot">You sign every transaction yourself. This page never holds your keys.</p>
@@ -743,6 +765,12 @@ let creationFee = null;
       publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'partnerFeeBps' }),
     ]);
     creationFee = fee;
+    // Show the real creation fee in the "what you need" box, read live.
+    const el = document.getElementById('rhFeeLive');
+    if (el) {
+      const eth = Number(formatEther(fee));
+      el.textContent = eth === 0 ? 'no creation fee' : `${eth.toLocaleString('en-US',{maximumFractionDigits:4})} ETH`;
+    }
     if (partnerSet) {
       const pad = Number(bps) / 10000;
       $('padCut').textContent = pad.toFixed(2) + '%';
