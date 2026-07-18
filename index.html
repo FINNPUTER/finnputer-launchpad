@@ -741,6 +741,25 @@ window.ethereum?.on?.('accountsChanged', () => location.reload());
 window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
 readChain();
 
+/* If the wallet was already authorised on a previous visit, reflect that on
+   load — otherwise the page shows "not connected" even though MetaMask is. */
+(async () => {
+  if (!window.ethereum) return;
+  try {
+    const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // no popup
+    if (accounts && accounts.length) {
+      account = getAddress(accounts[0]);
+      walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
+      $('connect').textContent = shorten(account);
+      if (!claimers[0].address) { claimers[0].address = account; renderClaimers(); }
+      await readChain();
+      setFace(walletChainId === CHAIN_ID ? 'live' : 'idle',
+              walletChainId === CHAIN_ID ? 'Connected on Robinhood Chain' : 'Wrong network — switch to Robinhood Chain',
+              walletChainId === CHAIN_ID ? 'ok' : 'bad');
+    }
+  } catch (e) { console.error('auto-connect', e); }
+})();
+
 /* launch */
 function showOut(html, isErr) {
   const o = $('out');
