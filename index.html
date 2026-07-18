@@ -306,6 +306,7 @@
     padding: 3px 8px 3px 4px; font-size: 11px; color: var(--brand); max-width: 100%;
   }
   .resolved img { width: 16px; height: 16px; border-radius: 50%; flex: none; object-fit: cover; }
+  .x-badge { font-size: 12px; color: var(--paper); flex: none; }
   .resolved span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .claimer-row { align-items: start; }
   .pct-input span {
@@ -544,7 +545,7 @@
       <div id="claimers"></div>
       <button class="key key-sm" id="addClaimer">+ Add claimer</button>
       <div class="bps-tally" id="tally">0.00 / 100%</div>
-      <p class="hint">1–100 claimers, each unique and non-zero. None may equal the partner address.<br>Smallest share is 0.01%. Give the last claimer the rounding remainder so it lands on exactly 100.</p>
+      <p class="hint">Paste a wallet address, or type <b>@username</b> to send fees to someone's <b>X (Twitter)</b> account — we resolve it to their wallet automatically.<br>1–100 claimers, each unique. Smallest share is 0.01%; give the last claimer the rounding remainder so it lands on exactly 100%.</p>
     </div>
     <details>
       <summary>Advanced — bring your own metadata URI</summary>
@@ -792,8 +793,8 @@ function renderClaimers() {
   $('claimers').innerHTML = claimers.map((c, i) => `
     <div class="claimer-row">
       <div class="claimer-id">
-        <input data-i="${i}" data-k="input" placeholder="0x… wallet or @handle" value="${c.input}" />
-        ${c.resolved ? `<div class="resolved">${c.avatar ? `<img src="${c.avatar}" alt="">` : ''}<span>${c.name || shorten(c.resolved)}</span></div>` : ''}
+        <input data-i="${i}" data-k="input" placeholder="0x… wallet or @X-username" value="${c.input}" />
+        ${c.resolved ? `<div class="resolved">${c.input.startsWith('@') ? '<b class="x-badge">𝕏</b>' : ''}${c.avatar ? `<img src="${c.avatar}" alt="">` : ''}<span>${c.name || shorten(c.resolved)}</span></div>` : ''}
       </div>
       <div class="pct-input"><input data-i="${i}" data-k="pct" placeholder="0" inputmode="decimal" value="${c.pct}" /><span>%</span></div>
       <button class="key" data-rm="${i}" ${claimers.length === 1 ? 'disabled' : ''} title="Remove">×</button>
