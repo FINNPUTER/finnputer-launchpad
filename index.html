@@ -4,20 +4,20 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>FINNPUTER Launchpad — on Robinhood Chain</title>
-<meta name="description" content="Launch a token on Robinhood Chain and keep 1% of every trade, forever. Bonding curve to Uniswap v4." />
+<meta name="description" content="Launch a token on Robinhood Chain or Solana and keep 1% of every trade, forever." />
 <link rel="icon" type="image/png" href="mascot.png" />
 <link rel="apple-touch-icon" href="mascot.png" />
 <!-- Every link you post anywhere renders from these. Without them it looks like a dead URL. -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="FINNPUTER" />
 <meta property="og:title" content="FINNPUTER Launchpad — on Robinhood Chain" />
-<meta property="og:description" content="Launch a token on Robinhood Chain and keep 1% of every trade, forever." />
+<meta property="og:description" content="Launch a token on Robinhood Chain or Solana and keep 1% of every trade, forever." />
 <meta property="og:url" content="https://launchpad.finnputerdex.com" />
 <meta property="og:image" content="https://launchpad.finnputerdex.com/banner.webp" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@FINNPUTER28" />
 <meta name="twitter:title" content="FINNPUTER Launchpad — on Robinhood Chain" />
-<meta name="twitter:description" content="Launch a token on Robinhood Chain and keep 1% of every trade, forever." />
+<meta name="twitter:description" content="Launch a token on Robinhood Chain or Solana and keep 1% of every trade, forever." />
 <meta name="twitter:image" content="https://launchpad.finnputerdex.com/banner.webp" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -178,7 +178,10 @@
   .sec-wrap .sec { position: relative; margin: 0; transform: scale(.994); }
 
   /* ───── ledger ───── */
-  .ledger { border: 1px solid var(--edge); border-radius: 3px; margin-bottom: 36px; overflow: hidden; background: var(--panel); }
+  .ledger { border: 1px solid var(--edge); border-top: none; border-radius: 0 0 3px 3px; overflow: hidden; background: var(--panel); }
+  .fee-details { margin-bottom: 22px; }
+  .fee-details > summary { border-radius: 3px; }
+  .fee-details[open] > summary { border-radius: 3px 3px 0 0; border-bottom: none; }
   .ledger-h { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute); padding: 9px 14px; border-bottom: 1px solid var(--edge); background: var(--panel-hi); }
   .row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 11px 14px; border-bottom: 1px solid #131c0f; font-size: 13px; }
   .row:last-child { border-bottom: none; }
@@ -188,6 +191,32 @@
   .row.you .amt { color: var(--brand); }
   .row.pad .amt { color: var(--brand); }
   .row.vault .amt { color: var(--mute); }
+
+  /* ───── what you need ───── */
+  .need {
+    border: 1px solid var(--edge); border-top: none; border-radius: 0;
+    background: var(--panel); padding: 18px 18px 16px; margin-bottom: 22px;
+  }
+  .need-h {
+    font-family: var(--display); font-weight: 700; font-size: 12px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--brand);
+    margin-bottom: 14px;
+  }
+  .need-list { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 12px; }
+  .need-list li { counter-increment: step; position: relative; padding-left: 34px; }
+  .need-list li::before {
+    content: counter(step); position: absolute; left: 0; top: -1px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--brand-deep); border: 1px solid var(--brand-lo);
+    color: var(--brand); font-family: var(--display); font-weight: 700; font-size: 11px;
+    display: grid; place-items: center;
+  }
+  .need-list b { display: block; font-size: 13px; font-weight: 600; color: var(--paper); margin-bottom: 2px; }
+  .need-list span { font-size: 11.5px; color: var(--mute); line-height: 1.55; }
+  .need-foot { margin-top: 14px; font-size: 10.5px; color: #55634d; letter-spacing: 0.02em; }
+  .need-mobile { display: none; margin-top: 10px; padding: 10px 12px; font-size: 11px; line-height: 1.5;
+    color: var(--brand); background: #7bdd340d; border: 1px solid var(--brand-lo); border-radius: 4px; }
+  @media (hover: none) and (pointer: coarse) { .need-mobile { display: block; } }
 
   /* ───── tabs ───── */
   .tabs { display: flex; gap: 6px; }
@@ -306,6 +335,20 @@
   .todo li span { color: var(--mute); }
 
   /* ───── solana panel ───── */
+  .wallet-connect-wrap { position: relative; }
+  .wallet-menu {
+    position: absolute; top: calc(100% + 6px); right: 0; z-index: 20;
+    min-width: 180px; background: var(--panel); border: 1px solid var(--edge-lit);
+    border-radius: 4px; overflow: hidden; box-shadow: 0 8px 24px -8px #000;
+  }
+  .wallet-opt {
+    display: block; width: 100%; text-align: left; font-family: var(--mono);
+    font-size: 12px; letter-spacing: 0.06em; color: var(--paper);
+    background: none; border: none; border-bottom: 1px solid var(--edge);
+    padding: 11px 14px; cursor: pointer;
+  }
+  .wallet-opt:last-child { border-bottom: none; }
+  .wallet-opt:hover { background: #7bdd340f; color: var(--brand); }
   .sol-connect { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
   .sol-status { font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute); }
   .sol-status[data-tone="ok"]  { color: var(--brand); }
@@ -384,8 +427,8 @@
 <body>
 
 <div class="hero">
-  <img id="banner" src="banner.webp" width="1600" height="533" alt="FINNPUTER Launchpad on Robinhood Chain" />
-  <div class="fallback" id="bannerFallback">FINNPUTER<small>LAUNCHPAD · ON ROBINHOOD CHAIN</small></div>
+  <img id="banner" src="banner.webp" width="1600" height="533" alt="FINNPUTER Launchpad — live on Robinhood Chain and Solana" />
+  <div class="fallback" id="bannerFallback">FINNPUTER<small>LAUNCHPAD · ROBINHOOD CHAIN + SOLANA</small></div>
 </div>
 
 <div class="wrap">
@@ -401,15 +444,8 @@
     <div class="status" id="status">Wallet not connected</div>
   </div>
 
-  <h1 class="thesis">Launch a token on Robinhood Chain and keep <em>1% of every trade</em>, forever.</h1>
+  <h1 class="thesis">Launch a token on Robinhood Chain or Solana and keep <em>1% of every trade</em>, forever.</h1>
   <p class="sub">Bonding curve → Uniswap v4. Locked liquidity. No cut taken from your side.</p>
-
-  <div class="ledger">
-    <div class="ledger-h">Where every 2% trade fee goes</div>
-    <div class="row you"><div><b>Your fee claimers</b><br><span>Claimable any time, both phases</span></div><div class="amt">1.00%</div></div>
-    <div class="row pad"><div><b>FINNPUTER</b><br><span>Partner share of the protocol half</span></div><div class="amt" id="padCut">0.25%</div></div>
-    <div class="row vault"><div><b>Bags vault</b><br><span>Protocol remainder</span></div><div class="amt" id="vaultCut">0.75%</div></div>
-  </div>
 
   <div id="guard"></div>
 
@@ -417,6 +453,37 @@
     <button class="tab" role="tab" id="tab-rh"  aria-selected="true"  aria-controls="p-rh">Robinhood Chain</button>
     <button class="tab" role="tab" id="tab-sol" aria-selected="false" aria-controls="p-sol">Solana</button>
   </div>
+
+  <div class="need" id="need-rh">
+    <div class="need-h">What you need to launch on Robinhood Chain</div>
+    <ol class="need-list">
+      <li><b>An EVM wallet</b><span>MetaMask, Rabby or any browser wallet. Connect it above and switch to Robinhood Chain (4663).</span></li>
+      <li><b>ETH on Robinhood Chain</b><span>Covers the one-time creation fee plus a little gas. No ETH on 4663 yet? Bridge over first.</span></li>
+      <li><b>A name, ticker and image</b><span>Fill the form below. The image is pinned automatically — no IPFS knowledge needed.</span></li>
+    </ol>
+    <p class="need-foot">You sign the launch yourself. This page never holds your keys.</p>
+    <p class="need-mobile">On a phone? Open this page inside your wallet app's browser (MetaMask → Browser) — normal Safari/Chrome can't reach your wallet.</p>
+  </div>
+
+  <div class="need" id="need-sol" hidden>
+    <div class="need-h">What you need to launch on Solana</div>
+    <ol class="need-list">
+      <li><b>A Solana wallet</b><span>Phantom, Solflare, Backpack or any Solana wallet. Connect it in the Solana tab.</span></li>
+      <li><b>SOL in that wallet</b><span>Roughly 0.05–0.1 SOL covers the network tip, rent and fees. More if you want an initial buy.</span></li>
+      <li><b>A name, ticker and image</b><span>Fill the form. On Solana the image and metadata are hosted for you — nothing to pin.</span></li>
+    </ol>
+    <p class="need-foot">You sign every transaction yourself. This page never holds your keys.</p>
+    <p class="need-mobile">On a phone? Open this page inside your wallet app's browser (Phantom → the compass/browser icon) — normal Safari/Chrome can't reach your wallet.</p>
+  </div>
+
+  <details class="fee-details">
+    <summary>Fee breakdown — where every 2% trade fee goes</summary>
+    <div class="ledger">
+      <div class="row you"><div><b>Your fee claimers</b><br><span>Claimable any time, both phases</span></div><div class="amt">1.00%</div></div>
+      <div class="row pad"><div><b>FINNPUTER</b><br><span>Partner share of the protocol half</span></div><div class="amt" id="padCut">0.25%</div></div>
+      <div class="row vault"><div><b>Bags vault</b><br><span>Protocol remainder</span></div><div class="amt" id="vaultCut">0.75%</div></div>
+    </div>
+  </details>
 
   <div class="panel-b" id="p-rh" role="tabpanel" aria-labelledby="tab-rh">
     <div class="coin-grid">
@@ -473,7 +540,10 @@
 
   <div class="panel-b" id="p-sol" role="tabpanel" aria-labelledby="tab-sol" hidden>
     <div class="sol-connect">
-      <button class="key" id="solConnect">Connect Phantom</button>
+      <div class="wallet-connect-wrap">
+        <button class="key" id="solConnect">Connect wallet</button>
+        <div class="wallet-menu" id="solWalletMenu" hidden></div>
+      </div>
       <span class="sol-status" id="solStatus">Solana wallet not connected</span>
     </div>
 
@@ -494,6 +564,12 @@
       <textarea id="sol-desc" rows="3" maxlength="500" placeholder="What is this token?"></textarea>
     </div>
 
+    <div class="field">
+      <label for="sol-imgurl">Image URL</label>
+      <input id="sol-imgurl" placeholder="https://… (link to your token image)" />
+      <p class="hint">Paste a link to your image. Direct file upload is coming — for now Solana hosts from a URL.</p>
+    </div>
+
     <details>
       <summary>Social links (optional)</summary>
       <div class="details-body">
@@ -509,7 +585,7 @@
       <p class="hint">Bags handles the image upload on Solana — no pinning needed. Fees paid in SOL, forever.</p>
     </div>
 
-    <button class="key key-go" id="solLaunch" disabled>Connect Phantom to launch</button>
+    <button class="key key-go" id="solLaunch" disabled>Connect a wallet to launch</button>
     <div class="out" id="solOut"></div>
   </div>
 
@@ -628,8 +704,11 @@ drop.addEventListener('drop', (e) => {
 /* tabs */
 ['tab-rh','tab-sol'].forEach(t => $(t).addEventListener('click', () => {
   ['tab-rh','tab-sol'].forEach(id => $(id).setAttribute('aria-selected', String(id === t)));
-  $('p-rh').hidden  = t !== 'tab-rh';
-  $('p-sol').hidden = t !== 'tab-sol';
+  const rh = t === 'tab-rh';
+  $('p-rh').hidden  = !rh;
+  $('p-sol').hidden = rh;
+  $('need-rh').hidden = !rh;
+  $('need-sol').hidden = rh;
 }));
 
 /* chain badge — the visible proof of which network you are on */
@@ -776,7 +855,16 @@ function validateClaimers() {
 
 /* wallet */
 async function connect() {
-  if (!window.ethereum) return setFace('fail', 'No EVM wallet found in this browser', 'bad');
+  if (!window.ethereum) {
+    const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (mobile) {
+      // No extensions on mobile browsers — open in MetaMask's in-app browser.
+      setFace('fail', 'Open this page in MetaMask to connect', 'bad');
+      window.location.href = 'https://metamask.app.link/dapp/' + location.host + location.pathname;
+      return;
+    }
+    return setFace('fail', 'No EVM wallet found in this browser', 'bad');
+  }
   try {
     setFace('working', 'Waiting for the wallet…');
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -829,23 +917,25 @@ window.ethereum?.on?.('accountsChanged', () => location.reload());
 window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
 readChain();
 
-/* If the wallet was already authorised on a previous visit, reflect that on
-   load — otherwise the page shows "not connected" even though MetaMask is. */
+/* Passive check on load: if a wallet was ALREADY connected on a previous
+   visit, quietly show that — no popup, no forced reconnect. We never call
+   eth_requestAccounts here; that only happens when the user clicks Connect.
+   This keeps the page from nagging first-time visitors for a wallet. */
 (async () => {
   if (!window.ethereum) return;
   try {
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // no popup
+    const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // silent, no prompt
     if (accounts && accounts.length) {
       account = getAddress(accounts[0]);
       walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
       $('connect').textContent = shorten(account);
-      if (!claimers[0].input) { claimers[0].input = account; renderClaimers(); }
       await readChain();
-      setFace(walletChainId === CHAIN_ID ? 'live' : 'idle',
-              walletChainId === CHAIN_ID ? 'Connected on Robinhood Chain' : 'Wrong network — switch to Robinhood Chain',
+      setFace('idle', walletChainId === CHAIN_ID ? 'Connected on Robinhood Chain' : 'Connected — switch to Robinhood Chain to launch',
               walletChainId === CHAIN_ID ? 'ok' : 'bad');
     }
-  } catch (e) { console.error('auto-connect', e); }
+    // If accounts is empty, do NOTHING — the page stays "not connected" and
+    // quiet until the user chooses to connect.
+  } catch (e) { console.error('passive wallet check', e); }
 })();
 
 /* launch */
@@ -1141,12 +1231,34 @@ async function loadFeed() {
 }
 loadFeed();
 
-/* ══════════════════ SOLANA (Phantom + Bags via proxy) ══════════════════ */
-// The proxy builds the launch transactions with the Bags SDK; Phantom signs
-// them here. The server never sees a Solana key. Our finnputer28 partner is
-// injected server-side, so every launch through this pad pays FINNPUTER.
+/* ══════════════════ SOLANA (any wallet + Bags via proxy) ══════════════════ */
+// The proxy builds the launch transactions with the Bags SDK; the user's own
+// wallet signs them here. The server never sees a key. Our finnputer28 partner
+// is injected server-side, so every launch through this pad pays FINNPUTER.
+//
+// Not Phantom-only: we detect every injected Solana provider (Phantom,
+// Solflare, Backpack, Coinbase, Glow, …) and let the user pick.
 let solPubkey = null;
-const solProvider = () => (window.solana?.isPhantom ? window.solana : null);
+let solWallet = null;   // the chosen provider object
+
+// Collect every injected provider we can find, de-duplicated.
+function detectSolWallets() {
+  const found = [];
+  const seen = new Set();
+  const add = (obj, name) => {
+    if (obj && !seen.has(obj)) { seen.add(obj); found.push({ obj, name }); }
+  };
+  // Phantom exposes both window.solana and window.phantom.solana
+  if (window.phantom?.solana) add(window.phantom.solana, 'Phantom');
+  else if (window.solana?.isPhantom) add(window.solana, 'Phantom');
+  if (window.solflare?.isSolflare) add(window.solflare, 'Solflare');
+  if (window.backpack?.isBackpack) add(window.backpack, 'Backpack');
+  if (window.glow) add(window.glow, 'Glow');
+  if (window.coinbaseSolana) add(window.coinbaseSolana, 'Coinbase');
+  // generic fallback: any window.solana that wasn't matched above
+  if (window.solana) add(window.solana, window.solana.isPhantom ? 'Phantom' : 'Solana Wallet');
+  return found;
+}
 
 function solSet(text, tone) {
   $('solStatus').textContent = text;
@@ -1154,22 +1266,63 @@ function solSet(text, tone) {
 }
 function solArm() {
   const b = $('solLaunch');
-  if (!solPubkey) { b.disabled = true; b.textContent = 'Connect Phantom to launch'; return; }
+  if (!solPubkey) { b.disabled = true; b.textContent = 'Connect a wallet to launch'; return; }
   if (!PROXY_BASE) { b.disabled = true; b.textContent = 'Server not configured'; return; }
   b.disabled = false; b.textContent = 'Launch on Solana';
 }
 
-async function solConnect() {
-  const p = solProvider();
-  if (!p) { solSet('Phantom not found — install it first', 'bad'); window.open('https://phantom.app/', '_blank'); return; }
+async function connectSolWallet(entry) {
   try {
-    const resp = await p.connect();
-    solPubkey = resp.publicKey.toString();
-    $('solConnect').textContent = solPubkey.slice(0, 4) + '…' + solPubkey.slice(-4);
+    solSet(`Connecting ${entry.name}…`);
+    const resp = await entry.obj.connect();
+    solWallet = entry.obj;
+    solPubkey = (resp?.publicKey || entry.obj.publicKey).toString();
+    $('solConnect').textContent = `${entry.name} · ${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
     solSet('Connected on Solana', 'ok');
     solArm();
-  } catch (e) { solSet(e.message || 'Phantom connection failed', 'bad'); }
+    // reflect account/disconnect changes
+    entry.obj.on?.('disconnect', () => { solPubkey = null; solWallet = null; $('solConnect').textContent = 'Connect wallet'; solSet('Wallet disconnected', 'bad'); solArm(); });
+    entry.obj.on?.('accountChanged', (pk) => { if (pk) { solPubkey = pk.toString(); $('solConnect').textContent = `${entry.name} · ${solPubkey.slice(0,4)}…${solPubkey.slice(-4)}`; } });
+  } catch (e) {
+    solSet(e.message || `${entry.name} connection failed`, 'bad');
+  }
 }
+
+const IS_MOBILE = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+const IN_WALLET_BROWSER = !!(window.solana || window.ethereum || window.phantom);
+
+async function solConnect() {
+  const wallets = detectSolWallets();
+  if (wallets.length === 0) {
+    if (IS_MOBILE && !IN_WALLET_BROWSER) {
+      // On mobile Safari/Chrome there are no wallet extensions. Open this page
+      // inside Phantom's in-app browser, where the wallet is injected.
+      solSet('Open this page in your wallet app to connect', 'bad');
+      const target = 'https://phantom.app/ul/browse/' + encodeURIComponent(location.href) + '?ref=' + encodeURIComponent(location.origin);
+      window.location.href = target;
+      return;
+    }
+    solSet('No Solana wallet found — install one first', 'bad');
+    window.open('https://phantom.app/', '_blank');
+    return;
+  }
+  if (wallets.length === 1) { await connectSolWallet(wallets[0]); return; }
+  // multiple wallets → let the user choose
+  showSolWalletPicker(wallets);
+}
+
+function showSolWalletPicker(wallets) {
+  const menu = document.getElementById('solWalletMenu');
+  menu.innerHTML = wallets.map((w, i) =>
+    `<button class="wallet-opt" data-i="${i}">${w.name}</button>`).join('');
+  menu.querySelectorAll('button').forEach(b =>
+    b.addEventListener('click', () => { menu.hidden = true; connectSolWallet(wallets[+b.dataset.i]); }));
+  menu.hidden = false;
+}
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('solWalletMenu');
+  if (menu && !menu.hidden && !menu.contains(e.target) && e.target.id !== 'solConnect') menu.hidden = true;
+});
 $('solConnect').addEventListener('click', solConnect);
 
 /* Solana image preview (Bags hosts the real image from a URL in v1). */
@@ -1180,8 +1333,7 @@ solFile?.addEventListener('change', () => {
 });
 
 $('solLaunch').addEventListener('click', async () => {
-  const p = solProvider();
-  if (!p || !solPubkey) return;
+  if (!solWallet || !solPubkey) return;
   const name = $('sol-name').value.trim();
   const symbol = $('sol-symbol').value.trim();
   const out = $('solOut');
@@ -1190,10 +1342,10 @@ $('solLaunch').addEventListener('click', async () => {
   if (!name)   return show('<h4>Missing name</h4><p>Give the token a name.</p>', true);
   if (!symbol) return show('<h4>Missing ticker</h4><p>Give the token a ticker.</p>', true);
 
-  // v1: Bags hosts the image from a URL, so we need a reachable URL. Pinata
-  // upload for Solana is the next step; until then, ask for a URL.
-  let imageUrl = prompt('Paste an image URL for the token (Solana v1 hosts from a URL — file upload comes with Pinata):') || '';
-  if (!imageUrl) return show('<h4>Image URL needed</h4><p>Solana v1 needs an image URL. File-upload for Solana is next.</p>', true);
+  // Solana hosts the image from a URL; read it from the field (mobile-safe,
+  // unlike prompt() which some mobile browsers block).
+  const imageUrl = $('sol-imgurl').value.trim();
+  if (!imageUrl) return show('<h4>Image URL needed</h4><p>Paste a link to your token image in the Image URL field.</p>', true);
 
   $('solLaunch').disabled = true;
   try {
@@ -1214,12 +1366,12 @@ $('solLaunch').addEventListener('click', async () => {
     const j = await r.json();
     if (!r.ok) throw new Error(j.error || `Build failed (${r.status}).`);
 
-    show('<h4>Sign in Phantom</h4><p>Approve each transaction in order.</p>');
+    show('<h4>Sign in your wallet</h4><p>Approve each transaction in order.</p>');
     const { VersionedTransaction } = await import('https://esm.sh/@solana/web3.js@1.95.0');
     let lastSig = '';
     for (const b64 of j.transactions) {
       const tx = VersionedTransaction.deserialize(Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
-      const signed = await p.signAndSendTransaction(tx);
+      const signed = await solWallet.signAndSendTransaction(tx);
       lastSig = signed.signature || signed;
     }
 
