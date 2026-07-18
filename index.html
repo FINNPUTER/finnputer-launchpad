@@ -180,6 +180,9 @@
   /* ───── ledger ───── */
   .ledger { border: 1px solid var(--edge); border-top: none; border-radius: 0 0 3px 3px; overflow: hidden; background: var(--panel); }
   .fee-details { margin-bottom: 22px; }
+  .claim-note { margin-top: 12px; }
+  .claim-note > summary { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand-lo); cursor: pointer; }
+  .claim-note[open] > summary { color: var(--brand); }
   .fee-details > summary { border-radius: 3px; }
   .fee-details[open] > summary { border-radius: 3px 3px 0 0; border-bottom: none; }
   .ledger-h { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute); padding: 9px 14px; border-bottom: 1px solid var(--edge); background: var(--panel-hi); }
@@ -546,6 +549,12 @@
       <button class="key key-sm" id="addClaimer">+ Add claimer</button>
       <div class="bps-tally" id="tally">0.00 / 100%</div>
       <p class="hint">Paste a wallet address, or type <b>@username</b> to send fees to someone's <b>X (Twitter)</b> account — we resolve it to their wallet automatically.<br>1–100 claimers, each unique. Smallest share is 0.01%; give the last claimer the rounding remainder so it lands on exactly 100%.</p>
+      <details class="claim-note">
+        <summary>How do claimers get their fees?</summary>
+        <div class="details-body">
+          <p class="hint" style="margin:0">Fees accrue on-chain to each claimer, split every trade. <b>Wallet addresses</b> claim directly on the token's page at bags.fm — connect that wallet, hit claim. <b>@X accounts</b> get a wallet created for them automatically; the owner connects their X account at bags.fm to see and claim what's waiting. Nothing to sign up for here — the wallet or the X login is the key.</p>
+        </div>
+      </details>
     </div>
     <details>
       <summary>Advanced — bring your own metadata URI</summary>
