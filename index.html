@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>FINNPUTER Launchpad — on Robinhood Chain</title>
 <meta name="description" content="Launch a coin on Robinhood Chain and keep 1% of every trade, forever. Bonding curve to Uniswap v4." />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23030503'/%3E%3Crect x='5' y='4' width='22' height='6' rx='3' fill='%23de6b5e'/%3E%3Crect x='6' y='11' width='20' height='15' rx='2' fill='%23000' stroke='%237bdd34'/%3E%3Ctext x='16' y='21' font-size='9' fill='%23eaf6ff' text-anchor='middle' font-family='monospace'%3E^ ^%3C/text%3E%3C/svg%3E" />
+<link rel="icon" type="image/png" href="mascot.png" />
+<link rel="apple-touch-icon" href="mascot.png" />
 <!-- Every link you post anywhere renders from these. Without them it looks like a dead URL. -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="FINNPUTER" />
@@ -148,10 +149,12 @@
     box-shadow: 0 0 30px -8px #7bdd3426 inset;
   }
   .mini {
-    width: 46px; height: 34px; flex: none; border-radius: 4px;
+    width: 40px; height: 40px; flex: none; border-radius: 6px;
     background: #000; border: 1px solid #1a2416;
     display: grid; place-items: center; overflow: hidden;
   }
+  .mini img { width: 100%; height: 100%; object-fit: cover; }
+  .mini img[hidden] { display: none; }
   .face {
     font-family: var(--display); font-weight: 700; font-size: 17px;
     letter-spacing: 0.08em; color: var(--face);
@@ -279,6 +282,15 @@
   .claimer-row { display: grid; grid-template-columns: 1fr 92px 38px; gap: 8px; margin-bottom: 8px; }
   .pct-input { position: relative; }
   .pct-input input { padding-right: 26px; text-align: right; }
+  .claimer-id { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .resolved {
+    display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
+    background: #7bdd340f; border: 1px solid var(--brand-lo); border-radius: 3px;
+    padding: 3px 8px 3px 4px; font-size: 11px; color: var(--brand); max-width: 100%;
+  }
+  .resolved img { width: 16px; height: 16px; border-radius: 50%; flex: none; object-fit: cover; }
+  .resolved span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .claimer-row { align-items: start; }
   .pct-input span {
     position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
     color: var(--mute); font-size: 12px; pointer-events: none;
@@ -287,6 +299,45 @@
   .bps-tally { font-size: 11px; color: var(--mute); margin-top: 9px; }
   .bps-tally.bad { color: var(--coral); }
   .bps-tally.ok  { color: var(--brand-lo); }
+
+  /* ───── the edge: the one thing only FINNPUTER has ───── */
+  .edge {
+    position: relative; margin-bottom: 38px; padding: 24px 20px 20px;
+    border: 1px solid var(--brand-lo); border-radius: 6px;
+    background:
+      radial-gradient(ellipse 70% 100% at 50% 0%, #7bdd3412, transparent 70%),
+      var(--panel);
+    box-shadow: 0 0 40px -14px #7bdd3440;
+  }
+  .edge-badge {
+    position: absolute; top: -10px; left: 20px;
+    font-family: var(--display); font-weight: 700; font-size: 9.5px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: #041003;
+    background: linear-gradient(180deg, var(--brand-hi), #5cc41f);
+    padding: 5px 12px; border-radius: 3px;
+  }
+  .edge-h { font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.2; margin-bottom: 8px; }
+  .edge-sub { color: var(--mute); font-size: 12.5px; line-height: 1.6; margin-bottom: 18px; max-width: 52ch; }
+  .edge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  @media (max-width: 560px) { .edge-grid { grid-template-columns: 1fr; } }
+  .edge-card {
+    border: 1px solid var(--edge); border-radius: 4px; padding: 12px 14px;
+    background: #00000040; position: relative; padding-left: 34px;
+  }
+  .edge-card::before {
+    position: absolute; left: 13px; top: 12px; font-weight: 700; font-size: 12px;
+  }
+  .edge-card.live::before { content: '✓'; color: var(--brand); }
+  .edge-card.soon { opacity: .62; border-style: dashed; }
+  .edge-card.soon::before { content: '○'; color: var(--mute); }
+  .edge-card.soon b::after {
+    content: 'SOON'; margin-left: 8px; font-size: 8.5px; letter-spacing: 0.14em;
+    color: var(--mute); border: 1px solid var(--edge-lit); border-radius: 2px;
+    padding: 1px 5px; vertical-align: middle;
+  }
+  .edge-card b { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 2px; }
+  .edge-card span { font-size: 11px; color: var(--mute); line-height: 1.5; }
+  .edge-foot { font-size: 10.5px; color: #55634d; letter-spacing: 0.02em; }
 
   /* ───── notices / output ───── */
   .notice { border-left: 2px solid var(--coral); background: #de6b5e0f; padding: 13px 15px; margin-bottom: 22px; font-size: 12.5px; line-height: 1.65; }
@@ -394,7 +445,7 @@
   </div>
 
   <div class="console">
-    <div class="mini"><div class="face" id="face">^&nbsp;&nbsp;^</div></div>
+    <div class="mini"><img src="mascot.png" alt="" id="mascotMini" /><div class="face" id="face" hidden>^&nbsp;&nbsp;^</div></div>
     <div class="status" id="status">Wallet not connected</div>
   </div>
 
@@ -406,6 +457,19 @@
     <div class="row you"><div><b>Your fee claimers</b><br><span>Claimable any time, both phases</span></div><div class="amt">1.00%</div></div>
     <div class="row pad"><div><b>FINNPUTER</b><br><span>Partner share of the protocol half</span></div><div class="amt" id="padCut">0.25%</div></div>
     <div class="row vault"><div><b>Bags vault</b><br><span>Protocol remainder</span></div><div class="amt" id="vaultCut">0.75%</div></div>
+  </div>
+
+  <div class="edge">
+    <div class="edge-badge">Only on FINNPUTER</div>
+    <h2 class="edge-h">A safety scanner no other launchpad has.</h2>
+    <p class="edge-sub">Our on-chain scanner reads the chain so you don't have to trust the copy — bundles, sniper clusters, fresh-wallet rings, holder concentration. It runs live today on Solana; Robinhood Chain support is next.</p>
+    <div class="edge-grid">
+      <div class="edge-card live"><b>Bundle &amp; sniper check</b><span>Flags coordinated first-block buys and bundled wallets.</span></div>
+      <div class="edge-card live"><b>Fresh-wallet cluster</b><span>Detects freshly funded wallets moving together.</span></div>
+      <div class="edge-card live"><b>Holder concentration</b><span>Surfaces how much supply sits in how few hands.</span></div>
+      <div class="edge-card soon"><b>Robinhood Chain scans</b><span>The scanner is Solana-native today. EVM support is being built.</span></div>
+    </div>
+    <p class="edge-foot">Powered by the FINNPUTER x402 scanner — live at api.finnputerdex.com. Robinhood tokens aren't scanned yet; this section won't claim they are until they are.</p>
   </div>
 
   <div id="guard"></div>
@@ -509,7 +573,7 @@ const PARTNER = '0x9536cfe8bEbA85d09CBE1a24369441031a7b58b1';
 // Your Railway proxy, no trailing slash. It pins the token image and metadata
 // so nobody has to know what an IPFS CID is. Leave it empty and the upload is
 // disabled — the "Advanced" URI field still works.
-const PROXY_BASE = '';
+const PROXY_BASE = 'https://finnputer-launchpad-proxy-production.up.railway.app';
 
 const ADDR = { factory: '0xe8Cc4431adF8b5A847C113EF0c6af9043219Cb37' };
 const EXPLORER = 'https://robinhoodchain.blockscout.com';
@@ -575,8 +639,14 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(poin
 
 /* the mascot's screen mirrors what the machine is doing */
 const FACES = { idle:'^&nbsp;&nbsp;^', live:'^&nbsp;o&nbsp;^', working:'o&nbsp;&nbsp;o', signing:'&gt;&nbsp;&nbsp;&lt;', win:'^&nbsp;O&nbsp;^', fail:'x&nbsp;&nbsp;x' };
+const mascotMini = $('mascotMini');
+if (mascotMini) {
+  mascotMini.onerror = () => { mascotMini.hidden = true; $('face').hidden = false; };
+}
 function setFace(kind, text, tone) {
-  $('face').innerHTML = FACES[kind];
+  // The render carries the identity; the drawn face is the state light only
+  // when the image is missing. Either way the status text always updates.
+  if ($('face') && !$('face').hidden) $('face').innerHTML = FACES[kind];
   $('status').textContent = text;
   $('status').dataset.tone = tone || '';
 }
@@ -649,31 +719,75 @@ let creationFee = null;
 // 1 bps = 0.01%, so the mapping is exact to two decimals. Convert as late
 // as possible so what the tally shows is literally what gets signed.
 const toBps = (pct) => Math.round((Number(pct) || 0) * 100);
-const claimers = [{ address: '', pct: 100 }];
+// Each claimer holds what the user typed (address OR @handle) plus, once a
+// handle resolves through the proxy, the wallet it maps to and its profile.
+const claimers = [{ input: '', pct: 100, resolved: null, avatar: '', name: '' }];
+
 function renderClaimers() {
   $('claimers').innerHTML = claimers.map((c, i) => `
     <div class="claimer-row">
-      <input data-i="${i}" data-k="address" placeholder="0x… wallet" value="${c.address}" />
+      <div class="claimer-id">
+        <input data-i="${i}" data-k="input" placeholder="0x… wallet or @handle" value="${c.input}" />
+        ${c.resolved ? `<div class="resolved">${c.avatar ? `<img src="${c.avatar}" alt="">` : ''}<span>${c.name || shorten(c.resolved)}</span></div>` : ''}
+      </div>
       <div class="pct-input"><input data-i="${i}" data-k="pct" placeholder="0" inputmode="decimal" value="${c.pct}" /><span>%</span></div>
       <button class="key" data-rm="${i}" ${claimers.length === 1 ? 'disabled' : ''} title="Remove">×</button>
     </div>`).join('');
   $('claimers').querySelectorAll('input').forEach(el => el.addEventListener('input', () => {
     const c = claimers[+el.dataset.i];
-    c[el.dataset.k] = el.dataset.k === 'pct' ? el.value.replace(',', '.') : el.value.trim();
+    if (el.dataset.k === 'pct') { c.pct = el.value.replace(',', '.'); tally(); return; }
+    c.input = el.value.trim();
+    c.resolved = null; c.avatar = ''; c.name = '';   // input changed, drop old resolution
     tally();
+    maybeResolve(+el.dataset.i);
   }));
   $('claimers').querySelectorAll('[data-rm]').forEach(b => b.addEventListener('click', () => {
     claimers.splice(+b.dataset.rm, 1); renderClaimers();
   }));
   tally();
 }
+
+// Debounced handle → wallet lookup. Addresses need no proxy; @handles do.
+const resolveTimers = {};
+function maybeResolve(i) {
+  const c = claimers[i];
+  if (!c || !c.input.startsWith('@')) return;
+  if (!PROXY_BASE) return;   // no proxy configured → handles simply won't resolve
+  clearTimeout(resolveTimers[i]);
+  resolveTimers[i] = setTimeout(async () => {
+    const handle = c.input.replace(/^@/, '');
+    if (!handle) return;
+    try {
+      const r = await fetch(`${PROXY_BASE}/api/resolve?provider=twitter&username=${encodeURIComponent(handle)}`);
+      const j = await r.json();
+      if (!r.ok || !j.wallet) throw new Error(j.error || 'not found');
+      // only apply if the user hasn't typed something else since
+      if (claimers[i] && claimers[i].input === c.input) {
+        claimers[i].resolved = j.wallet;
+        claimers[i].avatar = j.avatarUrl || '';
+        claimers[i].name = j.displayName || j.username || handle;
+        renderClaimers();
+      }
+    } catch (e) {
+      console.warn('resolve @' + handle, e.message);
+    }
+  }, 500);
+}
+
+// The address the factory actually gets: a resolved handle's wallet, or the
+// raw input when it's already an address.
+function claimerAddress(c) {
+  if (c.resolved) return c.resolved;
+  return c.input;
+}
+
 function tally() {
   // Sum the bps, not the percents — floats drift and the contract counts bps.
   const bps = claimers.reduce((s, c) => s + toBps(c.pct), 0);
   $('tally').textContent = `${(bps / 100).toFixed(2)} / 100%`;
   $('tally').className = 'bps-tally ' + (bps === 10000 ? 'ok' : 'bad');
 }
-$('addClaimer').addEventListener('click', () => { claimers.push({ address: '', pct: '' }); renderClaimers(); });
+$('addClaimer').addEventListener('click', () => { claimers.push({ input: '', pct: '', resolved: null, avatar: '', name: '' }); renderClaimers(); });
 renderClaimers();
 
 /* client mirror of the factory rules — an on-chain revert still costs gas */
@@ -682,8 +796,10 @@ function validateClaimers() {
   if (claimers.length > 100) return 'At most 100 claimers.';
   const seen = new Set();
   for (const c of claimers) {
-    if (!isAddress(c.address)) return `"${c.address || 'empty'}" is not a valid address.`;
-    const k = c.address.toLowerCase();
+    const addr = claimerAddress(c);
+    if (c.input.startsWith('@') && !c.resolved) return `"${c.input}" hasn't resolved to a wallet yet — wait a moment or check the handle.`;
+    if (!isAddress(addr)) return `"${c.input || 'empty'}" is not a valid address or @handle.`;
+    const k = addr.toLowerCase();
     if (k === zeroAddress) return 'The zero address cannot be a claimer.';
     if (partnerSet && k === PARTNER.toLowerCase()) return 'The partner cannot also be a claimer.';
     if (seen.has(k)) return 'Claimer addresses must be unique.';
@@ -702,11 +818,23 @@ function validateClaimers() {
 
 /* wallet */
 async function connect() {
-  if (!window.ethereum) return setFace('fail', 'No EVM wallet found', 'bad');
+  if (!window.ethereum) return setFace('fail', 'No EVM wallet found in this browser', 'bad');
   try {
     setFace('working', 'Waiting for the wallet…');
-    const [a] = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    account = getAddress(a);
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    if (!accounts || !accounts.length) return setFace('fail', 'No account approved', 'bad');
+    account = getAddress(accounts[0]);
+
+    // Account is approved — reflect that NOW, before the chain switch, so a
+    // declined network prompt can't roll the whole connection back to "not connected".
+    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
+    $('connect').textContent = shorten(account);
+    if (!claimers[0].input) { claimers[0].input = account; renderClaimers(); }
+    await readChain();
+    setFace('live', 'Connected', 'ok');
+
+    // Now try to get them onto the right chain. Failure here is not fatal —
+    // the chain badge and the launch button already gate on chainId.
     try {
       await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
     } catch (err) {
@@ -717,15 +845,17 @@ async function connect() {
           rpcUrls: ['https://rpc.mainnet.chain.robinhood.com'],
           blockExplorerUrls: [EXPLORER],
         }] });
-      } else throw err;
+      } else if (err.code === 4001) {
+        setFace('idle', 'Connected — switch to Robinhood Chain to launch', 'bad');
+        return;
+      }
     }
-    // chain pinned here: viem throws ChainMismatchError before signing if the wallet drifted
-    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
-    $('connect').textContent = shorten(account);
-    if (!claimers[0].address) { claimers[0].address = account; renderClaimers(); }
     await readChain();
-    setFace('live', 'Connected on Robinhood Chain', 'ok');
+    setFace(walletChainId === CHAIN_ID ? 'live' : 'idle',
+            walletChainId === CHAIN_ID ? 'Connected on Robinhood Chain' : 'Switch to Robinhood Chain to launch',
+            walletChainId === CHAIN_ID ? 'ok' : 'bad');
   } catch (e) {
+    console.error('[connect]', e);
     setFace('fail', e.shortMessage || e.message || 'Wallet connection failed', 'bad');
   }
 }
@@ -751,7 +881,7 @@ readChain();
       account = getAddress(accounts[0]);
       walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
       $('connect').textContent = shorten(account);
-      if (!claimers[0].address) { claimers[0].address = account; renderClaimers(); }
+      if (!claimers[0].input) { claimers[0].input = account; renderClaimers(); }
       await readChain();
       setFace(walletChainId === CHAIN_ID ? 'live' : 'idle',
               walletChainId === CHAIN_ID ? 'Connected on Robinhood Chain' : 'Wrong network — switch to Robinhood Chain',
@@ -808,7 +938,7 @@ $('launch').addEventListener('click', async () => {
     creationFee = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'creationFee' });
 
     const args = [name, symbol, metadataURI, getAddress(PARTNER),
-                  claimers.map(c => getAddress(c.address)), claimers.map(c => toBps(c.pct))];
+                  claimers.map(c => getAddress(claimerAddress(c))), claimers.map(c => toBps(c.pct))];
     const value = creationFee + initialBuyWei;
     const functionName = initialBuyWei > 0n ? 'createAndBuy' : 'create';
 
