@@ -550,7 +550,7 @@
     <div class="need-h">What you need to launch on Solana</div>
     <ol class="need-list">
       <li><b>A Solana wallet</b><span>Phantom, Solflare, Backpack or any Solana wallet. Connect it in the Solana tab.</span></li>
-      <li><b>SOL in that wallet</b><span>Keep at least <b class="fee-live">~0.05 SOL</b> for the network tip, rent and fees — more if you want an initial buy.</span></li>
+      <li><b>SOL in that wallet</b><span>Keep at least <b class="fee-live">0.2 SOL</b> to cover transaction fees — more if you want an initial buy.</span></li>
       <li><b>A name, ticker and image</b><span>Fill the form. On Solana the image and metadata are hosted for you — nothing to pin.</span></li>
     </ol>
     <p class="need-foot">You sign every transaction yourself. This page never holds your keys. <b class="beta-inline">Beta — start with a small test launch.</b></p>
@@ -1026,26 +1026,10 @@ window.ethereum?.on?.('accountsChanged', () => location.reload());
 window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
 readChain();
 
-/* Passive check on load: if a wallet was ALREADY connected on a previous
-   visit, quietly show that — no popup, no forced reconnect. We never call
-   eth_requestAccounts here; that only happens when the user clicks Connect.
-   This keeps the page from nagging first-time visitors for a wallet. */
-(async () => {
-  if (!window.ethereum) return;
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' }); // silent, no prompt
-    if (accounts && accounts.length) {
-      account = getAddress(accounts[0]);
-      walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
-      $('connect').textContent = shorten(account);
-      await readChain();
-      setFace('idle', walletChainId === CHAIN_ID ? 'Connected on Robinhood Chain' : 'Connected — switch to Robinhood Chain to launch',
-              walletChainId === CHAIN_ID ? 'ok' : 'bad');
-    }
-    // If accounts is empty, do NOTHING — the page stays "not connected" and
-    // quiet until the user chooses to connect.
-  } catch (e) { console.error('passive wallet check', e); }
-})();
+/* No wallet touch on load. Some wallets pop themselves open the moment a page
+   builds a client or reads chain state on startup — so we do NOTHING here.
+   The page stays quietly "not connected"; the wallet is only ever touched when
+   the user clicks Connect. This is the only way to stop the auto-open on load. */
 
 /* launch */
 function showOut(html, isErr) {
