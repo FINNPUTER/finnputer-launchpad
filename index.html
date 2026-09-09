@@ -3,21 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FINNPUTER Launchpad — on Robinhood Chain</title>
-<meta name="description" content="Launch a token on Robinhood Chain or Solana and keep 1% of every trade, forever." />
+<title>FINNPUTER Launchpad · Robinhood Chain and Solana</title>
+<meta name="description" content="Launch a token on Robinhood Chain or Solana, or pair it with a tokenised stock, and keep 1% of every trade forever." />
 <link rel="icon" type="image/png" href="mascot.png" />
 <link rel="apple-touch-icon" href="mascot.png" />
-<!-- Every link you post anywhere renders from these. Without them it looks like a dead URL. -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="FINNPUTER" />
-<meta property="og:title" content="FINNPUTER Launchpad — on Robinhood Chain" />
-<meta property="og:description" content="Launch a token on Robinhood Chain or Solana and keep 1% of every trade, forever." />
+<meta property="og:title" content="FINNPUTER Launchpad · Robinhood Chain and Solana" />
+<meta property="og:description" content="Launch a token on Robinhood Chain or Solana, or pair it with a tokenised stock, and keep 1% of every trade forever." />
 <meta property="og:url" content="https://launchpad.finnputerdex.com" />
 <meta property="og:image" content="https://launchpad.finnputerdex.com/banner.webp" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@FINNPUTER28" />
-<meta name="twitter:title" content="FINNPUTER Launchpad — on Robinhood Chain" />
-<meta name="twitter:description" content="Launch a token on Robinhood Chain or Solana and keep 1% of every trade, forever." />
+<meta name="twitter:title" content="FINNPUTER Launchpad · Robinhood Chain and Solana" />
+<meta name="twitter:description" content="Launch a token on Robinhood Chain or Solana, or pair it with a tokenised stock, and keep 1% of every trade forever." />
 <meta name="twitter:image" content="https://launchpad.finnputerdex.com/banner.webp" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -498,7 +497,7 @@
   .pct.grad { color: var(--coral); }
   .empty { color: var(--mute); font-size: 12.5px; padding: 20px 0; }
 
-  /* the curve: not decoration — it is the token's own math, read on-chain */
+  /* the curve: not decoration, it is the token's own math, read on-chain */
   .curve-panel { border-bottom: 1px solid #131c0f; padding: 4px 0 20px; }
   .curve-panel svg { width: 100%; height: auto; display: block; }
   .curve-line { fill: none; stroke: var(--brand); stroke-width: 2; stroke-linecap: round;
@@ -564,63 +563,288 @@
     .key-go { padding: 16px; font-size: 13px; letter-spacing: 0.14em; }
     footer { margin-top: 40px; }
   }
+
+  /* ══════════════════════════════════════════════════════════════════
+     APP SHELL  (v2)
+     Everything above this line is the original component CSS and is
+     still used by the JS that renders feeds, tokens, trade panels and
+     result boxes. Below is the shell that turns the single page into
+     an app: pill navigation, aurora backdrop, views, cards.
+     ══════════════════════════════════════════════════════════════════ */
+
+  /* aurora backdrop, fixed behind everything, cheap and GPU friendly */
+  .aurora {
+    position: fixed; inset: -20vh -10vw auto -10vw; height: 120vh;
+    z-index: -2; pointer-events: none; opacity: 0.55;
+    background:
+      radial-gradient(38vw 30vw at 18% 12%, rgba(123,221,52,0.20), transparent 62%),
+      radial-gradient(34vw 26vw at 82% 18%, rgba(222,107,94,0.16), transparent 60%),
+      radial-gradient(46vw 34vw at 50% 78%, rgba(143,212,255,0.10), transparent 66%);
+    filter: blur(28px);
+    animation: drift 26s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    0%   { transform: translate3d(0,0,0) scale(1); }
+    50%  { transform: translate3d(-2.5%, 2%, 0) scale(1.06); }
+    100% { transform: translate3d(2.5%, -1.5%, 0) scale(1.03); }
+  }
+  @media (prefers-reduced-motion: reduce) { .aurora { animation: none; } }
+
+  /* ── pill navigation ─────────────────────────────────────────────── */
+  .nav-outer {
+    position: sticky; top: 0; z-index: 60;
+    padding: 14px 16px 10px;
+    display: flex; justify-content: center;
+    background: linear-gradient(180deg, rgba(3,5,3,0.92) 40%, rgba(3,5,3,0));
+  }
+  .nav {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px; border-radius: 999px;
+    background: rgba(10,15,8,0.72);
+    border: 1px solid var(--edge);
+    backdrop-filter: blur(14px) saturate(1.3);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.55);
+    max-width: 100%;
+  }
+  .nav-brand {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 12px 0 8px; font-family: 'Chakra Petch', sans-serif;
+    font-weight: 700; letter-spacing: 0.04em; font-size: 14px; color: #fff;
+    white-space: nowrap;
+  }
+  .nav-brand img { width: 26px; height: 26px; border-radius: 7px; display: block; }
+  .nav-brand b { color: var(--brand); font-weight: 700; }
+  .nav-links { display: flex; gap: 2px; }
+  .nav-link {
+    appearance: none; border: 0; cursor: pointer;
+    background: transparent; color: var(--mute);
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 9px 14px; border-radius: 999px;
+    transition: color .18s ease, background .18s ease;
+    white-space: nowrap;
+  }
+  .nav-link:hover { color: #dff5cf; background: rgba(123,221,52,0.07); }
+  .nav-link[aria-current="page"] {
+    color: var(--void); background: var(--brand);
+    box-shadow: 0 0 22px rgba(123,221,52,0.35);
+  }
+  .nav-right { display: flex; align-items: center; gap: 8px; padding-left: 6px; }
+  @media (max-width: 780px) {
+    .nav { border-radius: 18px; flex-wrap: wrap; justify-content: center; }
+    .nav-brand { width: 100%; justify-content: center; padding: 4px 0 2px; }
+    .nav-link { padding: 8px 10px; font-size: 10px; letter-spacing: 0.08em; }
+  }
+
+  /* ── views ───────────────────────────────────────────────────────── */
+  .view { display: none; }
+  .view.on { display: block; animation: viewIn .32s ease both; }
+  @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* staggered reveal for anything tagged .reveal */
+  /* fallback: if the script ever fails before the reveal runs, the content
+     must not stay invisible. This unhides everything after 2.5 seconds. */
+  .reveal { opacity: 0; transform: translateY(14px); animation: revealSafety 0s 2.5s forwards; }
+  @keyframes revealSafety { to { opacity: 1; transform: none; } }
+  .reveal.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s cubic-bezier(.2,.7,.3,1); }
+  @media (prefers-reduced-motion: reduce) { .reveal, .reveal.in { opacity: 1; transform: none; transition: none; } }
+
+  /* ── shiny headline ──────────────────────────────────────────────── */
+  .shiny {
+    background: linear-gradient(100deg, #dff5cf 20%, #ffffff 42%, var(--brand-hi) 55%, #dff5cf 78%);
+    background-size: 260% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: shine 5.5s linear infinite;
+  }
+  @keyframes shine { 0% { background-position: 180% 0; } 100% { background-position: -80% 0; } }
+  @media (prefers-reduced-motion: reduce) { .shiny { animation: none; } }
+
+  /* ── stat tiles ──────────────────────────────────────────────────── */
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin: 30px 0 10px;
+  }
+  .tile {
+    position: relative; overflow: hidden;
+    border: 1px solid var(--edge); border-radius: 12px;
+    background: linear-gradient(180deg, rgba(17,26,14,0.9), rgba(10,15,8,0.9));
+    padding: 16px 16px 14px;
+  }
+  .tile::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 0%), rgba(123,221,52,0.16), transparent 60%);
+    opacity: 0; transition: opacity .25s ease;
+  }
+  .tile:hover::before { opacity: 1; }
+  .tile .k {
+    font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--mute); margin-bottom: 8px;
+  }
+  .tile .v {
+    font-family: 'Chakra Petch', sans-serif; font-weight: 700;
+    font-size: 26px; line-height: 1; color: #fff;
+  }
+  .tile .v small { font-size: 12px; color: var(--mute); font-weight: 600; margin-left: 4px; }
+  @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, 1fr); } .tile .v { font-size: 21px; } }
+
+  /* ── generic card ────────────────────────────────────────────────── */
+  .card {
+    border: 1px solid var(--edge); border-radius: 12px;
+    background: var(--panel); padding: 20px; margin-bottom: 18px;
+  }
+  .card h3 {
+    font-family: 'Chakra Petch', sans-serif; font-size: 15px; letter-spacing: 0.04em;
+    margin: 0 0 6px; color: #fff;
+  }
+  .card .card-sub { font-size: 11.5px; color: var(--mute); margin: 0 0 16px; line-height: 1.6; }
+
+  /* ── launch mode switch ──────────────────────────────────────────── */
+  .modes { display: flex; gap: 6px; margin: 0 0 18px; }
+  .mode {
+    flex: 1; cursor: pointer; text-align: left;
+    border: 1px solid var(--edge); border-radius: 10px;
+    background: var(--panel); color: var(--mute);
+    padding: 12px 14px; transition: border-color .2s ease, background .2s ease, color .2s ease;
+  }
+  .mode b {
+    display: block; font-family: 'Chakra Petch', sans-serif; font-size: 12.5px;
+    letter-spacing: 0.04em; color: #cfe9bd; margin-bottom: 3px;
+  }
+  .mode span { font-size: 10.5px; line-height: 1.5; display: block; }
+  .mode[aria-pressed="true"] {
+    border-color: var(--brand); background: rgba(123,221,52,0.08); color: #dff5cf;
+  }
+  .mode[aria-pressed="true"] b { color: var(--brand-hi); }
+  @media (max-width: 640px) { .modes { flex-direction: column; } }
+
+  /* ── quote token picker ──────────────────────────────────────────── */
+  .quote-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+    gap: 8px; max-height: 268px; overflow-y: auto; padding: 2px;
+  }
+  .quote-opt {
+    display: flex; align-items: center; gap: 9px; cursor: pointer; text-align: left;
+    border: 1px solid var(--edge); border-radius: 9px; background: var(--panel-hi);
+    padding: 9px 10px; color: #cfe9bd; transition: border-color .15s ease, transform .15s ease;
+  }
+  .quote-opt:hover { border-color: var(--edge-lit); transform: translateY(-1px); }
+  .quote-opt[aria-pressed="true"] { border-color: var(--brand); background: rgba(123,221,52,0.09); }
+  .quote-opt img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; background: #0d140a; flex: none; }
+  .quote-opt .qs { min-width: 0; }
+  .quote-opt .qs b { display: block; font-size: 11.5px; letter-spacing: 0.03em; }
+  .quote-opt .qs small { display: block; font-size: 9.5px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* ── basket rows (dividend coin) ─────────────────────────────────── */
+  .basket-row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .basket-row input { flex: 1; }
+  .basket-row .key { flex: none; }
+
+  .warn {
+    border: 1px solid rgba(222,107,94,0.4); border-left-width: 3px;
+    background: rgba(222,107,94,0.07); border-radius: 8px;
+    padding: 12px 14px; font-size: 11.5px; line-height: 1.65; color: #f0c9c2;
+    margin-bottom: 16px;
+  }
+  .warn b { color: var(--coral-hi); }
+
+  .mini-list { display: flex; flex-direction: column; gap: 8px; }
+  .mini {
+    display: flex; align-items: center; gap: 11px;
+    border: 1px solid var(--edge); border-radius: 9px;
+    background: var(--panel-hi); padding: 11px 13px;
+  }
+  .mini img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: #0d140a; flex: none; }
+  .mini .mi { flex: 1; min-width: 0; }
+  .mini .mi b { display: block; font-size: 12px; color: #dff5cf; }
+  .mini .mi small { display: block; font-size: 10px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mini .amt { font-family: 'Chakra Petch', sans-serif; font-size: 14px; color: #fff; white-space: nowrap; }
 </style>
 </head>
 <body>
 
-<div class="hero">
-  <img id="banner" src="banner.webp" width="1600" height="533" alt="FINNPUTER Launchpad — live on Robinhood Chain and Solana" />
-  <div class="fallback" id="bannerFallback">FINNPUTER<small>LAUNCHPAD · ROBINHOOD CHAIN + SOLANA</small></div>
+<div class="aurora"></div>
+
+<div class="nav-outer">
+  <nav class="nav">
+    <div class="nav-brand"><img src="mascot.png" alt="" />FINN<b>PUTER</b></div>
+    <div class="nav-links">
+      <button class="nav-link" data-view="explore"   aria-current="page">Explore</button>
+      <button class="nav-link" data-view="launch">Launch</button>
+      <button class="nav-link" data-view="portfolio">Portfolio</button>
+      <button class="nav-link" data-view="creator">Creator</button>
+    </div>
+    <div class="nav-right">
+      <div class="chip" id="chainChip"><i class="led"></i><span id="chainTxt">No chain</span></div>
+      <button class="key" id="connect">Connect wallet</button>
+    </div>
+  </nav>
 </div>
 
 <div class="wrap">
 
-  <div class="top">
-    <div class="beta-tag" title="Early release — launches are new and lightly tested. Start small.">BETA</div>
-    <div class="ctrls">
-      <div class="chip" id="chainChip"><i class="led"></i><span id="chainTxt">No chain</span></div>
-      <button class="key" id="connect">Connect wallet</button>
+  <div class="console"><div class="status" id="status">Wallet not connected</div></div>
+
+  <!-- ══════════════════ EXPLORE ══════════════════ -->
+  <section class="view on" id="v-explore">
+    <div class="hero reveal">
+      <img id="banner" src="banner.webp" width="1600" height="533" alt="FINNPUTER Launchpad, live on Robinhood Chain and Solana" />
+      <div class="fallback" id="bannerFallback">FINNPUTER<small>LAUNCHPAD · ROBINHOOD CHAIN + SOLANA</small></div>
     </div>
-  </div>
 
-  <div class="console">
-    <div class="status" id="status">Wallet not connected</div>
-  </div>
+    <h1 class="thesis reveal"><span class="shiny">Launch a token on Robinhood Chain or Solana</span> and keep <em>1% of every trade</em>, forever.</h1>
+    <p class="sub reveal">Bonding curve to Uniswap v4, or straight into a pool paired with a tokenised stock. Locked liquidity. No cut taken from your side.</p>
 
-  <h1 class="thesis">Launch a token on Robinhood Chain or Solana and keep <em>1% of every trade</em>, forever.</h1>
-  <p class="sub">Bonding curve → Uniswap v4. Locked liquidity. No cut taken from your side.</p>
+    <div class="stats reveal">
+      <div class="tile"><div class="k">Tokens on the factory</div><div class="v" data-count id="stTokens">0</div></div>
+      <div class="tile"><div class="k">Top volume, lifetime</div><div class="v" data-count id="stVolume">0<small>ETH</small></div></div>
+      <div class="tile"><div class="k">Graduated</div><div class="v" data-count id="stGrad">0</div></div>
+      <div class="tile"><div class="k">Creation fee</div><div class="v" id="stFee">-</div></div>
+    </div>
 
-  <div id="guard"></div>
+    <div class="sec-wrap" style="margin-top:46px;"><div class="sec">Launched through FINNPUTER</div></div>
+    <div id="feed" class="reveal"><p class="empty">Reading the chain…</p></div>
 
-  <div class="tabs" role="tablist">
+    <div class="sec-wrap" style="margin-top:46px;"><div class="sec">Top volume on Robinhood Chain</div></div>
+    <div id="topVol" class="reveal"><p class="empty">Loading…</p></div>
+  </section>
+
+  <!-- ══════════════════ LAUNCH ══════════════════ -->
+  <section class="view" id="v-launch">
+    <h1 class="thesis reveal" style="margin-top:26px;"><span class="shiny">Launch a token</span></h1>
+    <p class="sub reveal">Pick a chain, fill the form, sign it yourself. This page never holds your keys.</p>
+
+    <div id="guard"></div>
+
+      <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="tab-rh"  aria-selected="true"  aria-controls="p-rh"><svg class="chain-logo" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 20c0-8 5-14 12-16-1 9-5 14-12 16z" fill="#6fdc3a"/><path d="M6 20l7-8" stroke="#0a0d09" stroke-width="1.4" stroke-linecap="round"/></svg>Robinhood Chain</button>
     <button class="tab" role="tab" id="tab-sol" aria-selected="false" aria-controls="p-sol"><svg class="chain-logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="solg" x1="2" y1="20" x2="22" y2="4" gradientUnits="userSpaceOnUse"><stop stop-color="#9945FF"/><stop offset="1" stop-color="#14F195"/></linearGradient></defs><g fill="url(#solg)"><path d="M5 7.5a.9.9 0 0 1 .64-.27h12.2c.4 0 .6.48.32.76l-2.16 2.13a.9.9 0 0 1-.64.27H3.16c-.4 0-.6-.48-.32-.76z"/><path d="M5 16.5a.9.9 0 0 1 .64-.27h12.2c.4 0 .6.48.32.76l-2.16 2.13a.9.9 0 0 1-.64.27H3.16c-.4 0-.6-.48-.32-.76z" transform="translate(1.6 -4.5)"/><path d="M18.36 12a.9.9 0 0 0-.64-.27H5.5c-.4 0-.6.48-.32.76l2.16 2.13c.17.17.4.27.64.27h12.2c.4 0 .6-.48.32-.76z"/></g></svg>Solana</button>
   </div>
 
-  <div class="need" id="need-rh">
+      <div class="need" id="need-rh">
     <div class="need-h">What you need to launch on Robinhood Chain</div>
     <ol class="need-list">
       <li><b>An EVM wallet</b><span>MetaMask, Rabby or any browser wallet. Connect it above and switch to Robinhood Chain (4663).</span></li>
       <li><b>ETH on Robinhood Chain</b><span>You need at least <b id="rhFeeLive" class="fee-live">the creation fee</b> plus a little gas. No ETH on 4663 yet? Bridge over first.</span></li>
-      <li><b>A name, ticker and image</b><span>Fill the form below. The image is pinned automatically — no IPFS knowledge needed.</span></li>
+      <li><b>A name, ticker and image</b><span>Fill the form below. The image is pinned automatically, no IPFS knowledge needed.</span></li>
     </ol>
-    <p class="need-foot">You sign the launch yourself. This page never holds your keys. <b class="beta-inline">Beta — start with a small test launch.</b></p>
-    <p class="need-mobile">On a phone? Open this page inside your wallet app's browser (MetaMask → Browser) — normal Safari/Chrome can't reach your wallet.</p>
+    <p class="need-foot">You sign the launch yourself. This page never holds your keys. <b class="beta-inline">Beta, start with a small test launch.</b></p>
+    <p class="need-mobile">On a phone? Open this page inside your wallet app's browser (MetaMask → Browser), normal Safari/Chrome can't reach your wallet.</p>
   </div>
 
-  <div class="need" id="need-sol" hidden>
+      <div class="need" id="need-sol" hidden>
     <div class="need-h">What you need to launch on Solana</div>
     <ol class="need-list">
       <li><b>A Solana wallet</b><span>Phantom, Solflare, Backpack or any Solana wallet. Connect it in the Solana tab.</span></li>
-      <li><b>SOL in that wallet</b><span>Keep at least <b class="fee-live">0.2 SOL</b> to cover transaction fees — more if you want an initial buy.</span></li>
-      <li><b>A name, ticker and image</b><span>Fill the form. On Solana the image and metadata are hosted for you — nothing to pin.</span></li>
+      <li><b>SOL in that wallet</b><span>Keep at least <b class="fee-live">0.2 SOL</b> to cover transaction fees, more if you want an initial buy.</span></li>
+      <li><b>A name, ticker and image</b><span>Fill the form. On Solana the image and metadata are hosted for you, nothing to pin.</span></li>
     </ol>
-    <p class="need-foot">You sign every transaction yourself. This page never holds your keys. <b class="beta-inline">Beta — start with a small test launch.</b></p>
-    <p class="need-mobile">On a phone? Open this page inside your wallet app's browser (Phantom → the compass/browser icon) — normal Safari/Chrome can't reach your wallet.</p>
+    <p class="need-foot">You sign every transaction yourself. This page never holds your keys. <b class="beta-inline">Beta, start with a small test launch.</b></p>
+    <p class="need-mobile">On a phone? Open this page inside your wallet app's browser (Phantom → the compass/browser icon), normal Safari/Chrome can't reach your wallet.</p>
   </div>
 
-  <details class="fee-details">
-    <summary>Fee breakdown — where every 2% trade fee goes</summary>
+      <details class="fee-details">
+    <summary>Fee breakdown, where every 2% trade fee goes</summary>
     <div class="ledger">
       <div class="row you"><div><b>Your fee claimers</b><br><span>Claimable any time, both phases</span></div><div class="amt">1.00%</div></div>
       <div class="row pad"><div><b>FINNPUTER</b><br><span>Partner share of the protocol half</span></div><div class="amt" id="padCut">0.25%</div></div>
@@ -628,7 +852,7 @@
     </div>
   </details>
 
-  <div class="panel-b" id="p-rh" role="tabpanel" aria-labelledby="tab-rh">
+      <div class="panel-b" id="p-rh" role="tabpanel" aria-labelledby="tab-rh">
     <div class="coin-grid">
       <label class="drop" id="drop">
         <input type="file" id="f-image" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
@@ -656,25 +880,25 @@
     </details>
 
     <div class="field">
-      <label for="f-buy">Initial buy — ETH (optional)</label>
+      <label for="f-buy">Initial buy, ETH (optional)</label>
       <input id="f-buy" placeholder="0.01" inputmode="decimal" />
       <p class="hint">Leave empty for no buy. A large enough first buy can graduate the token in the same transaction.</p>
     </div>
     <div class="field">
-      <label>Fee claimers — must total 100%</label>
+      <label>Fee claimers, must total 100%</label>
       <div id="claimers"></div>
       <button class="key key-sm" id="addClaimer">+ Add claimer</button>
       <div class="bps-tally" id="tally">0.00 / 100%</div>
-      <p class="hint">Paste a wallet address, or type <b>@username</b> to send fees to someone's <b>X (Twitter)</b> account — we resolve it to their wallet automatically.<br>1–100 claimers, each unique. Smallest share is 0.01%; give the last claimer the rounding remainder so it lands on exactly 100%.</p>
+      <p class="hint">Paste a wallet address, or type <b>@username</b> to send fees to someone's <b>X (Twitter)</b> account, we resolve it to their wallet automatically.<br>1-100 claimers, each unique. Smallest share is 0.01%; give the last claimer the rounding remainder so it lands on exactly 100%.</p>
       <details class="claim-note">
         <summary>How do claimers get their fees?</summary>
         <div class="details-body">
-          <p class="hint" style="margin:0">Fees accrue on-chain to each claimer, split every trade. <b>Wallet addresses</b> claim directly on the token's page at bags.fm — connect that wallet, hit claim. <b>@X accounts</b> get a wallet created for them automatically; the owner connects their X account at bags.fm to see and claim what's waiting. Nothing to sign up for here — the wallet or the X login is the key.</p>
+          <p class="hint" style="margin:0">Fees accrue on-chain to each claimer, split every trade. <b>Wallet addresses</b> claim directly on the token's page at bags.fm, connect that wallet, hit claim. <b>@X accounts</b> get a wallet created for them automatically; the owner connects their X account at bags.fm to see and claim what's waiting. Nothing to sign up for here, the wallet or the X login is the key.</p>
         </div>
       </details>
     </div>
     <details>
-      <summary>Advanced — bring your own metadata URI</summary>
+      <summary>Advanced, bring your own metadata URI</summary>
       <div class="details-body">
         <div class="field">
           <input id="f-uri" placeholder="https://ipfs.io/ipfs/…" />
@@ -687,7 +911,18 @@
     <div class="out" id="out"></div>
   </div>
 
-  <div class="panel-b" id="p-sol" role="tabpanel" aria-labelledby="tab-sol" hidden>
+    <div class="modes" id="solModes" hidden>
+      <button class="mode" id="mode-sol" aria-pressed="true">
+        <b>Standard, quoted in SOL</b>
+        <span>Bonding curve first, graduates into a pool. The classic launch.</span>
+      </button>
+      <button class="mode" id="mode-pair" aria-pressed="false">
+        <b>Paired with a token or stock</b>
+        <span>Straight into a locked pool quoted in a tokenised asset. No curve, fees paid in that asset.</span>
+      </button>
+    </div>
+
+      <div class="panel-b" id="p-sol" role="tabpanel" aria-labelledby="tab-sol" hidden>
     <div class="sol-connect">
       <div class="wallet-connect-wrap">
         <button class="key" id="solConnect">Connect wallet</button>
@@ -716,7 +951,7 @@
     <div class="field">
       <label for="sol-imgurl">Image URL</label>
       <input id="sol-imgurl" placeholder="https://… (link to your token image)" />
-      <p class="hint">Paste a link to your image. Direct file upload is coming — for now Solana hosts from a URL.</p>
+      <p class="hint">Paste a link to your image. Direct file upload is coming, for now Solana hosts from a URL.</p>
     </div>
 
     <details>
@@ -729,34 +964,150 @@
     </details>
 
     <div class="field">
-      <label for="sol-buy">Initial buy — SOL (optional)</label>
+      <label for="sol-buy">Initial buy, SOL (optional)</label>
       <input id="sol-buy" placeholder="0.01" inputmode="decimal" />
-      <p class="hint">Bags handles the image upload on Solana — no pinning needed. Fees paid in SOL, forever.</p>
+      <p class="hint">Bags handles the image upload on Solana, no pinning needed. Fees paid in SOL, forever.</p>
     </div>
 
     <button class="key key-go" id="solLaunch" disabled>Connect a wallet to launch</button>
     <div class="out" id="solOut"></div>
   </div>
 
-  <div class="sec-wrap" style="margin-top:56px;"><div class="sec">Launched through FINNPUTER</div></div>
-  <div id="feed"><p class="empty">Reading the chain…</p></div>
+    <div class="panel-b" id="p-pair" hidden>
+      <div class="sol-connect">
+        <span class="sol-status" id="pairWallet">Connect your wallet in the standard tab first, it is the same wallet.</span>
+      </div>
 
-  <div class="sec-wrap" style="margin-top:56px;"><div class="sec">Your dashboard</div></div>
-  <div class="dash-box">
+      <div class="warn">
+        <b>Read this once before you use it.</b> A paired launch has no bonding curve. The pool is created and fully seeded by the launch transaction, and the liquidity is locked permanently, you claim fees rather than liquidity. Trading fees are a flat 2% and accrue in the <b>pair token</b>, not in SOL. An initial buy is spent from your balance of the pair token, and you still need some SOL for fees and rent.
+      </div>
+
+      <div class="coin-grid">
+        <label class="drop" id="pairDrop">
+          <input type="file" id="pair-image" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
+          <img id="pairPreview" alt="" />
+          <div class="drop-cue"><b>▲</b>Preview image</div>
+        </label>
+        <div class="coin-fields">
+          <div class="field" style="margin:0"><label for="pair-name">Name</label><input id="pair-name" placeholder="Finnputer Cat" maxlength="64" /></div>
+          <div class="field" style="margin:0"><label for="pair-symbol">Ticker</label><input id="pair-symbol" placeholder="FCAT" maxlength="16" /></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pair-desc">Description</label>
+        <textarea id="pair-desc" rows="3" maxlength="500" placeholder="What is this token?"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="pair-imgurl">Image URL</label>
+        <input id="pair-imgurl" placeholder="https://… (link to your token image)" />
+        <p class="hint">Bags hosts the image from a URL on Solana. The preview box above is only for you.</p>
+      </div>
+
+      <div class="field">
+        <label>Pair token</label>
+        <div class="quote-grid" id="quoteGrid"><p class="empty">Loading the supported list…</p></div>
+        <p class="hint">Only badged mints can be used as a pair, and the list changes. Decimals differ per token, the amount below is converted for you.</p>
+      </div>
+
+      <details>
+        <summary>Social links (optional)</summary>
+        <div class="details-body">
+          <div class="field"><label for="pair-web">Website</label><input id="pair-web" placeholder="https://…" /></div>
+          <div class="field"><label for="pair-tw">X / Twitter</label><input id="pair-tw" placeholder="https://x.com/…" /></div>
+          <div class="field"><label for="pair-tg">Telegram</label><input id="pair-tg" placeholder="https://t.me/…" /></div>
+        </div>
+      </details>
+
+      <div class="field">
+        <label for="pair-buy">Initial buy, in the pair token (optional)</label>
+        <input id="pair-buy" placeholder="0" inputmode="decimal" />
+        <p class="hint" id="pairBuyHint">Pick a pair token first. The amount is spent from your balance of that token.</p>
+      </div>
+
+      <details>
+        <summary>Advanced, send the creator fees somewhere else</summary>
+        <div class="details-body">
+          <div class="field">
+            <input id="pair-claimer" placeholder="Solana address that claims the fees" />
+            <p class="hint">Leave empty and the launching wallet claims. There is no percentage split on this launch type, it is one recipient.</p>
+          </div>
+        </div>
+      </details>
+
+      <button class="key key-go" id="pairLaunch" disabled>Connect a wallet to launch</button>
+      <div class="out" id="pairOut"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ PORTFOLIO ══════════════════ -->
+  <section class="view" id="v-portfolio">
+    <h1 class="thesis reveal" style="margin-top:26px;"><span class="shiny">Your tokens</span></h1>
+    <p class="sub reveal">Live price, bonding progress, trade activity and the fees waiting for you.</p>
+      <div class="dash-box">
     <div class="dash-connect">
-      <p class="claim-intro" id="dashIntro">Connect your wallet to see your launched tokens — live price, bonding progress, trade activity and the fees waiting for you. Everything on this page, no leaving the pad.</p>
+      <p class="claim-intro" id="dashIntro">Connect your wallet to see your launched tokens, live price, bonding progress, trade activity and the fees waiting for you. Everything on this page, no leaving the pad.</p>
       <button class="key" id="dashLoad" disabled>Connect wallet to load</button>
     </div>
     <div id="dashTokens"></div>
     <div id="dashDetail"></div>
-    <p class="claim-x-note">Earning through an <b>X account</b> instead of a wallet? Those fees live in the wallet Bags created for that handle — connect your X account at <a href="https://bags.fm" target="_blank" rel="noopener">bags.fm</a> to claim them.</p>
+    <p class="claim-x-note">Earning through an <b>X account</b> instead of a wallet? Those fees live in the wallet Bags created for that handle, connect your X account at <a href="https://bags.fm" target="_blank" rel="noopener">bags.fm</a> to claim them.</p>
   </div>
+  </section>
+
+  <!-- ══════════════════ CREATOR ══════════════════ -->
+  <section class="view" id="v-creator">
+    <h1 class="thesis reveal" style="margin-top:26px;"><span class="shiny">Creator</span></h1>
+    <p class="sub reveal">Everything on the Solana side of the pad, plus dividend coins on Robinhood Chain.</p>
+
+    <div class="card reveal">
+      <h3>Paired launches</h3>
+      <p class="card-sub">Confirmed launches quoted in a token instead of SOL, newest first, across the whole DAMM v2 direct feed.</p>
+      <div id="pairFeed"><p class="empty">Loading…</p></div>
+    </div>
+
+    <div class="card reveal">
+      <h3>Claimable fees on Solana</h3>
+      <p class="card-sub">Fee positions from paired launches, plus the partner and deployer vaults. Connect a Solana wallet in the Launch view first.</p>
+      <button class="key" id="claimLoad">Load my positions</button>
+      <div id="claimBox" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="card reveal" id="divCard" hidden>
+      <h3>Dividend coin on Robinhood Chain</h3>
+      <p class="card-sub">Register a token you already launched as an index token. Its whole creator half is converted into a basket of tokenised assets and paid out to holders.</p>
+      <div class="warn">
+        <b>Irreversible.</b> The basket cannot be changed and there is no second registration. The token must have been launched with the Bags claimer wallet at 100%, and its creator wallet must belong to your own Bags account. You give up the creator fees on that token, the holders get them.
+      </div>
+      <div class="field">
+        <label for="div-token">Token address</label>
+        <input id="div-token" placeholder="0x… the token you launched" />
+      </div>
+      <div class="field">
+        <label>Basket, 1 to 10 tokenised assets</label>
+        <div id="basket"></div>
+        <button class="key key-sm" id="addBasket">+ Add asset</button>
+      </div>
+      <button class="key key-go" id="divGo" disabled>Connect wallet</button>
+      <div class="out" id="divOut"></div>
+      <div class="field" style="margin-top:22px;">
+        <label for="div-check">Check a token</label>
+        <div class="basket-row">
+          <input id="div-check" placeholder="0x… is this an index token?" />
+          <button class="key" id="divCheckGo">Check</button>
+        </div>
+        <div id="divStatus"></div>
+      </div>
+    </div>
+  </section>
 
   <footer>
     BagsFactory 0xe8Cc4431adF8b5A847C113EF0c6af9043219Cb37 · Chain 4663 · Fees read live from the factory.<br>
     You sign every transaction yourself. This page never holds your keys. Nothing here is investment advice.
   </footer>
 </div>
+
 
 <script type="module">
 import {
@@ -768,13 +1119,13 @@ import {
    CONFIG
    Your partner wallet is baked into every launch and IMMUTABLE
    afterwards. Leave it at zero and you earn nothing, permanently.
-   Dedicated EVM wallet only — a Solana address will not work.
+   Dedicated EVM wallet only, a Solana address will not work.
    ══════════════════════════════════════════════════════════════════ */
 const PARTNER = '0x9536cfe8bEbA85d09CBE1a24369441031a7b58b1';
 
 // Your Railway proxy, no trailing slash. It pins the token image and metadata
 // so nobody has to know what an IPFS CID is. Leave it empty and the upload is
-// disabled — the "Advanced" URI field still works.
+// disabled, the "Advanced" URI field still works.
 const PROXY_BASE = 'https://finnputer-launchpad-proxy-production.up.railway.app';
 
 const ADDR = { factory: '0xe8Cc4431adF8b5A847C113EF0c6af9043219Cb37' };
@@ -846,7 +1197,7 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches && matchMedia('(poin
   document.addEventListener('pointerleave', () => { hero.style.transform = ''; });
 }
 
-// Status line only — the mascot lives in the banner, not here.
+// Status line only, the mascot lives in the banner, not here.
 function setFace(_kind, text, tone) {
   $('status').textContent = text;
   $('status').dataset.tone = tone || '';
@@ -878,7 +1229,7 @@ drop.addEventListener('drop', (e) => {
   $('need-sol').hidden = rh;
 }));
 
-/* chain badge — the visible proof of which network you are on */
+/* chain badge, the visible proof of which network you are on */
 function paintChain() {
   const chip = $('chainChip'), txt = $('chainTxt');
   if (walletChainId === null) { chip.dataset.s = ''; txt.textContent = 'No chain'; return; }
@@ -896,7 +1247,7 @@ async function readChain() {
 const partnerSet = isAddress(PARTNER) && PARTNER.toLowerCase() !== zeroAddress;
 if (!partnerSet) {
   $('guard').innerHTML = `<div class="notice"><b>Partner address not set.</b> Every launch from this page
-    would pay <code>address(0)</code> — you would earn nothing, and it cannot be fixed after launch.
+    would pay <code>address(0)</code>, you would earn nothing, and it cannot be fixed after launch.
     Set <code>PARTNER</code> at the top of the script, then redeploy.</div>`;
   $('padCut').textContent = '0.00%'; $('vaultCut').textContent = '1.00%';
 }
@@ -992,7 +1343,7 @@ function claimerAddress(c) {
 }
 
 function tally() {
-  // Sum the bps, not the percents — floats drift and the contract counts bps.
+  // Sum the bps, not the percents, floats drift and the contract counts bps.
   const bps = claimers.reduce((s, c) => s + toBps(c.pct), 0);
   $('tally').textContent = `${(bps / 100).toFixed(2)} / 100%`;
   $('tally').className = 'bps-tally ' + (bps === 10000 ? 'ok' : 'bad');
@@ -1000,14 +1351,14 @@ function tally() {
 $('addClaimer').addEventListener('click', () => { claimers.push({ input: '', pct: '', resolved: null, avatar: '', name: '' }); renderClaimers(); });
 renderClaimers();
 
-/* client mirror of the factory rules — an on-chain revert still costs gas */
+/* client mirror of the factory rules, an on-chain revert still costs gas */
 function validateClaimers() {
   if (claimers.length === 0) return 'Add at least one fee claimer.';
   if (claimers.length > 100) return 'At most 100 claimers.';
   const seen = new Set();
   for (const c of claimers) {
     const addr = claimerAddress(c);
-    if (c.input.startsWith('@') && !c.resolved) return `"${c.input}" hasn't resolved to a wallet yet — wait a moment or check the handle.`;
+    if (c.input.startsWith('@') && !c.resolved) return `"${c.input}" hasn't resolved to a wallet yet, wait a moment or check the handle.`;
     if (!isAddress(addr)) return `"${c.input || 'empty'}" is not a valid address or @handle.`;
     const k = addr.toLowerCase();
     if (k === zeroAddress) return 'The zero address cannot be a claimer.';
@@ -1021,7 +1372,7 @@ function validateClaimers() {
   const total = claimers.reduce((s, c) => s + toBps(c.pct), 0);
   if (total !== 10000) {
     const off = (total - 10000) / 100;
-    return `Shares must add up to exactly 100% — currently ${(total / 100).toFixed(2)}% (${off > 0 ? 'over' : 'under'} by ${Math.abs(off).toFixed(2)}%).`;
+    return `Shares must add up to exactly 100%, currently ${(total / 100).toFixed(2)}% (${off > 0 ? 'over' : 'under'} by ${Math.abs(off).toFixed(2)}%).`;
   }
   return null;
 }
@@ -1031,7 +1382,7 @@ async function connect() {
   if (!window.ethereum) {
     const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (mobile) {
-      // No extensions on mobile browsers — open in MetaMask's in-app browser.
+      // No extensions on mobile browsers, open in MetaMask's in-app browser.
       setFace('fail', 'Open this page in MetaMask to connect', 'bad');
       window.location.href = 'https://metamask.app.link/dapp/' + location.host + location.pathname;
       return;
@@ -1044,7 +1395,7 @@ async function connect() {
     if (!accounts || !accounts.length) return setFace('fail', 'No account approved', 'bad');
     account = getAddress(accounts[0]);
 
-    // Account is approved — reflect that NOW, before the chain switch, so a
+    // Account is approved, reflect that NOW, before the chain switch, so a
     // declined network prompt can't roll the whole connection back to "not connected".
     walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
     $('connect').textContent = shorten(account);
@@ -1052,7 +1403,7 @@ async function connect() {
     await readChain();
     setFace('live', 'Connected', 'ok');
 
-    // Now try to get them onto the right chain. Failure here is not fatal —
+    // Now try to get them onto the right chain. Failure here is not fatal -
     // the chain badge and the launch button already gate on chainId.
     try {
       await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
@@ -1065,7 +1416,7 @@ async function connect() {
           blockExplorerUrls: [EXPLORER],
         }] });
       } else if (err.code === 4001) {
-        setFace('idle', 'Connected — switch to Robinhood Chain to launch', 'bad');
+        setFace('idle', 'Connected, switch to Robinhood Chain to launch', 'bad');
         return;
       }
     }
@@ -1092,7 +1443,7 @@ window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 1
 readChain();
 
 /* No wallet touch on load. Some wallets pop themselves open the moment a page
-   builds a client or reads chain state on startup — so we do NOTHING here.
+   builds a client or reads chain state on startup, so we do NOTHING here.
    The page stays quietly "not connected"; the wallet is only ever touched when
    the user clicks Connect. This is the only way to stop the auto-open on load. */
 
@@ -1140,7 +1491,7 @@ $('launch').addEventListener('click', async () => {
     }
 
     setFace('working', 'Reading the creation fee…');
-    // owner-settable global — read live, never cached
+    // owner-settable global, read live, never cached
     creationFee = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'creationFee' });
 
     const args = [name, symbol, metadataURI, getAddress(PARTNER),
@@ -1159,7 +1510,7 @@ $('launch').addEventListener('click', async () => {
     const receipt = await publicClient.waitForTransactionReceipt({ hash });
     if (receipt.status !== 'success') throw new Error('The transaction reverted. No token was created.');
 
-    // per-token addresses are not predictable — they only exist in the event
+    // per-token addresses are not predictable, they only exist in the event
     const [created] = parseEventLogs({ abi: factoryAbi, logs: receipt.logs, eventName: 'TokenCreated' });
     if (!created) throw new Error('Confirmed, but no TokenCreated event was found in the receipt.');
 
@@ -1175,7 +1526,7 @@ $('launch').addEventListener('click', async () => {
       <div class="trade-row">
         <a class="trade-link" href="${BAGS_APP}/${created.args.token}" target="_blank" rel="noopener">Trade ↗</a>
       </div>
-      <p style="margin-top:12px;color:var(--mute);font-size:11.5px;">Save the token address — it identifies this launch everywhere else.</p>`);
+      <p style="margin-top:12px;color:var(--mute);font-size:11.5px;">Save the token address, it identifies this launch everywhere else.</p>`);
     loadFeed();
   } catch (e) {
     const msg = e.shortMessage || e.details || e.message || 'Launch failed.';
@@ -1186,7 +1537,7 @@ $('launch').addEventListener('click', async () => {
 function hintFor(msg) {
   const m = String(msg);
   if (m.includes('ChainMismatch'))           return '<p class="hint">The wallet is on another network. Switch to Robinhood Chain and try again.</p>';
-  if (m.includes('InsufficientCreationFee')) return '<p class="hint">The fee changed between reading and signing. Try again — it is read live.</p>';
+  if (m.includes('InsufficientCreationFee')) return '<p class="hint">The fee changed between reading and signing. Try again, it is read live.</p>';
   if (m.includes('InvalidClaimers'))         return '<p class="hint">A claimer is duplicated, zero, equal to the partner, or the shares do not add up to 100%.</p>';
   if (m.includes('NoClaimers'))              return '<p class="hint">The claimers array was empty.</p>';
   if (m.includes('BuyFailed'))               return '<p class="hint">The atomic initial buy reverted. Lower the buy amount, or launch without one and buy after.</p>';
@@ -1195,7 +1546,7 @@ function hintFor(msg) {
 
 /* ── feed ───────────────────────────────────────────────────────────────
    Grouped by state, with each token's own bonding curve on demand. Every
-   number below is read from the curve contract — nothing is simulated.   */
+   number below is read from the curve contract, nothing is simulated.   */
 
 const curveCache = new Map();
 
@@ -1292,7 +1643,7 @@ async function toggleCurve(token, curve, migrated, btn) {
       </div>`;
 
     if (migrated) {
-      // The curve is drained after migration — liquidity lives in a Uniswap v4 pool now.
+      // The curve is drained after migration, liquidity lives in a Uniswap v4 pool now.
       panel.innerHTML = `<div class="curve-stats" style="margin-top:2px">
           <div class="hl"><span>State</span><b>Graduated to Uniswap v4</b></div>
           <div><span>Raised on the curve</span><b>${fmtEth(data.threshold)}</b></div>
@@ -1360,7 +1711,7 @@ async function loadFeed() {
 
     const mine = rows.filter(r => r.partner.toLowerCase() === PARTNER.toLowerCase()).reverse();
     if (mine.length === 0) {
-      box.innerHTML = `<p class="empty">Nothing launched through this pad yet — in the last ${Number(limit)} tokens on the factory.</p>`;
+      box.innerHTML = `<p class="empty">Nothing launched through this pad yet, in the last ${Number(limit)} tokens on the factory.</p>`;
       return;
     }
 
@@ -1384,7 +1735,7 @@ async function loadFeed() {
     box.querySelectorAll('.pfp').forEach(img => loadArt(img.dataset.uri, img));
   } catch (e) {
     console.error(e);
-    box.innerHTML = '<p class="empty">Could not read the chain. The public RPC is rate-limited — try again in a moment.</p>';
+    box.innerHTML = '<p class="empty">Could not read the chain. The public RPC is rate-limited, try again in a moment.</p>';
   }
 }
 loadFeed();
@@ -1425,7 +1776,7 @@ async function loadDashboard() {
     const data = await rhApi('tokens', { creator: account, limit: 50, orderBy: 'createdAtTimestamp', orderDirection: 'desc' });
     const items = data.items || [];
     if (!items.length) {
-      list.innerHTML = '<p class="empty">You haven\'t launched a token here yet. Launch one above — it\'ll show up here with live price, activity and fees.</p>';
+      list.innerHTML = '<p class="empty">You haven\'t launched a token here yet. Launch one above, it\'ll show up here with live price, activity and fees.</p>';
       return;
     }
     list.innerHTML = items.map(t => {
@@ -1438,7 +1789,7 @@ async function loadDashboard() {
           <div class="dash-tok-id"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · ${shorten(t.address)}</small></div>
           <div class="dash-tok-prog">
             ${t.migrated ? '<span class="pp grad">Graduated</span><small>on uniswap</small>'
-                         : `<span class="pp">${prog == null ? '—' : prog + '%'}</span><small>to graduate</small>`}
+                         : `<span class="pp">${prog == null ? '-' : prog + '%'}</span><small>to graduate</small>`}
           </div>
         </div>`;
     }).join('');
@@ -1449,7 +1800,7 @@ async function loadDashboard() {
     }));
   } catch (e) {
     console.error(e);
-    list.innerHTML = `<p class="empty">Couldn't load your tokens — ${e.message}. Try again in a moment.</p>`;
+    list.innerHTML = `<p class="empty">Couldn't load your tokens, ${e.message}. Try again in a moment.</p>`;
   }
 }
 
@@ -1463,10 +1814,10 @@ async function openTokenDetail(addr, tok) {
         ${meta.image ? `<img src="${meta.image}" alt="" onerror="this.style.display='none'">` : ''}
         <div><h3>$${tok?.symbol || '?'} <small>${tok?.name || ''}</small></h3><small>${shorten(addr)}</small></div>
       </div>
-      <div class="stat-row" id="dStats"><div class="stat"><div class="k">Loading…</div><div class="v">—</div></div></div>
+      <div class="stat-row" id="dStats"><div class="stat"><div class="k">Loading…</div><div class="v">-</div></div></div>
       <div class="chart-wrap" id="dChart"><div class="chart-empty">Loading price history…</div></div>
       <div class="earn-strip" id="dEarn" style="display:none;">
-        <div><div class="lbl">Your claimable fees</div><div class="amt" id="dEarnAmt">—</div></div>
+        <div><div class="lbl">Your claimable fees</div><div class="amt" id="dEarnAmt">-</div></div>
         <button class="claim-btn" id="dClaimBtn" style="display:none;">Claim</button>
       </div>
       <div class="trade-panel" id="dTrade">
@@ -1495,7 +1846,7 @@ async function loadStats(addr) {
     const el = $('dStats'); if (!el) return;
     const last = s.lastPriceEthPerToken ? Number(s.lastPriceEthPerToken) : null;
     el.innerHTML = `
-      <div class="stat"><div class="k">Last price</div><div class="v">${last == null ? '—' : last.toPrecision(3) + ' ETH'}</div></div>
+      <div class="stat"><div class="k">Last price</div><div class="v">${last == null ? '-' : last.toPrecision(3) + ' ETH'}</div></div>
       <div class="stat"><div class="k">24h volume</div><div class="v">${ethStr(s.volumeEthWei, 3)} ETH</div></div>
       <div class="stat"><div class="k">24h trades</div><div class="v">${s.txCount ?? 0}</div></div>
       <div class="stat"><div class="k">Buys / Sells</div><div class="v">${s.buyCount ?? 0}/${s.sellCount ?? 0}</div></div>`;
@@ -1516,7 +1867,7 @@ async function loadChart(addr) {
   }
 }
 
-// dependency-free SVG price line — no external chart library
+// dependency-free SVG price line, no external chart library
 function sparkline(pts) {
   const W = 480, H = 150, pad = 6;
   const ps = pts.map(p => p.p), ts = pts.map(p => p.t);
@@ -1599,9 +1950,9 @@ function wireTrade(addr, tok) {
     // Trading executes on-chain against the curve/router. The quote proves the
     // route; the actual buy/sell is a signed contract call. Wired conservatively:
     // we tell the user to confirm in-wallet and open the token on bags for the
-    // swap UI ONLY as a fallback — the on-chain buy/sell call is the next build
+    // swap UI ONLY as a fallback, the on-chain buy/sell call is the next build
     // step once the curve buy()/sell() ABI is verified against a live token.
-    quoteEl.innerHTML = 'On-chain trading from the dashboard is rolling out — your quote is live. For now confirm the swap in your wallet flow; direct buy/sell here lands next.';
+    quoteEl.innerHTML = 'On-chain trading from the dashboard is rolling out, your quote is live. For now confirm the swap in your wallet flow; direct buy/sell here lands next.';
   });
 }
 
@@ -1679,7 +2030,7 @@ async function solConnect() {
       window.location.href = target;
       return;
     }
-    solSet('No Solana wallet found — install one first', 'bad');
+    solSet('No Solana wallet found, install one first', 'bad');
     window.open('https://phantom.app/', '_blank');
     return;
   }
@@ -1765,6 +2116,460 @@ $('solLaunch').addEventListener('click', async () => {
   }
 });
 solArm();
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   APP SHELL  (v2)
+   Everything above is the original engine and is untouched. What follows
+   is the app around it: routing, the explore numbers, the paired launch
+   on Solana, the creator tools and dividend coins on Robinhood Chain.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── routing ─────────────────────────────────────────────────────────── */
+const VIEWS = ['explore', 'launch', 'portfolio', 'creator'];
+const seen = new Set();
+
+function showView(name) {
+  const v = VIEWS.includes(name) ? name : 'explore';
+  VIEWS.forEach(id => $('v-' + id).classList.toggle('on', id === v));
+  document.querySelectorAll('.nav-link').forEach(b => {
+    if (b.dataset.view === v) b.setAttribute('aria-current', 'page');
+    else b.removeAttribute('aria-current');
+  });
+  scrollTo(0, 0);
+  revealIn($('v-' + v));
+  // load a view's data the first time it is opened, never on every switch
+  if (!seen.has(v)) { seen.add(v); onFirstOpen(v); }
+}
+function onFirstOpen(v) {
+  if (v === 'explore') { loadStatTiles(); loadTopVolume(); }
+  if (v === 'creator') { loadPairFeed(); checkIndexFeature(); }
+}
+document.querySelectorAll('.nav-link').forEach(b => {
+  b.addEventListener('click', () => { location.hash = '#/' + b.dataset.view; });
+});
+addEventListener('hashchange', () => showView(location.hash.replace('#/', '')));
+showView(location.hash.replace('#/', ''));
+
+/* ── staggered reveal ────────────────────────────────────────────────── */
+function revealIn(root) {
+  const items = root.querySelectorAll('.reveal');
+  items.forEach((el, i) => setTimeout(() => el.classList.add('in'), 60 * i));
+}
+
+/* ── count up ────────────────────────────────────────────────────────── */
+function countUp(el, target, suffix = '') {
+  if (!el) return;
+  const dur = 900, t0 = performance.now();
+  const dp = target < 10 && target % 1 !== 0 ? 3 : 0;
+  const step = (t) => {
+    const p = Math.min(1, (t - t0) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = target * eased;
+    el.innerHTML = val.toLocaleString('en-US', { maximumFractionDigits: dp }) + suffix;
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+/* spotlight follows the pointer on the stat tiles */
+document.querySelectorAll('.tile').forEach(t => {
+  t.addEventListener('pointermove', (e) => {
+    const r = t.getBoundingClientRect();
+    t.style.setProperty('--mx', `${e.clientX - r.left}px`);
+    t.style.setProperty('--my', `${e.clientY - r.top}px`);
+  }, { passive: true });
+});
+
+/* ── explore numbers ─────────────────────────────────────────────────── */
+async function loadStatTiles() {
+  // exact, straight from the factory
+  try {
+    const len = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'allTokensLength' });
+    countUp($('stTokens'), Number(len));
+  } catch { $('stTokens').textContent = '-'; }
+
+  try {
+    const fee = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'creationFee' });
+    const eth = Number(formatEther(fee));
+    $('stFee').innerHTML = eth === 0 ? 'free' : `${eth.toLocaleString('en-US', { maximumFractionDigits: 4 })}<small>ETH</small>`;
+  } catch { $('stFee').textContent = '-'; }
+
+  // a sample, not a total: say so on the label rather than pretend
+  try {
+    const data = await rhApi('tokens', { limit: 100, orderBy: 'createdAtTimestamp', orderDirection: 'desc' });
+    const items = data.items || [];
+    const grad = items.filter(t => t.migrated).length;
+    $('stGrad').closest('.tile').querySelector('.k').textContent = `Graduated, last ${items.length}`;
+    countUp($('stGrad'), grad);
+  } catch { $('stGrad').textContent = '-'; }
+
+  try {
+    const top = await rhApi('top-volume', { limit: 1 });
+    const first = (top.items || top || [])[0];
+    const eth = weiToEth(first?.volumeEthWei || 0);
+    countUp($('stVolume'), eth, '<small>ETH</small>');
+  } catch { $('stVolume').textContent = '-'; }
+}
+
+async function loadTopVolume() {
+  const box = $('topVol');
+  try {
+    const top = await rhApi('top-volume', { limit: 10 });
+    const items = top.items || top || [];
+    if (!items.length) { box.innerHTML = '<p class="empty">No volume recorded yet.</p>'; return; }
+    box.innerHTML = '<div class="mini-list">' + items.map(t => {
+      const img = t.metadata?.image || '';
+      return `<div class="mini">
+        ${img ? `<img src="${img}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · ${shorten(t.address)}</small></div>
+        <div class="amt">${ethStr(t.volumeEthWei, 2)} ETH</div>
+      </div>`;
+    }).join('') + '</div>';
+  } catch (e) {
+    box.innerHTML = `<p class="empty">Could not load the ranking, ${e.message}</p>`;
+  }
+}
+
+/* ── Solana launch modes ─────────────────────────────────────────────── */
+// The standard tab keeps its own button and handler. The paired launch is a
+// separate panel with its own button, so neither path can interfere with the
+// other and the tested SOL flow stays exactly as it was.
+let pairMode = false;
+let quoteTokens = [];
+let quotePick = null;
+
+function paintSolMode() {
+  $('mode-sol').setAttribute('aria-pressed', String(!pairMode));
+  $('mode-pair').setAttribute('aria-pressed', String(pairMode));
+  const solTabOpen = $('tab-sol').getAttribute('aria-selected') === 'true';
+  $('p-sol').hidden = !solTabOpen || pairMode;
+  $('p-pair').hidden = !solTabOpen || !pairMode;
+  if (pairMode && !quoteTokens.length) loadQuoteTokens();
+  pairArm();
+}
+$('mode-sol').addEventListener('click', () => { pairMode = false; paintSolMode(); });
+$('mode-pair').addEventListener('click', () => { pairMode = true; paintSolMode(); });
+
+// the original tab handler already toggles p-rh and p-sol, this rides along
+['tab-rh', 'tab-sol'].forEach(t => $(t).addEventListener('click', () => {
+  const solOpen = t === 'tab-sol';
+  $('solModes').hidden = !solOpen;
+  paintSolMode();
+}));
+
+async function loadQuoteTokens() {
+  const grid = $('quoteGrid');
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/sol/quote-tokens`);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `Failed (${r.status}).`);
+    quoteTokens = Array.isArray(j) ? j : [];
+    if (!quoteTokens.length) { grid.innerHTML = '<p class="empty">Bags lists no pair tokens right now.</p>'; return; }
+    grid.innerHTML = quoteTokens.map((t, i) => `
+      <button class="quote-opt" data-i="${i}" aria-pressed="false">
+        ${t.image ? `<img src="${t.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        <div class="qs"><b>${t.symbol || '?'}</b><small>${t.name || shorten(t.mint)}</small></div>
+      </button>`).join('');
+    grid.querySelectorAll('.quote-opt').forEach(b => b.addEventListener('click', () => {
+      grid.querySelectorAll('.quote-opt').forEach(x => x.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      quotePick = quoteTokens[+b.dataset.i];
+      $('pairBuyHint').innerHTML = `Spent from your <b>${quotePick.symbol || 'pair token'}</b> balance, not from SOL. Leave empty for no buy.`;
+      pairArm();
+    }));
+  } catch (e) {
+    grid.innerHTML = `<p class="empty">Could not load the pair tokens, ${e.message}</p>`;
+  }
+}
+
+function pairArm() {
+  const b = $('pairLaunch');
+  if (!b) return;
+  if (!solPubkey) { b.disabled = true; b.textContent = 'Connect a wallet to launch'; $('pairWallet').textContent = 'Connect your Solana wallet in the standard tab, it is the same wallet.'; return; }
+  $('pairWallet').textContent = `Connected: ${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
+  if (!quotePick) { b.disabled = true; b.textContent = 'Pick a pair token'; return; }
+  b.disabled = false; b.textContent = `Launch paired with ${quotePick.symbol || 'the selected token'}`;
+}
+setInterval(pairArm, 1500);   // picks up a wallet connected in the other tab
+
+/* preview only, Bags hosts the real image from the URL field */
+const pairDrop = $('pairDrop'), pairFile = $('pair-image');
+pairFile?.addEventListener('change', () => {
+  const f = pairFile.files[0];
+  if (f) { $('pairPreview').src = URL.createObjectURL(f); pairDrop.classList.add('has'); pairDrop.querySelector('.drop-cue').textContent = f.name; }
+});
+
+$('pairLaunch').addEventListener('click', async () => {
+  if (!solWallet || !solPubkey || !quotePick) return;
+  const out = $('pairOut');
+  const show = (html, err) => { out.className = 'out show' + (err ? ' err' : ''); out.innerHTML = html; };
+
+  const name = $('pair-name').value.trim();
+  const symbol = $('pair-symbol').value.trim();
+  const imageUrl = $('pair-imgurl').value.trim();
+  if (!name)     return show('<h4>Missing name</h4><p>Give the token a name.</p>', true);
+  if (!symbol)   return show('<h4>Missing ticker</h4><p>Give the token a ticker.</p>', true);
+  if (!imageUrl) return show('<h4>Image URL needed</h4><p>Paste a link to your token image.</p>', true);
+
+  $('pairLaunch').disabled = true;
+  try {
+    show('<h4>Building the launch…</h4><p>Talking to the server.</p>');
+    const body = {
+      name, symbol,
+      description: $('pair-desc').value.trim(),
+      imageUrl,
+      twitter: $('pair-tw').value.trim() || undefined,
+      website: $('pair-web').value.trim() || undefined,
+      telegram: $('pair-tg').value.trim() || undefined,
+      quoteMint: quotePick.mint,
+      initialBuyQuote: $('pair-buy').value.trim() || 0,
+      launcher: solPubkey,
+      feeClaimerWallet: $('pair-claimer').value.trim() || undefined,
+    };
+    const r = await fetch(`${PROXY_BASE}/api/sol/build-pair-launch`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `Build failed (${r.status}).`);
+
+    const { VersionedTransaction } = await import('https://esm.sh/@solana/web3.js@1.95.0');
+    let lastSig = '';
+    for (let i = 0; i < j.transactions.length; i++) {
+      const step = j.transactions[i];
+      show(`<h4>Sign step ${i + 1} of ${j.transactions.length}</h4><p>${step.type.replace(/_/g, ' ').toLowerCase()}. Approve it in your wallet.</p>`);
+      const tx = VersionedTransaction.deserialize(Uint8Array.from(atob(step.tx), c => c.charCodeAt(0)));
+      const signed = await solWallet.signAndSendTransaction(tx);
+      lastSig = signed.signature || signed;
+      // each step depends on the one before it. The page has no Solana RPC of
+      // its own, so this waits a few seconds rather than confirming properly.
+      // If a step fails with "account not found", wait and retry the launch.
+      if (i < j.transactions.length - 1) await new Promise(res => setTimeout(res, 3500));
+    }
+
+    const price = j.launch?.launchPriceQuotePerToken;
+    const fdv = j.launch?.impliedLaunchFdvUsd;
+    show(`<h4>$${symbol.toUpperCase()} launched, paired with ${j.quote?.symbol || 'the pair token'}</h4>
+      <dl class="kv">
+        <dt>Mint</dt><dd><a href="https://bags.fm/${j.mint}" target="_blank" rel="noopener">${j.mint}</a></dd>
+        <dt>Pool</dt><dd>${j.launch?.pool || '-'}</dd>
+        <dt>Launch price</dt><dd>${price == null ? '-' : price} ${j.quote?.symbol || ''} per token</dd>
+        <dt>Implied FDV</dt><dd>${fdv == null ? '-' : '$' + Number(fdv).toLocaleString('en-US', { maximumFractionDigits: 0 })}</dd>
+        <dt>Tx</dt><dd><a href="https://solscan.io/tx/${lastSig}" target="_blank" rel="noopener">${String(lastSig).slice(0, 8)}…</a></dd>
+      </dl>
+      <div class="trade-row"><a class="trade-link" href="https://bags.fm/${j.mint}" target="_blank" rel="noopener">Trade ↗</a></div>
+      <p style="margin-top:12px;color:var(--mute);font-size:11.5px;">Your fees accrue in ${j.quote?.symbol || 'the pair token'} and are claimed under Creator.</p>`);
+  } catch (e) {
+    show(`<h4>Launch failed</h4><p style="word-break:break-word;">${e.message || e}</p>`, true);
+  } finally {
+    pairArm();
+  }
+});
+
+/* ── creator: paired launches feed ───────────────────────────────────── */
+async function loadPairFeed() {
+  const box = $('pairFeed');
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/sol/pair-launches?limit=12`);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `Failed (${r.status}).`);
+    const list = j.launches || [];
+    if (!list.length) { box.innerHTML = '<p class="empty">No paired launches confirmed yet.</p>'; return; }
+    box.innerHTML = '<div class="mini-list">' + list.map(t => `
+      <div class="mini">
+        ${t.image ? `<img src="${t.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · quoted in ${shorten(t.quoteMint || '')}</small></div>
+        <a class="trade-link" href="https://bags.fm/${t.tokenMint}" target="_blank" rel="noopener">Open ↗</a>
+      </div>`).join('') + '</div>';
+  } catch (e) {
+    box.innerHTML = `<p class="empty">Could not load the feed, ${e.message}</p>`;
+  }
+}
+
+/* ── creator: claimable positions and vaults ─────────────────────────── */
+$('claimLoad').addEventListener('click', async () => {
+  const box = $('claimBox');
+  if (!solPubkey) { box.innerHTML = '<p class="empty">Connect a Solana wallet in the Launch view first.</p>'; return; }
+  box.innerHTML = '<p class="empty">Loading…</p>';
+  try {
+    const [posR, vaultR] = await Promise.all([
+      fetch(`${PROXY_BASE}/api/sol/claimable?wallet=${solPubkey}`),
+      fetch(`${PROXY_BASE}/api/sol/vaults?wallet=${solPubkey}`),
+    ]);
+    const positions = await posR.json();
+    const vaults = await vaultR.json();
+
+    const direct = (Array.isArray(positions) ? positions : []).filter(p => p.launchType === 'DAMM_V2_DIRECT');
+    const vlist = Array.isArray(vaults) ? vaults : [];
+
+    let html = '';
+    html += '<div class="mini-list">';
+    if (!direct.length) html += '<p class="empty">No paired-launch positions with fees waiting.</p>';
+    direct.forEach((p, i) => {
+      html += `<div class="mini">
+        <div class="mi"><b>${shorten(p.baseMint || '')}</b><small>paired launch position</small></div>
+        <div class="amt">${p.claimableDisplayAmount ?? '-'}</div>
+        <button class="key key-sm" data-claim="${i}">Claim</button>
+      </div>`;
+    });
+    if (!vlist.length) html += '<p class="empty">No partner or deployer vault balance.</p>';
+    vlist.forEach((v, i) => {
+      html += `<div class="mini">
+        <div class="mi"><b>${v.kind} vault</b><small>quoted in ${shorten(v.quoteMint || '')}</small></div>
+        <div class="amt">${v.claimableDisplayAmount ?? '-'}</div>
+        <button class="key key-sm" data-vault="${i}">Sweep</button>
+      </div>`;
+    });
+    html += '</div>';
+    box.innerHTML = html;
+
+    box.querySelectorAll('[data-claim]').forEach(b => b.addEventListener('click', () => claimPosition(direct[+b.dataset.claim], b)));
+    box.querySelectorAll('[data-vault]').forEach(b => b.addEventListener('click', () => sweepVault(vlist[+b.dataset.vault], b)));
+  } catch (e) {
+    box.innerHTML = `<p class="empty">Could not load, ${e.message}</p>`;
+  }
+});
+
+async function sendSolTxB64(b64) {
+  const { VersionedTransaction } = await import('https://esm.sh/@solana/web3.js@1.95.0');
+  const tx = VersionedTransaction.deserialize(Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
+  const signed = await solWallet.signAndSendTransaction(tx);
+  return signed.signature || signed;
+}
+
+async function claimPosition(pos, btn) {
+  if (!pos?.dammPositionInfo) return;
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/sol/claim-tx`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pos.dammPositionInfo),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Claim build failed.');
+    for (const b64 of j.transactions) await sendSolTxB64(b64);
+    btn.textContent = 'Claimed';
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'Retry';
+    console.error('[claim]', e);
+  }
+}
+
+async function sweepVault(v, btn) {
+  btn.disabled = true; btn.textContent = '…';
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/sol/vault-claim`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: v.kind, wallet: solPubkey, quoteMint: v.quoteMint }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Vault claim failed.');
+    await sendSolTxB64(j.transaction);
+    btn.textContent = 'Swept';
+  } catch (e) {
+    btn.disabled = false; btn.textContent = 'Retry';
+    console.error('[vault]', e);
+  }
+}
+
+/* ── creator: dividend coins ─────────────────────────────────────────── */
+// Only shown when the server has owner wallets configured. The server checks
+// the signature and the wallet list, and Bags itself rejects any token whose
+// creator wallet does not belong to our API key's user.
+async function checkIndexFeature() {
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/health`);
+    const j = await r.json();
+    if (j.indexTokens) { $('divCard').hidden = false; renderBasket(); armDiv(); }
+  } catch { /* feature simply stays hidden */ }
+}
+
+const basket = [''];
+function renderBasket() {
+  $('basket').innerHTML = basket.map((v, i) => `
+    <div class="basket-row">
+      <input data-b="${i}" placeholder="0x… tokenised asset, e.g. a stock" value="${v}" />
+      <button class="key" data-brm="${i}" ${basket.length === 1 ? 'disabled' : ''} title="Remove">×</button>
+    </div>`).join('');
+  $('basket').querySelectorAll('input[data-b]').forEach(inp =>
+    inp.addEventListener('input', () => { basket[+inp.dataset.b] = inp.value.trim(); armDiv(); }));
+  $('basket').querySelectorAll('[data-brm]').forEach(b =>
+    b.addEventListener('click', () => { basket.splice(+b.dataset.brm, 1); renderBasket(); armDiv(); }));
+}
+$('addBasket').addEventListener('click', () => {
+  if (basket.length >= 10) return;
+  basket.push(''); renderBasket(); armDiv();
+});
+
+function armDiv() {
+  const b = $('divGo');
+  if (!b) return;
+  if (!account) { b.disabled = true; b.textContent = 'Connect wallet'; return; }
+  const token = $('div-token').value.trim();
+  const filled = basket.filter(Boolean);
+  if (!isAddress(token)) { b.disabled = true; b.textContent = 'Enter the token address'; return; }
+  if (!filled.length) { b.disabled = true; b.textContent = 'Add at least one asset'; return; }
+  if (!filled.every(isAddress)) { b.disabled = true; b.textContent = 'One basket address is invalid'; return; }
+  b.disabled = false; b.textContent = `Register with ${filled.length} asset${filled.length > 1 ? 's' : ''}`;
+}
+$('div-token').addEventListener('input', armDiv);
+
+$('divGo').addEventListener('click', async () => {
+  const out = $('divOut');
+  const show = (html, err) => { out.className = 'out show' + (err ? ' err' : ''); out.innerHTML = html; };
+  const tokenAddress = $('div-token').value.trim();
+  const tokens = basket.filter(Boolean);
+
+  if (!confirm('This cannot be undone. The basket is fixed forever and the creator fees go to holders from now on. Continue?')) return;
+
+  $('divGo').disabled = true;
+  try {
+    // exactly the string the server rebuilds and verifies
+    const message = `FINNPUTER index token init\ntoken: ${tokenAddress.toLowerCase()}\nbasket: ${tokens.map(t => t.toLowerCase()).join(',')}`;
+    show('<h4>Sign to prove the wallet</h4><p>This signature costs nothing and moves nothing.</p>');
+    const signature = await walletClient.signMessage({ account, message });
+
+    show('<h4>Registering…</h4><p>Talking to Bags.</p>');
+    const r = await fetch(`${PROXY_BASE}/api/rh/index-token/init`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tokenAddress, tokens, wallet: account, signature }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `Registration failed (${r.status}).`);
+
+    show(`<h4>Registered as a dividend coin</h4>
+      <p>Every trade now feeds the basket. The bot starts a cycle once the claimable creator fees reach 0.001 ETH, then buys the assets and pays holders pro rata.</p>`);
+  } catch (e) {
+    const m = e.shortMessage || e.message || String(e);
+    let hint = '';
+    if (m.includes('403')) hint = '<p class="hint">Bags rejected it: either the token was not launched with the Bags claimer at 100%, or its creator wallet does not belong to your Bags account.</p>';
+    if (m.includes('409')) hint = '<p class="hint">This token is already registered. The basket cannot be changed.</p>';
+    if (m.includes('404')) hint = '<p class="hint">That address is not a Bags token on Robinhood Chain.</p>';
+    show(`<h4>Registration failed</h4><p style="word-break:break-word;">${m}</p>${hint}`, true);
+  } finally { armDiv(); }
+});
+
+$('divCheckGo').addEventListener('click', async () => {
+  const el = $('divStatus');
+  const addr = $('div-check').value.trim();
+  if (!isAddress(addr)) { el.innerHTML = '<p class="hint">Enter a valid address.</p>'; return; }
+  el.innerHTML = '<p class="hint">Checking…</p>';
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/rh/index-token/status`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tokenAddresses: [addr] }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Check failed.');
+    const item = (Array.isArray(j) ? j : j.response || [])[0];
+    if (!item?.isIndexToken) { el.innerHTML = '<p class="hint">Not an index token.</p>'; return; }
+    el.innerHTML = `<p class="hint">Index token with ${item.tokens.length} asset(s): ${item.tokens.map(shorten).join(', ')}</p>`;
+  } catch (e) {
+    el.innerHTML = `<p class="hint">${e.message}</p>`;
+  }
+});
+
+/* keep the dividend button honest about the wallet state */
+setInterval(armDiv, 1500);
 </script>
 </body>
 </html>
