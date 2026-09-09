@@ -41,6 +41,7 @@
     --r:16px;
   }
   *{box-sizing:border-box}
+  [hidden]{display:none !important}
   html,body{margin:0;padding:0;overflow-x:clip;width:100%}
   body{
     background:
@@ -417,11 +418,17 @@
       </div>
     </section>
 
-    <div class="sec-wrap"><div class="sec">Launched through FINNPUTER</div></div>
-    <div id="feed" class="reveal"><p class="empty">Reading the chain…</p></div>
+    <div class="sec-wrap"><div class="sec">Just launched on Solana</div></div>
+    <div id="solFeed" class="reveal"><p class="empty">Loading…</p></div>
+
+    <div class="sec-wrap"><div class="sec">Just launched on Robinhood Chain</div></div>
+    <div id="rhFeed" class="reveal"><p class="empty">Loading…</p></div>
 
     <div class="sec-wrap"><div class="sec">Top volume on Robinhood Chain</div></div>
     <div id="topVol" class="reveal"><p class="empty">Loading…</p></div>
+
+    <div class="sec-wrap"><div class="sec">Launched through FINNPUTER</div></div>
+    <div id="feed" class="reveal"><p class="empty">Reading the chain…</p></div>
   </section>
 
   <!-- ══════════════════ LAUNCH ══════════════════ -->
@@ -1810,7 +1817,7 @@ function showView(name) {
   if (!opened.has(v)) { opened.add(v); onFirstOpen(v); }
 }
 function onFirstOpen(v) {
-  if (v === 'explore') { loadStatTiles(); loadTopVolume(); }
+  if (v === 'explore') { loadStatTiles(); loadTopVolume(); loadSolFeed(); loadRhFeed(); }
   if (v === 'launch')  { loadConfigTypes(); }
   if (v === 'creator') { loadPairFeed(); checkIndexFeature(); }
 }
@@ -1858,7 +1865,7 @@ async function loadStatTiles() {
   } catch { $('stGrad').textContent = '-'; }
 
   try {
-    const top = await rhApi('top-volume', { limit: 1 });
+    const top = await rhApi('top-volume');
     const first = (top.items || top || [])[0];
     countUp($('stVolume'), weiToEth(first?.volumeEthWei || 0), '<small>ETH</small>');
   } catch { $('stVolume').textContent = '-'; }
@@ -1867,8 +1874,8 @@ async function loadStatTiles() {
 async function loadTopVolume() {
   const box = $('topVol');
   try {
-    const top = await rhApi('top-volume', { limit: 10 });
-    const items = top.items || top || [];
+    const top = await rhApi('top-volume');
+    const items = (top.items || top || []).slice(0, 10);
     if (!items.length) { box.innerHTML = '<p class="empty">No volume recorded yet.</p>'; return; }
     box.innerHTML = '<div class="mini-list">' + items.map(t => `
       <div class="mini">
@@ -2539,6 +2546,53 @@ $('divCheckGo').addEventListener('click', async () => {
     el.innerHTML = `<p class="hint">${e.message}</p>`;
   }
 });
+
+/* ── live launches, everywhere, not just through this pad ──────────────
+   The pad's own feed stays below. These two show what is actually being
+   launched right now, so the page has a pulse even before your first
+   launch lands.                                                         */
+const STATUS_LABEL = { PRE_LAUNCH: 'preparing', PRE_GRAD: 'bonding', MIGRATING: 'migrating', MIGRATED: 'graduated' };
+
+async function loadSolFeed() {
+  const box = $('solFeed');
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/sol/feed`);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `Failed (${r.status}).`);
+    const list = (Array.isArray(j) ? j : (j.items || j.launches || [])).slice(0, 12);
+    if (!list.length) { box.innerHTML = '<p class="empty">The feed is empty right now.</p>'; return; }
+    box.innerHTML = '<div class="mini-list">' + list.map(t => `
+      <div class="mini">
+        ${t.image ? `<img src="${t.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · ${shorten(t.tokenMint || '')}</small></div>
+        <div class="amt">${STATUS_LABEL[t.status] || (t.status || '').toLowerCase()}</div>
+        <a class="trade-link" href="https://bags.fm/${t.tokenMint}" target="_blank" rel="noopener">Open ↗</a>
+      </div>`).join('') + '</div>';
+  } catch (e) {
+    box.innerHTML = `<p class="empty">Could not load the Solana feed, ${e.message}</p>`;
+  }
+}
+
+async function loadRhFeed() {
+  const box = $('rhFeed');
+  try {
+    const j = await rhApi('token-creations');
+    const list = (j.items || j || []).slice(0, 12);
+    if (!list.length) { box.innerHTML = '<p class="empty">Nothing launched on 4663 yet today.</p>'; return; }
+    box.innerHTML = '<div class="mini-list">' + list.map(t => {
+      const addr = t.address || t.token || '';
+      const prog = t.bondingProgressPct != null ? Math.round(t.bondingProgressPct) + '%' : (t.migrated ? 'graduated' : '');
+      return `<div class="mini">
+        ${t.metadata?.image ? `<img src="${t.metadata.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · ${shorten(addr)}</small></div>
+        <div class="amt">${prog}</div>
+        <a class="trade-link" href="${BAGS_APP}/${addr}" target="_blank" rel="noopener">Open ↗</a>
+      </div>`;
+    }).join('') + '</div>';
+  } catch (e) {
+    box.innerHTML = `<p class="empty">Could not load the Robinhood feed, ${e.message}</p>`;
+  }
+}
 
 /* ── boot ────────────────────────────────────────────────────────────── */
 renderSolClaimers();
