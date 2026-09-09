@@ -858,17 +858,49 @@ const feeShareAbi = parseAbi([
  * even a harmless eth_chainId makes Phantom throw up an "unsupported account"
  * modal. So: when several providers are present, take one that is not Phantom.
  */
+/**
+ * Which injected provider do we talk to for the EVM side?
+ *
+ * Order matters and it is not "the first one". A browser with several wallet
+ * extensions exposes all of them, and some sit there dead: one of them answers
+ * nothing at all and the request hangs forever ("Transport request timed out").
+ * So: the browser's own default first, as long as it is not Phantom (Phantom
+ * throws an unsupported-account dialog at Solana-only accounts), then the
+ * wallets we can identify by name, and only then anything else.
+ */
 let _evm = null;
+function evmList() {
+  const e = window.ethereum;
+  if (!e) return [];
+  return Array.isArray(e.providers) && e.providers.length ? e.providers : [e];
+}
 function evm() {
   if (_evm) return _evm;
   const e = window.ethereum;
-  if (!e) return null;                       // extensions inject late, so ask again next time
-  const list = Array.isArray(e.providers) && e.providers.length ? e.providers : [e];
-  _evm = list.find(p => !p.isPhantom) || list[0];
-  // account and chain changes, attached the first time we actually find a provider
+  const list = evmList();
+  if (!list.length) return null;             // extensions inject late, ask again next time
+  _evm =
+    (e && !e.isPhantom && !Array.isArray(e.providers) ? e : null) ||
+    list.find(p => p.isMetaMask && !p.isPhantom) ||
+    list.find(p => p.isRabby) ||
+    list.find(p => p.isCoinbaseWallet) ||
+    (e && !e.isPhantom ? e : null) ||
+    list.find(p => !p.isPhantom) ||
+    list[0];
+  console.log('[evm] providers:', list.length, 'using:',
+    _evm.isMetaMask ? 'MetaMask' : _evm.isRabby ? 'Rabby' : _evm.isCoinbaseWallet ? 'Coinbase' : _evm.isPhantom ? 'Phantom' : 'unknown');
   _evm.on?.('accountsChanged', () => location.reload());
   _evm.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
   return _evm;
+}
+/** A dead extension must not freeze the page. */
+function askWallet(args, ms = 20000) {
+  return Promise.race([
+    evm().request(args),
+    new Promise((_, rej) => setTimeout(() => rej(new Error(
+      'The wallet did not answer. Open the extension icon in your toolbar, the request is probably waiting there. If several wallet extensions are installed, switch the others off for this site.'
+    )), ms)),
+  ]);
 }
 
 const publicClient = createPublicClient({ chain: robinhood, transport: http(), batch: { multicall: true } });
@@ -1087,7 +1119,7 @@ async function connect() {
   }
   try {
     setFace('working', 'Waiting for the wallet…');
-    const accounts = await evm().request({ method: 'eth_requestAccounts' });
+    const accounts = await askWallet({ method: 'eth_requestAccounts' });
     if (!accounts || !accounts.length) return setFace('fail', 'No account approved', 'bad');
     account = getAddress(accounts[0]);
 
