@@ -397,6 +397,8 @@
 
 <div class="wrap">
 
+  <div class="console"><div class="status" id="status">Wallet not connected</div></div>
+
   <!-- ══════════════════ EXPLORE ══════════════════ -->
   <section class="view on" id="v-explore">
     <div class="hero reveal">
@@ -408,7 +410,6 @@
       <span class="eyebrow reveal">Robinhood Chain and Solana</span>
       <h1 class="page reveal">Launch a token and keep <em>1% of every trade</em>, forever.</h1>
       <p class="sub reveal">Bonding curve to Uniswap v4, or straight into a locked pool paired with a tokenised stock. You sign every transaction yourself, and this page never holds your keys.</p>
-      <div class="console reveal"><div class="status" id="status">Wallet not connected</div></div>
 
       <div class="stat-grid reveal">
         <div class="tile"><div class="k">Tokens on the factory</div><div class="v" id="stTokens">0</div></div>
@@ -1081,7 +1082,8 @@ async function connect() {
       window.location.href = 'https://metamask.app.link/dapp/' + location.host + location.pathname;
       return;
     }
-    return setFace('fail', 'No EVM wallet found in this browser', 'bad');
+    $('connect').textContent = 'No EVM wallet';
+    return setFace('fail', 'No EVM wallet found in this browser. MetaMask or Rabby is needed for Robinhood Chain; Solana is connected further down the Launch page.', 'bad');
   }
   try {
     setFace('working', 'Waiting for the wallet…');
@@ -1131,7 +1133,22 @@ function armButton() {
   if (walletChainId !== CHAIN_ID) { b.disabled = true; b.textContent = 'Switch to Robinhood'; return; }
   b.disabled = false; b.textContent = 'Launch token';
 }
-$('connect').addEventListener('click', connect);
+$('connect').addEventListener('click', async () => {
+  // Visible proof that the click reached the script. If this text never
+  // changes, the page is broken; if it changes and nothing else happens,
+  // the wallet extension is sitting on the request.
+  const b = $('connect');
+  const label = b.textContent;
+  b.textContent = 'Opening wallet…';
+  try {
+    await connect();
+    if (!account) b.textContent = label;
+  } catch (e) {
+    b.textContent = 'Wallet error';
+    setFace('fail', e?.message || String(e), 'bad');
+    console.error('[connect]', e);
+  }
+});
 // Deliberately NO readChain() here. Touching the EVM provider on load is what
 // made Phantom pop its "unsupported account" dialog at people who only wanted
 // to launch on Solana. The chain is read the moment they hit Connect.
