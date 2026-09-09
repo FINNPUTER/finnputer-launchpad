@@ -857,13 +857,18 @@ const feeShareAbi = parseAbi([
  * even a harmless eth_chainId makes Phantom throw up an "unsupported account"
  * modal. So: when several providers are present, take one that is not Phantom.
  */
-function pickEvm() {
+let _evm = null;
+function evm() {
+  if (_evm) return _evm;
   const e = window.ethereum;
-  if (!e) return null;
+  if (!e) return null;                       // extensions inject late, so ask again next time
   const list = Array.isArray(e.providers) && e.providers.length ? e.providers : [e];
-  return list.find(p => !p.isPhantom) || list[0];
+  _evm = list.find(p => !p.isPhantom) || list[0];
+  // account and chain changes, attached the first time we actually find a provider
+  _evm.on?.('accountsChanged', () => location.reload());
+  _evm.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
+  return _evm;
 }
-const ETH = pickEvm();
 
 const publicClient = createPublicClient({ chain: robinhood, transport: http(), batch: { multicall: true } });
 let walletClient = null, account = null, walletChainId = null;
@@ -926,8 +931,8 @@ function paintChain() {
   else { chip.dataset.s = 'bad'; txt.textContent = 'Wrong chain: ' + walletChainId; }
 }
 async function readChain() {
-  if (!ETH) return;
-  try { walletChainId = parseInt(await ETH.request({ method: 'eth_chainId' }), 16); }
+  if (!evm()) return;
+  try { walletChainId = parseInt(await evm().request({ method: 'eth_chainId' }), 16); }
   catch { walletChainId = null; }
   paintChain(); armButton();
 }
@@ -1068,7 +1073,7 @@ function validateClaimers() {
 
 /* wallet */
 async function connect() {
-  if (!ETH) {
+  if (!evm()) {
     const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (mobile) {
       // No extensions on mobile browsers, open in MetaMask's in-app browser.
@@ -1080,13 +1085,13 @@ async function connect() {
   }
   try {
     setFace('working', 'Waiting for the wallet…');
-    const accounts = await ETH.request({ method: 'eth_requestAccounts' });
+    const accounts = await evm().request({ method: 'eth_requestAccounts' });
     if (!accounts || !accounts.length) return setFace('fail', 'No account approved', 'bad');
     account = getAddress(accounts[0]);
 
     // Account is approved, reflect that NOW, before the chain switch, so a
     // declined network prompt can't roll the whole connection back to "not connected".
-    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(ETH) });
+    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(evm()) });
     $('connect').textContent = shorten(account);
     if (!claimers[0].input) { claimers[0].input = account; renderClaimers(); }
     await readChain();
@@ -1095,10 +1100,10 @@ async function connect() {
     // Now try to get them onto the right chain. Failure here is not fatal -
     // the chain badge and the launch button already gate on chainId.
     try {
-      await ETH.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
+      await evm().request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
     } catch (err) {
       if (err.code === 4902 || err?.data?.originalError?.code === 4902) {
-        await ETH.request({ method: 'wallet_addEthereumChain', params: [{
+        await evm().request({ method: 'wallet_addEthereumChain', params: [{
           chainId: CHAIN_HEX, chainName: 'Robinhood Chain',
           nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
           rpcUrls: ['https://rpc.mainnet.chain.robinhood.com'],
@@ -1127,8 +1132,6 @@ function armButton() {
   b.disabled = false; b.textContent = 'Launch token';
 }
 $('connect').addEventListener('click', connect);
-ETH?.on?.('accountsChanged', () => location.reload());
-ETH?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
 // Deliberately NO readChain() here. Touching the EVM provider on load is what
 // made Phantom pop its "unsupported account" dialog at people who only wanted
 // to launch on Solana. The chain is read the moment they hit Connect.
