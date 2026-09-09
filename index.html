@@ -1689,7 +1689,8 @@ async function connectSolWallet(entry) {
     entry.obj.on?.('disconnect', () => { solPubkey = null; solWallet = null; $('solConnect').textContent = 'Connect wallet'; solSet('Wallet disconnected', 'bad'); solArm(); });
     entry.obj.on?.('accountChanged', (pk) => { if (pk) { solPubkey = pk.toString(); $('solConnect').textContent = `${entry.name} · ${solPubkey.slice(0,4)}…${solPubkey.slice(-4)}`; } });
   } catch (e) {
-    solSet(e.message || `${entry.name} connection failed`, 'bad');
+    console.error('[sol connect]', e);
+    solSet(`${entry.name}: ${e?.message || 'connection refused'}`, 'bad');
   }
 }
 
@@ -1698,6 +1699,7 @@ const IN_WALLET_BROWSER = !!(window.solana || window.ethereum || window.phantom)
 
 async function solConnect() {
   const wallets = detectSolWallets();
+  console.log('[sol] wallets found:', wallets.map(w => w.name));
   if (wallets.length === 0) {
     if (IS_MOBILE && !IN_WALLET_BROWSER) {
       // On mobile Safari/Chrome there are no wallet extensions. Open this page
@@ -1707,8 +1709,18 @@ async function solConnect() {
       window.location.href = target;
       return;
     }
-    solSet('No Solana wallet found, install one first', 'bad');
-    window.open('https://phantom.app/', '_blank');
+    // No redirect. Sending someone to a download page they already used is
+    // useless and hides the real message. Say what was actually found instead.
+    const probe = {
+      'window.solana': typeof window.solana,
+      'window.solana.isPhantom': !!window.solana?.isPhantom,
+      'window.phantom': typeof window.phantom,
+      'window.phantom.solana': typeof window.phantom?.solana,
+      'window.solflare': typeof window.solflare,
+      'window.backpack': typeof window.backpack,
+    };
+    console.log('[sol] no wallet detected:', probe);
+    solSet('No Solana wallet is reaching this page. If Phantom is installed, unlock it and reload. Details are in the browser console.', 'bad');
     return;
   }
   if (wallets.length === 1) { await connectSolWallet(wallets[0]); return; }
