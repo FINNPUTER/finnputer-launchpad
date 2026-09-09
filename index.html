@@ -1,789 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>FINNPUTER Launchpad · Robinhood Chain and Solana</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>FINNPUTER · Launch on Robinhood Chain and Solana</title>
 <meta name="description" content="Launch a token on Robinhood Chain or Solana, or pair it with a tokenised stock, and keep 1% of every trade forever." />
+<meta name="theme-color" content="#050608" />
+<link rel="canonical" href="https://launchpad.finnputerdex.com/" />
 <link rel="icon" type="image/png" href="mascot.png" />
 <link rel="apple-touch-icon" href="mascot.png" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="FINNPUTER" />
-<meta property="og:title" content="FINNPUTER Launchpad · Robinhood Chain and Solana" />
+<meta property="og:title" content="FINNPUTER · Launch on Robinhood Chain and Solana" />
 <meta property="og:description" content="Launch a token on Robinhood Chain or Solana, or pair it with a tokenised stock, and keep 1% of every trade forever." />
-<meta property="og:url" content="https://launchpad.finnputerdex.com" />
+<meta property="og:url" content="https://launchpad.finnputerdex.com/" />
 <meta property="og:image" content="https://launchpad.finnputerdex.com/banner.webp" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:site" content="@FINNPUTER28" />
-<meta name="twitter:title" content="FINNPUTER Launchpad · Robinhood Chain and Solana" />
+<meta name="twitter:title" content="FINNPUTER · Launch on Robinhood Chain and Solana" />
 <meta name="twitter:description" content="Launch a token on Robinhood Chain or Solana, or pair it with a tokenised stock, and keep 1% of every trade forever." />
 <meta name="twitter:image" content="https://launchpad.finnputerdex.com/banner.webp" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <style>
-  :root {
-    /* sampled from the banner artwork */
-    --brand:      #7bdd34;   /* FINNPUTER green */
-    --brand-hi:   #a6f75f;
-    --brand-lo:   #3d7a1c;
-    --brand-deep: #14300c;
-    --coral:      #de6b5e;   /* the beanie */
-    --coral-hi:   #f08878;
-    --face:       #eaf6ff;   /* the smiley: white, not green */
-    --face-glow:  #8fd4ff;
-    --void:       #030503;   /* banner background */
-    --panel:      #0a0f08;
-    --panel-hi:   #111a0e;
-    --edge:       #1e3016;
-    --edge-lit:   #2f5622;
-    --paper:      #d3e2cd;
-    --mute:       #6a7c64;
-    --display: 'Chakra Petch', system-ui, sans-serif;
-    --mono: 'IBM Plex Mono', ui-monospace, monospace;
-    /* the LAUNCHPAD bracket: pointed ends */
-    --bracket: polygon(13px 0, calc(100% - 13px) 0, 100% 50%, calc(100% - 13px) 100%, 13px 100%, 0 50%);
+  /* ══════════════════════════════════════════════════════════════════
+     FINNPUTER LAUNCHPAD, design system
+     Same language as stable.finnputerdex.com: Fraunces for display,
+     Inter for body, Space Mono for numbers. Blue-black ground, glass
+     panels, 16px radii. Every class the engine renders is styled here.
+     ══════════════════════════════════════════════════════════════════ */
+  :root{
+    --bg:#050608; --bg2:#080a10; --panel:rgba(18,22,32,.55); --panel-solid:#0b0e16; --panel2:rgba(24,28,42,.6);
+    --grn:#35d94a; --grn-bright:#83f78f; --grn-deep:#12a02f; --grn-dim:#164a24;
+    --red:#ff2f5e; --red-bright:#ff6f8f; --gold:#d9bd63; --gold-bright:#f0da96;
+    --ink:#eef2f9; --muted:#94a0b6; --faint:#5c667e;
+    --line:rgba(130,160,255,.14); --line-2:rgba(130,160,255,.07);
+    --bad:#ff8a6b; --up:#35d94a; --down:#ff2f5e;
+    --disp:'Fraunces',Georgia,serif; --body:'Inter',system-ui,sans-serif; --mono:'Space Mono',ui-monospace,monospace;
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;overflow-x:clip;width:100%}
+  body{
+    background:
+      radial-gradient(1100px 500px at 78% -8%, rgba(52,211,154,.10), transparent 60%),
+      radial-gradient(900px 500px at 8% 108%, rgba(217,189,99,.06), transparent 55%),
+      var(--bg);
+    color:var(--ink); font-family:var(--body); line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100dvh;
+  }
+  a{color:inherit; text-decoration:none}
+  img{max-width:100%}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 22px}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(120,220,180,.14);border-radius:99px}
+
+  /* ── nav ── */
+  header.nav{position:sticky; top:0; z-index:40; backdrop-filter:blur(16px); background:rgba(5,6,8,.94); border-bottom:1px solid var(--line-2)}
+  .nav-in{display:flex; align-items:center; gap:22px; height:64px}
+  .brand{display:flex; align-items:center; gap:11px; font-family:var(--disp); font-weight:900; font-size:20px; letter-spacing:.01em; white-space:nowrap}
+  .brand img{width:30px;height:30px;border-radius:9px;box-shadow:0 0 0 1px var(--grn),0 0 16px rgba(52,211,154,.35)}
+  .brand b{background:linear-gradient(180deg,var(--grn-bright),var(--grn));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900}
+  nav.tabs-main{display:flex; gap:4px; margin-left:6px}
+  nav.tabs-main button{font-family:var(--body); font-size:14px; font-weight:600; color:var(--muted); background:none; border:0; padding:8px 14px; border-radius:10px; cursor:pointer; transition:.15s}
+  nav.tabs-main button:hover{color:var(--ink); background:rgba(120,220,180,.06)}
+  nav.tabs-main button[aria-current="page"]{color:var(--bg); background:linear-gradient(180deg,var(--grn-bright),var(--grn))}
+  .nav-r{margin-left:auto; display:flex; align-items:center; gap:10px}
+  @media(max-width:820px){
+    .nav-in{height:auto; flex-wrap:wrap; gap:10px; padding:12px 0}
+    nav.tabs-main{order:3; width:100%; margin:0; overflow-x:auto}
+    nav.tabs-main button{font-size:13px; padding:8px 12px}
+    .nav-r{margin-left:auto}
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ── typography blocks ── */
+  section.top{padding:34px 0 10px}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--grn-deep); display:block}
+  h1.page,.thesis{font-family:var(--disp); font-weight:600; font-size:clamp(30px,5vw,42px); margin:8px 0 6px; letter-spacing:-.4px; line-height:1.12}
+  .thesis em{font-style:normal; background:linear-gradient(180deg,var(--grn-bright),var(--grn));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted); font-size:14px; margin:0 0 4px; max-width:62ch}
+  .sec-wrap{margin:44px 0 16px}
+  .sec{font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--grn-deep)}
+  .empty{color:var(--faint); font-size:13px; padding:18px 2px; margin:0}
+  .hint{color:var(--faint); font-size:12px; line-height:1.6; margin:8px 0 0}
+  .hint b{color:var(--muted)}
 
-  body {
-    background: var(--void);
-    color: var(--paper);
-    font-family: var(--mono); font-size: 14px; line-height: 1.6;
-    min-height: 100vh; padding: 0 0 90px;
-    -webkit-font-smoothing: antialiased;
-    position: relative; overflow-x: hidden;
-  }
-  /* the grid floor from the banner */
-  body::before {
-    content: ''; position: fixed; inset: auto 0 0 0; height: 46vh; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(#7bdd3400 0%, #7bdd3412 100%),
-      repeating-linear-gradient(90deg, #7bdd3417 0 1px, transparent 1px 62px),
-      repeating-linear-gradient(0deg,  #7bdd3417 0 1px, transparent 1px 62px);
-    transform: perspective(340px) rotateX(62deg);
-    transform-origin: bottom center;
-    background-position: 0 0, 0 0, 0 0;
-    animation: floor 2.6s linear infinite;
-    opacity: .5;
-    mask-image: linear-gradient(to top, #000 20%, transparent 100%);
-  }
-  @keyframes floor { to { background-position: 0 0, 0 0, 0 62px; } }
-  .wrap { max-width: 740px; margin: 0 auto; padding: 0 16px; position: relative; z-index: 1; }
+  /* ── buttons (legacy .key + new .btn) ── */
+  .key,.btn{font-family:var(--body); font-weight:600; font-size:14px; border:0; cursor:pointer; border-radius:12px; padding:12px 20px;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px; position:relative; overflow:hidden; isolation:isolate;
+    background:linear-gradient(180deg,rgba(120,220,180,.08),rgba(120,220,180,.03)); color:var(--grn); border:1px solid var(--line);
+    transition:transform .18s cubic-bezier(.2,.7,.3,1),box-shadow .25s,filter .25s,background .25s; white-space:nowrap}
+  .key:hover,.btn.ghost:hover{transform:translateY(-1px); border-color:var(--grn); color:var(--grn-bright); background:rgba(120,220,180,.12)}
+  .key-go,.btn.primary{width:100%; background:linear-gradient(180deg,var(--grn-bright),var(--grn) 52%,var(--grn-deep)); color:#05231a; border:0;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 10px 26px -8px rgba(52,211,154,.55),0 2px 6px rgba(0,0,0,.3); font-weight:700; padding:15px 20px; font-size:15px}
+  .btn.primary{width:auto}
+  .key-go::after,.btn.primary::after{content:"";position:absolute;top:0;left:-130%;width:55%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-18deg);transition:left .7s cubic-bezier(.2,.7,.3,1)}
+  .key-go:hover,.btn.primary:hover{transform:translateY(-2px); filter:brightness(1.05); color:#05231a; box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 20px 44px -10px rgba(52,211,154,.6)}
+  .key-go:hover::after,.btn.primary:hover::after{left:150%}
+  .key-sm,.btn.sm{padding:9px 14px; font-size:13px; border-radius:10px; width:auto}
+  .key:disabled,.btn:disabled{opacity:.5; cursor:not-allowed; transform:none; filter:none}
+  .key:disabled::after,.btn:disabled::after{display:none}
 
-  /* ───── banner hero ───── */
-  .hero {
-    margin: 0 auto 26px; max-width: 980px; padding: 14px 16px 0;
-    position: relative; overflow: hidden;
-    transition: transform .5s cubic-bezier(.2,.7,.2,1);
-    will-change: transform;
-  }
-  .hero img { width: 100%; height: auto; display: block; border-radius: 8px; }
-  /* one power-on sweep across the glass, then it stays out of the way */
-  .hero::after {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: linear-gradient(102deg, transparent 42%, #7bdd341f 47%, #eaf6ff1c 50%, #7bdd341f 53%, transparent 58%);
-    transform: translateX(-110%);
-    animation: sweep 1.9s .35s cubic-bezier(.4,0,.2,1) 1 both;
-  }
-  @keyframes sweep { to { transform: translateX(110%); } }
-  .hero .fallback {
-    display: none; font-family: var(--display); font-weight: 700;
-    font-size: 38px; letter-spacing: 0.1em; color: var(--brand);
-    text-align: center; padding: 42px 0 12px; text-shadow: 0 0 30px #7bdd3459;
-  }
-  .hero .fallback small { display: block; font-size: 15px; letter-spacing: 0.36em; color: var(--paper); margin-top: 6px; }
+  /* ── wallet chip / status ── */
+  .chip{font-family:var(--mono); font-size:12px; color:var(--grn); border:1px solid var(--line); padding:8px 12px; border-radius:10px;
+    background:rgba(52,211,154,.05); white-space:nowrap; display:inline-flex; align-items:center; gap:7px}
+  .chip .led{width:7px;height:7px;border-radius:50%;background:var(--faint);display:block}
+  .chip[data-s="ok"] .led{background:var(--grn); box-shadow:0 0 8px var(--grn)}
+  .chip[data-s="bad"] .led{background:var(--bad)}
+  .console{margin:14px 0 0}
+  .status{font-family:var(--mono); font-size:12px; color:var(--muted)}
+  .status[data-tone="ok"]{color:var(--grn)}
+  .status[data-tone="bad"]{color:var(--bad)}
+  .beta-tag{display:inline-block; font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:var(--gold-bright);
+    border:1px solid var(--gold); background:rgba(217,189,99,.08); padding:3px 8px; border-radius:6px}
+  .beta-inline{color:var(--gold-bright)}
 
-  /* ───── header bar ───── */
-  .beta-tag {
-    font-family: var(--display); font-weight: 700; font-size: 10px;
-    letter-spacing: 0.28em; color: var(--brand);
-    border: 1px solid var(--brand-lo); border-radius: 3px;
-    padding: 5px 9px 5px 11px; background: var(--brand-deep);
-    text-transform: uppercase; cursor: default; user-select: none;
-  }
-  .top { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
-  .ctrls { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
-  .chip {
-    display: inline-flex; align-items: center; gap: 7px;
-    font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
-    border: 1px solid var(--edge); border-radius: 3px;
-    padding: 8px 11px; color: var(--mute); background: var(--panel); white-space: nowrap;
-  }
-  .led { width: 6px; height: 6px; border-radius: 50%; background: #2b3527; flex: none; }
-  .chip[data-s="ok"] { color: var(--brand); border-color: var(--brand-lo); }
-  .chip[data-s="ok"] .led { background: var(--brand); box-shadow: 0 0 9px var(--brand); }
-  .chip[data-s="bad"] { color: var(--coral); border-color: #6d3229; }
-  .chip[data-s="bad"] .led { background: var(--coral); box-shadow: 0 0 9px var(--coral); }
+  /* ── panels / cards ── */
+  .panel,.card,.dash-box,.need,.ledger,.detail,.trade-panel,.claim-box{
+    background:linear-gradient(180deg,var(--panel2),var(--panel)); border:1px solid var(--line); border-radius:var(--r); backdrop-filter:blur(8px)}
+  .card{padding:22px; margin-bottom:16px}
+  .card h3{font-family:var(--disp); font-weight:600; font-size:18px; margin:0 0 6px}
+  .card .card-sub{color:var(--muted); font-size:13px; margin:0 0 18px; line-height:1.6}
+  .notice{border:1px solid rgba(255,138,107,.4); border-left-width:3px; background:rgba(255,138,107,.07);
+    border-radius:12px; padding:14px 16px; font-size:13px; line-height:1.6; color:#f6cfc4; margin:18px 0}
+  .notice b{color:var(--bad)}
+  .warn{border:1px solid rgba(217,189,99,.34); border-left-width:3px; background:rgba(217,189,99,.06);
+    border-radius:12px; padding:14px 16px; font-size:13px; line-height:1.65; color:#e6dcc0; margin-bottom:18px}
+  .warn b{color:var(--gold-bright)}
 
-  /* ───── keys ───── */
-  .key {
-    font-family: var(--mono); font-size: 12px; font-weight: 600;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--paper);
-    background: linear-gradient(180deg, #1a2614 0%, #0d140a 100%);
-    border: 1px solid var(--edge-lit); border-radius: 4px;
-    padding: 11px 18px; cursor: pointer;
-    box-shadow: 0 3px 0 #050703, 0 1px 0 #3b6b2b inset;
-    transition: transform .06s, box-shadow .06s, color .12s, border-color .12s;
-  }
-  .key:hover:not(:disabled) { color: var(--brand); border-color: var(--brand-lo); }
-  .key:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 #050703, 0 1px 0 #3b6b2b inset; }
-  .key:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
-  .key:disabled { opacity: .34; cursor: not-allowed; }
+  /* ── hero ── */
+  .hero{position:relative; border-radius:22px; overflow:hidden; margin-top:26px; border:1px solid var(--line);
+    background:linear-gradient(135deg,rgba(52,211,154,.10),rgba(217,189,99,.05))}
+  .hero img{display:block; width:100%; height:auto}
+  .hero .fallback{display:none; padding:64px 26px; font-family:var(--disp); font-weight:900; font-size:38px; text-align:center}
+  .hero .fallback small{display:block; font-family:var(--mono); font-size:11px; letter-spacing:.22em; color:var(--muted); margin-top:8px; font-weight:400}
 
-  /* the launch key wears the LAUNCHPAD bracket */
-  .key-go {
-    width: 100%; padding: 19px; font-family: var(--display); font-weight: 700;
-    font-size: 15px; letter-spacing: 0.22em; color: #041003;
-    background: linear-gradient(180deg, var(--brand-hi) 0%, #5cc41f 100%);
-    border: none; border-radius: 0; clip-path: var(--bracket);
-    box-shadow: none; filter: drop-shadow(0 0 22px #7bdd3466);
-  }
-  .key-go:hover:not(:disabled) { color: #041003; background: linear-gradient(180deg, #c2ff86 0%, #74dd2e 100%); }
-  .key-go:active:not(:disabled) { transform: translateY(2px); }
-  .key-go:focus-visible { outline: none; box-shadow: inset 0 0 0 3px #041003; }
-  .key-go:disabled { background: #1a2614; color: #4d5a47; filter: none; }
-  .key-sm { padding: 7px 12px; font-size: 11px; box-shadow: 0 2px 0 #050703; }
-  .key-sm:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 0 0 #050703; }
+  /* ── stat tiles ── */
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:var(--line-2);
+    border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:24px}
+  .stat-grid .tile{background:var(--panel-solid); padding:20px}
+  .stat-grid .k{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+  .stat-grid .v{font-family:var(--disp); font-weight:600; font-size:30px; margin-top:8px; letter-spacing:-.5px}
+  .stat-grid .v small{font-size:13px; color:var(--muted); margin-left:5px; font-family:var(--mono)}
 
-  /* ───── console strip: the mascot's screen as status light ───── */
-  .console {
-    display: flex; align-items: center; justify-content: center; gap: 14px;
-    background: #000; border: 1px solid var(--edge);
-    padding: 14px 16px; margin-bottom: 34px; border-radius: 4px;
-    box-shadow: 0 0 30px -8px #7bdd3426 inset;
-  }
-  .status { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute); text-align: center; }
-  .status[data-tone="ok"]  { color: var(--brand); }
-  .status[data-tone="bad"] { color: var(--coral); }
-  @media (prefers-reduced-motion: reduce) {
-    body::before, .hero::after { animation: none !important; }
-    .hero { transform: none !important; }
-    * { transition: none !important }
-  }
+  /* ── chain tabs (launch) ── */
+  .tabs{display:flex; gap:6px; background:rgba(120,220,180,.05); padding:5px; border-radius:14px; margin:26px 0 22px}
+  .tab{flex:1; font-family:var(--body); font-weight:700; font-size:14px; color:var(--muted); background:none; border:0;
+    padding:12px; border-radius:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:9px; transition:.15s}
+  .tab:hover{color:var(--ink)}
+  .tab[aria-selected="true"]{color:var(--bg); background:linear-gradient(180deg,var(--grn-bright),var(--grn))}
+  .chain-logo{width:17px; height:17px; display:block}
+  .panel-b[hidden]{display:none}
 
-  /* ───── thesis ───── */
-  .thesis { font-family: var(--display); font-weight: 600; font-size: 26px; line-height: 1.26; text-align: center; margin: 0 auto 8px; max-width: 34ch; }
-  .thesis em { font-style: normal; color: var(--brand); }
-  .sub { text-align: center; color: var(--mute); font-size: 12.5px; margin-bottom: 36px; }
+  /* ── mode cards ── */
+  .modes{display:flex; gap:10px; margin:0 0 20px}
+  .mode{flex:1; cursor:pointer; text-align:left; border:1px solid var(--line); border-radius:14px;
+    background:var(--panel-solid); color:var(--muted); padding:14px 16px; transition:.18s}
+  .mode b{display:block; font-family:var(--disp); font-weight:600; font-size:15px; color:var(--ink); margin-bottom:3px}
+  .mode span{font-size:12px; line-height:1.5; display:block}
+  .mode[aria-pressed="true"]{border-color:var(--grn); background:rgba(52,211,154,.07)}
+  .mode[aria-pressed="true"] b{color:var(--grn-bright)}
+  @media(max-width:640px){.modes{flex-direction:column}}
 
-  /* ───── bracket section headers ───── */
-  .sec {
-    font-family: var(--display); font-weight: 700; font-size: 11.5px;
-    letter-spacing: 0.24em; text-transform: uppercase; color: var(--brand);
-    background: var(--brand-deep); clip-path: var(--bracket);
-    padding: 10px 26px; text-align: center; margin-bottom: 18px;
-    border: none; position: relative;
-  }
-  .sec-wrap { position: relative; margin-bottom: 18px; }
-  .sec-wrap::before {
-    content: ''; position: absolute; inset: 0; background: var(--brand);
-    clip-path: var(--bracket); opacity: .55;
-  }
-  .sec-wrap .sec { position: relative; margin: 0; transform: scale(.994); }
+  /* ── "what you need" ── */
+  .need{padding:22px; margin-bottom:18px}
+  .need-h{font-family:var(--disp); font-weight:600; font-size:17px; margin-bottom:14px}
+  .need-list{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:12px}
+  .need-list li{font-size:13.5px; color:var(--ink)}
+  .need-list li b{display:block; font-weight:600}
+  .need-list li span{display:block; color:var(--muted); font-size:12.5px; margin-top:3px; line-height:1.6}
+  .need-foot,.need-mobile{font-size:12px; color:var(--faint); margin:16px 0 0; line-height:1.6}
+  .fee-live{color:var(--grn); font-family:var(--mono)}
 
-  /* ───── ledger ───── */
-  .ledger { border: 1px solid var(--edge); border-top: none; border-radius: 0 0 3px 3px; overflow: hidden; background: var(--panel); }
-  .fee-details { margin-bottom: 22px; }
-  .claim-note { margin-top: 12px; }
-  .claim-note > summary { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand-lo); cursor: pointer; }
-  .claim-note[open] > summary { color: var(--brand); }
-  .fee-details > summary { border-radius: 3px; }
-  .fee-details[open] > summary { border-radius: 3px 3px 0 0; border-bottom: none; }
-  .ledger-h { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--mute); padding: 9px 14px; border-bottom: 1px solid var(--edge); background: var(--panel-hi); }
-  .row { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 11px 14px; border-bottom: 1px solid #131c0f; font-size: 13px; }
-  .row:last-child { border-bottom: none; }
-  .row b { font-weight: 500; }
-  .row span { color: var(--mute); font-size: 11.5px; }
-  .row .amt { font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; }
-  .row.you .amt { color: var(--brand); }
-  .row.pad .amt { color: var(--brand); }
-  .row.vault .amt { color: var(--mute); }
+  /* ── fee ledger ── */
+  .fee-details{margin-bottom:20px}
+  details{border:1px solid var(--line); border-radius:14px; background:var(--panel-solid); margin-bottom:16px; overflow:hidden}
+  summary{cursor:pointer; padding:14px 18px; font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--muted); list-style:none}
+  summary::-webkit-details-marker{display:none}
+  summary:hover{color:var(--ink)}
+  .details-body{padding:4px 18px 18px}
+  .ledger{border-radius:0; border:0; border-top:1px solid var(--line-2); background:none; backdrop-filter:none}
+  .ledger .row{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 18px; border-top:1px solid var(--line-2)}
+  .ledger .row:first-child{border-top:0}
+  .ledger .row b{font-size:13.5px; font-weight:600}
+  .ledger .row span{font-size:11.5px; color:var(--faint)}
+  .ledger .amt{font-family:var(--mono); font-size:15px; color:var(--ink); background:none; border:0; padding:0; display:block}
+  .ledger .row.you .amt{color:var(--grn-bright)}
+  .ledger .row.pad .amt{color:var(--gold-bright)}
 
-  /* ───── what you need ───── */
-  .need {
-    border: 1px solid var(--edge); border-top: none; border-radius: 0;
-    background: var(--panel); padding: 18px 18px 16px; margin-bottom: 22px;
-  }
-  .need-h {
-    font-family: var(--display); font-weight: 700; font-size: 12px;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--brand);
-    margin-bottom: 14px;
-  }
-  .need-list { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 12px; }
-  .need-list li { counter-increment: step; position: relative; padding-left: 34px; }
-  .need-list li::before {
-    content: counter(step); position: absolute; left: 0; top: -1px;
-    width: 22px; height: 22px; border-radius: 50%;
-    background: var(--brand-deep); border: 1px solid var(--brand-lo);
-    color: var(--brand); font-family: var(--display); font-weight: 700; font-size: 11px;
-    display: grid; place-items: center;
-  }
-  .need-list b { display: block; font-size: 13px; font-weight: 600; color: var(--paper); margin-bottom: 2px; }
-  .need-list span { font-size: 11.5px; color: var(--mute); line-height: 1.55; }
-  .need-list span b { color: var(--paper); font-weight: 600; }
-  .fee-live { color: var(--brand) !important; }
-  .need-foot { margin-top: 14px; font-size: 10.5px; color: #55634d; letter-spacing: 0.02em; }
-  .beta-inline { color: var(--brand-lo); }
-  .need-mobile { display: none; margin-top: 10px; padding: 10px 12px; font-size: 11px; line-height: 1.5;
-    color: var(--brand); background: #7bdd340d; border: 1px solid var(--brand-lo); border-radius: 4px; }
-  @media (hover: none) and (pointer: coarse) { .need-mobile { display: block; } }
+  /* ── forms ── */
+  .field{margin-bottom:16px}
+  .field label{font-family:var(--mono); font-size:11px; color:var(--grn-deep); letter-spacing:.04em; display:block; margin-bottom:7px; text-transform:uppercase}
+  .field input,.field textarea,.field select,input[type="text"]{width:100%; background:var(--panel-solid); border:1px solid var(--line); border-radius:12px;
+    color:var(--ink); font-family:var(--body); font-size:14px; padding:13px 14px; outline:none; transition:border-color .15s}
+  .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--grn)}
+  .field textarea{resize:vertical; min-height:78px}
+  .coin-grid{display:grid; grid-template-columns:150px 1fr; gap:16px; margin-bottom:16px; align-items:stretch}
+  @media(max-width:640px){.coin-grid{grid-template-columns:1fr}}
+  .coin-fields{display:flex; flex-direction:column; gap:14px; justify-content:center}
+  .drop{position:relative; display:flex; align-items:center; justify-content:center; min-height:150px; cursor:pointer; overflow:hidden;
+    border:1px dashed var(--line); border-radius:14px; background:var(--panel-solid); transition:.18s}
+  .drop:hover,.drop.over{border-color:var(--grn); background:rgba(52,211,154,.05)}
+  .drop img{display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+  .drop.has img{display:block}
+  .drop.has .drop-cue{position:absolute; bottom:0; left:0; right:0; background:rgba(5,6,8,.82); padding:7px; font-size:10.5px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .drop-cue{font-family:var(--mono); font-size:11px; color:var(--muted); text-align:center; line-height:1.7}
+  .drop-cue b{display:block; font-size:17px; color:var(--grn)}
 
-  /* ───── tabs (chain selector) ───── */
-  .tabs { display: flex; gap: 8px; }
-  .tab {
-    flex: 1; display: flex; align-items: center; justify-content: center; gap: 9px;
-    font-family: var(--display); font-weight: 700; font-size: 12px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--mute); cursor: pointer; position: relative; overflow: hidden;
-    background: linear-gradient(180deg, #0e130c 0%, #090c08 100%);
-    border: 1px solid var(--edge); border-radius: 6px;
-    padding: 15px 10px;
-    transition: color .2s, border-color .2s, box-shadow .2s, background .2s;
-  }
-  .tab::before {
-    content: ''; position: absolute; inset: 0; opacity: 0;
-    background: radial-gradient(ellipse 80% 100% at 50% 120%, var(--tab-glow, #7bdd34) 0%, transparent 70%);
-    transition: opacity .25s; pointer-events: none;
-  }
-  .tab .chain-logo { width: 18px; height: 18px; flex: none; opacity: .55; transition: opacity .2s; }
-  .tab:hover { color: var(--paper); border-color: var(--edge-lit); }
-  .tab:hover .chain-logo { opacity: .85; }
-  .tab[aria-selected="true"] {
-    color: #fff; border-color: var(--tab-accent, var(--brand-lo));
-    box-shadow: 0 0 0 1px var(--tab-accent, var(--brand-lo)) inset, 0 6px 24px -8px var(--tab-glow, #7bdd34);
-  }
-  .tab[aria-selected="true"]::before { opacity: .28; }
-  .tab[aria-selected="true"] .chain-logo { opacity: 1; }
-  #tab-rh  { --tab-glow: #6fdc3a; --tab-accent: #4e8a2a; }
-  #tab-sol { --tab-glow: #9945ff; --tab-accent: #7a35cc; }
-  .tab:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
-  .panel-b { padding-top: 26px; }
-  .panel-b[hidden] { display: none; }
+  /* claimers */
+  .claimer-row{display:flex; gap:9px; align-items:flex-start; margin-bottom:9px}
+  .claimer-id{flex:1; min-width:0}
+  .pct-input{display:flex; align-items:center; width:96px; background:var(--panel-solid); border:1px solid var(--line); border-radius:12px; padding:0 12px}
+  .pct-input input{width:100%; background:none; border:0; color:var(--ink); font-family:var(--mono); font-size:14px; padding:13px 0; outline:none}
+  .pct-input span{font-family:var(--mono); font-size:12px; color:var(--muted)}
+  .claimer-row .key{padding:13px 15px; border-radius:12px}
+  .resolved{display:flex; align-items:center; gap:7px; margin-top:7px; font-family:var(--mono); font-size:11px; color:var(--grn)}
+  .resolved img{width:19px; height:19px; border-radius:50%}
+  .x-badge{color:var(--ink)}
+  .bps-tally{font-family:var(--mono); font-size:12px; color:var(--muted); text-align:right; margin-top:8px}
+  .bps-tally[data-ok="1"]{color:var(--grn)}
+  .bps-tally[data-ok="0"]{color:var(--bad)}
 
-  /* ───── form ───── */
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+  /* ── output box ── */
+  .out{display:none}
+  .out.show{display:block; margin-top:18px; border:1px solid var(--line); border-left:3px solid var(--grn);
+    border-radius:12px; background:var(--panel-solid); padding:18px 20px}
+  .out.err{border-left-color:var(--bad)}
+  .out h4{font-family:var(--disp); font-weight:600; font-size:17px; margin:0 0 8px}
+  .out p{font-size:13px; color:var(--muted); margin:0 0 6px; line-height:1.6}
+  .kv{display:grid; grid-template-columns:110px 1fr; gap:7px 14px; font-family:var(--mono); font-size:11.5px; margin:12px 0 0}
+  .kv dt{color:var(--faint)}
+  .kv dd{margin:0; color:var(--ink); overflow-wrap:anywhere}
+  .kv a{color:var(--grn)}
+  .trade-row{margin-top:14px}
+  .trade-link{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:12px; color:var(--grn);
+    border:1px solid var(--line); border-radius:10px; padding:9px 14px}
+  .trade-link:hover{border-color:var(--grn); background:rgba(52,211,154,.07)}
 
-  /* image + identity, the way a person actually thinks about a coin */
-  .coin-grid { display: grid; grid-template-columns: 150px 1fr; gap: 14px; margin-bottom: 15px; }
-  @media (max-width: 560px) { .coin-grid { grid-template-columns: 1fr; } }
-  .coin-fields { display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
-  .drop {
-    position: relative; display: grid; place-items: center; cursor: pointer;
-    min-height: 150px; border: 1px dashed var(--edge-lit); border-radius: 4px;
-    background: #000; overflow: hidden; transition: border-color .14s, background .14s;
-  }
-  .drop:hover, .drop.over { border-color: var(--brand); background: #7bdd340a; }
-  .drop:focus-within { outline: 2px solid var(--brand); outline-offset: 2px; }
-  .drop-cue {
-    display: flex; flex-direction: column; align-items: center; gap: 9px;
-    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute);
-    text-align: center; padding: 10px;
-  }
-  .drop-cue b { font-size: 20px; color: var(--brand-lo); font-weight: 400; line-height: 1; }
-  .drop img { display: none; width: 100%; height: 100%; object-fit: cover; }
-  .drop.has img { display: block; }
-  .drop.has .drop-cue {
-    position: absolute; inset: auto 0 0 0; background: #000000cc;
-    padding: 6px; font-size: 9px; gap: 0;
-  }
-  .drop.has .drop-cue b { display: none; }
+  /* ── feed rows ── */
+  .group-h{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); margin:22px 0 10px}
+  .group-h b{color:var(--grn)}
+  .feed-item{display:flex; align-items:center; gap:14px; width:100%; text-align:left; cursor:pointer;
+    background:linear-gradient(180deg,var(--panel2),var(--panel)); border:1px solid var(--line); border-radius:14px;
+    padding:14px 18px; margin-bottom:9px; color:var(--ink); transition:.18s}
+  .feed-item:hover{transform:translateY(-2px); border-color:var(--grn-dim); box-shadow:0 18px 40px -22px rgba(52,211,154,.5)}
+  .pfp{width:38px; height:38px; border-radius:11px; object-fit:cover; background:var(--panel-solid); flex:none}
+  .tick{flex:1; min-width:0; font-family:var(--disp); font-weight:600; font-size:16px}
+  .tick small{display:block; font-family:var(--mono); font-weight:400; font-size:11px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .bar{width:110px; height:6px; background:rgba(120,220,180,.1); border-radius:99px; overflow:hidden; flex:none}
+  .bar i{display:block; height:100%; background:linear-gradient(90deg,var(--grn-deep),var(--grn-bright)); border-radius:99px}
+  .pct{font-family:var(--mono); font-size:12px; color:var(--muted); width:46px; text-align:right; flex:none}
+  .pct.grad{width:auto; color:#05231a; background:var(--grn-bright); border-radius:6px; padding:3px 9px; font-size:9.5px; letter-spacing:.06em; font-weight:700}
+  .curve-panel{border:1px solid var(--line); border-radius:14px; background:var(--panel-solid); padding:16px; margin:0 0 9px}
+  .curve-panel svg{width:100%; height:auto; display:block}
+  .curve-stats{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:10px}
 
-  textarea {
-    width: 100%; font-family: var(--mono); font-size: 13.5px; resize: vertical;
-    background: #000; color: var(--paper);
-    border: 1px solid var(--edge); border-radius: 3px; padding: 12px;
-  }
-  textarea:focus { outline: none; border-color: var(--brand-lo); box-shadow: 0 0 0 3px #7bdd3417; }
-  textarea::placeholder { color: #3e4a39; }
+  /* ── dashboard ── */
+  .dash-box{padding:22px}
+  .dash-connect{margin-bottom:18px}
+  .claim-intro{font-size:13px; color:var(--muted); line-height:1.65; margin:0 0 14px; max-width:70ch}
+  .claim-x-note{font-size:12px; color:var(--faint); margin:18px 0 0; line-height:1.6}
+  .claim-x-note a{color:var(--grn)}
+  .dash-tok{display:flex; align-items:center; gap:14px; padding:14px 16px; border:1px solid var(--line); border-radius:14px;
+    background:var(--panel-solid); margin-bottom:9px; cursor:pointer; transition:.18s}
+  .dash-tok:hover{border-color:var(--grn-dim)}
+  .dash-tok.active{border-color:var(--grn); background:rgba(52,211,154,.06)}
+  .dash-tok-img{width:40px; height:40px; border-radius:11px; object-fit:cover; background:var(--panel2); flex:none}
+  .dash-tok-id{flex:1; min-width:0}
+  .dash-tok-id b{font-family:var(--disp); font-weight:600; font-size:16px}
+  .dash-tok-id small{display:block; font-family:var(--mono); font-size:11px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .dash-tok-prog{text-align:right; flex:none}
+  .dash-tok-prog .pp{font-family:var(--disp); font-weight:600; font-size:18px; display:block}
+  .dash-tok-prog .pp.grad{color:var(--grn-bright); font-size:14px}
+  .dash-tok-prog small{font-family:var(--mono); font-size:10px; color:var(--faint)}
 
-  details { border: 1px solid var(--edge); border-radius: 3px; margin-bottom: 15px; background: var(--panel); }
-  summary {
-    cursor: pointer; padding: 12px 14px; font-size: 10.5px;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--mute);
-    list-style: none;
-  }
-  summary::-webkit-details-marker { display: none; }
-  summary::after { content: ' ▾'; color: var(--brand-lo); }
-  details[open] summary::after { content: ' ▴'; }
-  summary:hover { color: var(--brand); }
-  summary:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
-  .details-body { padding: 0 14px 14px; }
-  .details-body .field:last-child { margin-bottom: 0; }
-
-  .field { margin-bottom: 15px; }
-  label { display: block; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mute); margin-bottom: 6px; }
-  input {
-    width: 100%; font-family: var(--mono); font-size: 13.5px;
-    background: #000; color: var(--paper);
-    border: 1px solid var(--edge); border-radius: 3px; padding: 12px;
-  }
-  input:focus { outline: none; border-color: var(--brand-lo); box-shadow: 0 0 0 3px #7bdd3417; }
-  input::placeholder { color: #3e4a39; }
-  .hint { font-size: 11px; color: var(--mute); margin-top: 5px; line-height: 1.5; }
-
-  .claimer-row { display: grid; grid-template-columns: 1fr 92px 38px; gap: 8px; margin-bottom: 8px; }
-  .pct-input { position: relative; }
-  .pct-input input { padding-right: 26px; text-align: right; }
-  .claimer-id { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
-  .resolved {
-    display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
-    background: #7bdd340f; border: 1px solid var(--brand-lo); border-radius: 3px;
-    padding: 3px 8px 3px 4px; font-size: 11px; color: var(--brand); max-width: 100%;
-  }
-  .resolved img { width: 16px; height: 16px; border-radius: 50%; flex: none; object-fit: cover; }
-  .x-badge { font-size: 12px; color: var(--paper); flex: none; }
-  .resolved span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .claimer-row { align-items: start; }
-  .pct-input span {
-    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-    color: var(--mute); font-size: 12px; pointer-events: none;
-  }
-  .claimer-row .key { padding: 0; font-size: 16px; }
-  .bps-tally { font-size: 11px; color: var(--mute); margin-top: 9px; }
-  .bps-tally.bad { color: var(--coral); }
-  .bps-tally.ok  { color: var(--brand-lo); }
-
-  /* ───── notices / output ───── */
-  .notice { border-left: 2px solid var(--coral); background: #de6b5e0f; padding: 13px 15px; margin-bottom: 22px; font-size: 12.5px; line-height: 1.65; }
-  .notice b { color: var(--coral-hi); font-weight: 600; }
-  code { background: #00000080; padding: 1px 5px; border-radius: 2px; font-size: 11.5px; color: var(--paper); }
-
-  .out { display: none; border: 1px solid var(--brand-lo); border-radius: 3px; padding: 16px; margin-top: 22px; font-size: 12.5px; background: #7bdd3408; }
-  .out.show { display: block; }
-  .out.err { border-color: var(--coral); background: #de6b5e0a; }
-  .out h4 { font-family: var(--display); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--brand); margin-bottom: 12px; }
-  .out.err h4 { color: var(--coral-hi); }
-  .kv { display: grid; grid-template-columns: 78px 1fr; gap: 4px 12px; font-size: 11.5px; word-break: break-all; }
-  .kv dt { color: var(--mute); }
-  .kv a { color: var(--brand); }
-
-  .todo { list-style: none; font-size: 12.5px; line-height: 1.85; }
-  .todo li { padding-left: 22px; position: relative; }
-  .todo li::before { content: '▸'; position: absolute; left: 2px; color: var(--brand-lo); }
-  .todo li span { color: var(--mute); }
-
-  /* ───── solana panel ───── */
-  .wallet-connect-wrap { position: relative; }
-  .wallet-menu {
-    position: absolute; top: calc(100% + 6px); right: 0; z-index: 20;
-    min-width: 180px; background: var(--panel); border: 1px solid var(--edge-lit);
-    border-radius: 4px; overflow: hidden; box-shadow: 0 8px 24px -8px #000;
-  }
-  .wallet-opt {
-    display: block; width: 100%; text-align: left; font-family: var(--mono);
-    font-size: 12px; letter-spacing: 0.06em; color: var(--paper);
-    background: none; border: none; border-bottom: 1px solid var(--edge);
-    padding: 11px 14px; cursor: pointer;
-  }
-  .wallet-opt:last-child { border-bottom: none; }
-  .wallet-opt:hover { background: #7bdd340f; color: var(--brand); }
-  .sol-connect { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
-  .sol-status { font-size: 11.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute); }
-  .sol-status[data-tone="ok"]  { color: var(--brand); }
-  .sol-status[data-tone="bad"] { color: var(--coral); }
-
-  /* ───── dashboard ───── */
-  .dash-box { border: 1px solid var(--edge); border-radius: 4px; background: var(--panel); padding: 18px; }
-  .dash-tok {
-    display: flex; align-items: center; gap: 12px; padding: 13px; margin-bottom: 8px;
-    border: 1px solid var(--edge); border-radius: 6px; background: #0a0f08; cursor: pointer;
-    transition: border-color .15s, background .15s;
-  }
-  .dash-tok:hover { border-color: var(--brand-lo); background: #0d130a; }
-  .dash-tok.active { border-color: var(--brand); background: var(--brand-deep); }
-  .dash-tok-img { width: 36px; height: 36px; border-radius: 6px; flex: none; object-fit: cover; background: #000; border: 1px solid var(--edge); }
-  .dash-tok-id { flex: 1; min-width: 0; }
-  .dash-tok-id b { font-family: var(--display); font-weight: 700; font-size: 13px; }
-  .dash-tok-id small { display: block; font-size: 10.5px; color: var(--mute); }
-  .dash-tok-prog { text-align: right; white-space: nowrap; }
-  .dash-tok-prog .pp { font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--brand); }
-  .dash-tok-prog small { display: block; font-size: 9px; color: var(--mute); letter-spacing: 0.08em; }
-  .dash-tok-prog .grad { color: #4aa8ff; }
-
-  .detail { margin-top: 18px; border-top: 1px solid var(--edge-lit); padding-top: 18px; }
-  .detail-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .detail-head img { width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--edge); }
-  .detail-head h3 { font-family: var(--display); font-weight: 700; font-size: 16px; }
-  .detail-head small { font-size: 11px; color: var(--mute); }
-
-  .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 16px; }
-  @media (max-width: 520px) { .stat-row { grid-template-columns: repeat(2, 1fr); } }
-  .stat { background: #0a0f08; border: 1px solid var(--edge); border-radius: 6px; padding: 10px; }
-  .stat .k { font-size: 8.5px; letter-spacing: 0.12em; color: var(--mute); text-transform: uppercase; margin-bottom: 4px; }
-  .stat .v { font-family: var(--display); font-weight: 700; font-size: 13px; }
-
-  .chart-wrap { background: #070b06; border: 1px solid var(--edge); border-radius: 8px; padding: 12px; margin-bottom: 16px; }
-  .chart-wrap svg { width: 100%; display: block; }
-  .chart-empty { text-align: center; color: var(--mute); font-size: 11px; padding: 40px 0; }
+  .detail{margin-top:18px; padding:0; overflow:hidden}
+  .detail-head{display:flex; align-items:center; gap:16px; padding:20px}
+  .detail-head img{width:56px; height:56px; border-radius:14px; object-fit:cover}
+  .detail-head h3{font-family:var(--disp); font-weight:600; font-size:22px; margin:0}
+  .detail-head h3 small{font-family:var(--body); font-size:13px; color:var(--muted); font-weight:400; margin-left:8px}
+  .detail-head small{font-family:var(--mono); font-size:11px; color:var(--faint)}
+  .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+  .stat-row .stat{background:var(--panel-solid); padding:16px}
+  .stat-row .k{font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  .stat-row .v{font-family:var(--disp); font-weight:600; font-size:19px; margin-top:6px}
+  @media(max-width:640px){.stat-row{grid-template-columns:repeat(2,1fr)}}
+  .chart-wrap{padding:18px}
+  .chart-wrap svg{width:100%; height:auto; display:block}
+  .chart-empty{font-family:var(--mono); font-size:12px; color:var(--faint); padding:26px 0; text-align:center}
+  .earn-strip{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 20px;
+    border-top:1px solid var(--line-2); background:rgba(217,189,99,.04)}
+  .earn-strip .lbl{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+  .earn-strip .amt{font-family:var(--disp); font-weight:600; font-size:22px; color:var(--gold-bright); background:none; border:0; padding:0}
+  .claim-btn{font-family:var(--body); font-weight:700; font-size:13px; cursor:pointer; border:0; border-radius:11px; padding:11px 18px;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold)); color:#241d05}
+  .claim-btn:hover{filter:brightness(1.06)}
+  .claim-btn:disabled{opacity:.55; cursor:not-allowed}
 
   /* trade panel */
-  .trade-panel { background: #0a0f08; border: 1px solid var(--edge); border-radius: 8px; padding: 14px; margin-bottom: 16px; }
-  .trade-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-  .trade-tab {
-    flex: 1; font-family: var(--display); font-weight: 700; font-size: 11px; letter-spacing: 0.1em;
-    padding: 9px; border-radius: 5px; cursor: pointer; text-transform: uppercase;
-    background: var(--panel); border: 1px solid var(--edge); color: var(--mute);
-  }
-  .trade-tab.buy.on { background: var(--brand-deep); border-color: var(--brand); color: var(--brand); }
-  .trade-tab.sell.on { background: #1c0d08; border-color: var(--coral); color: var(--coral); }
-  .trade-input { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-  .trade-input input {
-    flex: 1; min-width: 0; font-family: var(--mono); font-size: 14px; color: var(--paper);
-    background: var(--panel); border: 1px solid var(--edge); border-radius: 5px; padding: 11px; outline: none;
-  }
-  .trade-input input:focus { border-color: var(--brand-lo); }
-  .trade-input .unit { font-family: var(--display); font-weight: 700; font-size: 12px; color: var(--mute); }
-  .trade-quote { font-size: 11px; color: var(--mute); line-height: 1.6; margin-bottom: 12px; min-height: 16px; }
-  .trade-quote b { color: var(--paper); }
+  .trade-panel{margin:18px; padding:18px; border-radius:14px}
+  .trade-tabs{display:flex; gap:6px; background:rgba(120,220,180,.06); padding:5px; border-radius:12px; margin-bottom:16px}
+  .trade-tab{flex:1; text-align:center; font-weight:700; font-size:14px; color:var(--muted); padding:10px; border-radius:9px; cursor:pointer}
+  .trade-tab.buy.on{background:var(--grn); color:var(--bg)}
+  .trade-tab.sell.on{background:var(--bad); color:#fff}
+  .trade-input{display:flex; align-items:center; background:var(--panel-solid); border:1px solid var(--line); border-radius:12px; padding:0 14px}
+  .trade-input input{flex:1; background:none; border:0; color:var(--ink); font-size:22px; font-family:var(--disp); padding:14px 0; outline:none}
+  .trade-input .unit{font-family:var(--mono); font-size:12px; color:var(--muted)}
+  .trade-quote{font-family:var(--mono); font-size:12px; color:var(--muted); margin:12px 0; min-height:18px}
+  .trade-quote b{color:var(--ink)}
 
-  /* earnings strip */
-  .earn-strip {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    background: var(--brand-deep); border: 1px solid var(--brand-lo); border-radius: 8px; padding: 14px; margin-bottom: 16px;
-  }
-  .earn-strip .lbl { font-size: 10px; letter-spacing: 0.14em; color: var(--brand-lo); text-transform: uppercase; }
-  .earn-strip .amt { font-family: var(--display); font-weight: 700; font-size: 18px; color: var(--brand); }
+  /* ── mini list (rankings, vaults, positions) ── */
+  .mini-list{border:1px solid var(--line); border-radius:var(--r); overflow:hidden; background:var(--panel-solid)}
+  .mini{display:flex; align-items:center; gap:14px; padding:15px 18px; border-top:1px solid var(--line-2)}
+  .mini:first-child{border-top:0}
+  .mini img{width:36px; height:36px; border-radius:10px; object-fit:cover; background:var(--panel2); flex:none}
+  .mini .mi{flex:1; min-width:0}
+  .mini .mi b{display:block; font-weight:600; font-size:14px}
+  .mini .mi small{display:block; font-family:var(--mono); font-size:11px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .mini .amt{font-family:var(--mono); font-size:13px; color:var(--gold-bright); white-space:nowrap; background:none; border:0; padding:0}
 
-  /* ───── claim (legacy, still used by dashboard rows) ───── */
-  .claim-box { border: 1px solid var(--edge); border-radius: 4px; background: var(--panel); padding: 18px; }
-  .claim-intro { font-size: 12.5px; color: var(--mute); line-height: 1.6; margin-bottom: 16px; }
-  .claim-x-note { margin-top: 16px; font-size: 11px; color: #55634d; line-height: 1.55; }
-  .claim-x-note a { color: var(--brand-lo); }
-  .claim-row {
-    display: flex; align-items: center; gap: 14px; padding: 13px 0;
-    border-bottom: 1px solid #131c0f;
-  }
-  .claim-row:last-of-type { border-bottom: none; }
-  .claim-tok { flex: 1; min-width: 0; font-family: var(--display); font-weight: 700; font-size: 13px; letter-spacing: 0.04em; }
-  .claim-tok small { display: block; font-family: var(--mono); font-weight: 400; font-size: 10.5px; color: var(--mute); letter-spacing: 0; }
-  .claim-amt { font-family: var(--mono); font-weight: 600; font-size: 13px; color: var(--brand); white-space: nowrap; }
-  .claim-btn {
-    font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-    color: #041003; background: linear-gradient(180deg, var(--brand-hi), #5cc41f); border: none;
-    border-radius: 4px; padding: 8px 14px; cursor: pointer; box-shadow: 0 2px 0 #2c6b18;
-  }
-  .claim-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #2c6b18; }
-  .claim-btn:disabled { opacity: .5; cursor: default; }
+  /* ── pair token picker ── */
+  .quote-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:9px; max-height:280px; overflow-y:auto; padding:2px}
+  .quote-opt{display:flex; align-items:center; gap:10px; cursor:pointer; text-align:left; border:1px solid var(--line);
+    border-radius:12px; background:var(--panel-solid); padding:10px 12px; color:var(--ink); transition:.15s}
+  .quote-opt:hover{border-color:var(--grn-dim); transform:translateY(-1px)}
+  .quote-opt[aria-pressed="true"]{border-color:var(--grn); background:rgba(52,211,154,.08)}
+  .quote-opt img{width:26px; height:26px; border-radius:50%; object-fit:cover; background:var(--panel2); flex:none}
+  .quote-opt .qs{min-width:0}
+  .quote-opt .qs b{display:block; font-size:13px; font-weight:600}
+  .quote-opt .qs small{display:block; font-family:var(--mono); font-size:10px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 
-  /* ───── feed ───── */
-  .group-h {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--mute); margin: 22px 0 4px;
-  }
-  .group-h::after { content: ''; flex: 1; height: 1px; background: var(--edge); }
-  .group-h b { color: var(--brand-lo); font-weight: 600; }
-  .feed-item {
-    display: flex; align-items: center; gap: 14px; width: 100%;
-    padding: 13px 0; border-bottom: 1px solid #131c0f;
-    background: none; border-left: 0; border-right: 0; border-top: 0;
-    text-align: left; cursor: pointer; font-family: var(--mono);
-  }
-  .feed-item:hover .tick { color: var(--brand); }
-  .feed-item:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
-  .pfp {
-    width: 34px; height: 34px; flex: none; border-radius: 4px;
-    background: #10160d url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233f8a2c' stroke-width='1.5'%3E%3Crect x='3' y='3' width='18' height='18' rx='2'/%3E%3Cpath d='m3 16 5-5 4 4 3-3 6 6'/%3E%3C/svg%3E") center/16px no-repeat;
-    object-fit: cover; border: 1px solid var(--edge);
-  }
-  .tick { font-family: var(--display); font-weight: 700; font-size: 14px; letter-spacing: 0.05em; flex: 1; min-width: 0; color: var(--paper); transition: color .12s; }
-  .tick small { display: block; font-family: var(--mono); font-weight: 400; font-size: 10.5px; color: var(--mute); letter-spacing: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .bar { width: 84px; height: 4px; background: #16220f; border-radius: 2px; overflow: hidden; }
-  .bar i { display: block; height: 100%; background: var(--brand); box-shadow: 0 0 8px #7bdd3480; transition: width .8s cubic-bezier(.2,.8,.2,1); }
-  .pct { font-size: 11px; color: var(--mute); width: 66px; text-align: right; }
-  .pct.grad { color: var(--coral); }
-  .empty { color: var(--mute); font-size: 12.5px; padding: 20px 0; }
+  /* ── solana wallet row ── */
+  .sol-connect{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:20px}
+  .wallet-connect-wrap{position:relative}
+  .wallet-menu{position:absolute; top:calc(100% + 7px); left:0; z-index:30; min-width:190px; padding:6px;
+    background:var(--panel-solid); border:1px solid var(--line); border-radius:12px; box-shadow:0 24px 60px rgba(0,0,0,.6)}
+  .wallet-opt{display:block; width:100%; text-align:left; background:none; border:0; color:var(--ink);
+    font-family:var(--body); font-size:13.5px; padding:11px 13px; border-radius:9px; cursor:pointer}
+  .wallet-opt:hover{background:rgba(52,211,154,.09); color:var(--grn-bright)}
+  .sol-status{font-family:var(--mono); font-size:12px; color:var(--muted)}
+  .sol-status[data-tone="ok"]{color:var(--grn)}
+  .sol-status[data-tone="bad"]{color:var(--bad)}
 
-  /* the curve: not decoration, it is the token's own math, read on-chain */
-  .curve-panel { border-bottom: 1px solid #131c0f; padding: 4px 0 20px; }
-  .curve-panel svg { width: 100%; height: auto; display: block; }
-  .curve-line { fill: none; stroke: var(--brand); stroke-width: 2; stroke-linecap: round;
-    stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.1s cubic-bezier(.3,.8,.3,1) forwards; }
-  .curve-area { fill: url(#curveFill); opacity: 0; animation: fadein .5s .55s forwards; }
-  .curve-ahead { fill: none; stroke: var(--edge-lit); stroke-width: 1.5; stroke-dasharray: 3 4; }
-  .curve-dot { opacity: 0; animation: pop .45s .85s cubic-bezier(.2,1.5,.4,1) forwards; transform-origin: center; }
-  .curve-dot circle:first-child { animation: halo 2.2s 1.3s ease-out infinite; transform-origin: center; }
-  .curve-target { stroke: var(--coral); stroke-width: 1; stroke-dasharray: 2 3; opacity: .55; }
-  @keyframes draw   { to { stroke-dashoffset: 0; } }
-  @keyframes fadein { to { opacity: 1; } }
-  @keyframes pop    { to { opacity: 1; } }
-  @keyframes halo   { 0% { r: 4; opacity: .8 } 100% { r: 13; opacity: 0 } }
-  .curve-stats { display: flex; gap: 22px; flex-wrap: wrap; margin-top: 12px; font-size: 11px; }
-  .curve-stats div span { display: block; color: var(--mute); font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 3px; }
-  .curve-stats div b { font-weight: 600; color: var(--paper); font-size: 12.5px; }
-  .curve-stats div.hl b { color: var(--brand); }
-  /* The partner fee is baked into the curve at launch, so a trade anywhere
-     still pays us. Sending buyers to the Bags page costs nothing and gives
-     them a chart, slippage control and a trade history we do not have. */
-  .trade-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-  .trade-link {
-    display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
-    font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-    color: #041003; background: linear-gradient(180deg, var(--brand-hi), #5cc41f);
-    padding: 10px 16px; border-radius: 4px;
-    box-shadow: 0 3px 0 #2c6b18; transition: transform .06s, box-shadow .06s;
-  }
-  .trade-link:active { transform: translateY(3px); box-shadow: 0 0 0 #2c6b18; }
-  .trade-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
-  .trade-alt {
-    display: inline-flex; align-items: center; text-decoration: none;
-    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute);
-    border: 1px solid var(--edge-lit); border-radius: 4px; padding: 10px 16px;
-  }
-  .trade-alt:hover { color: var(--brand); border-color: var(--brand-lo); }
+  /* ── basket rows ── */
+  .basket-row{display:flex; gap:9px; margin-bottom:9px}
+  .basket-row input{flex:1; background:var(--panel-solid); border:1px solid var(--line); border-radius:12px;
+    color:var(--ink); font-family:var(--body); font-size:14px; padding:13px 14px; outline:none}
+  .basket-row .key{flex:none}
 
-  footer { margin-top: 54px; padding-top: 18px; border-top: 1px solid var(--edge); font-size: 10.5px; color: #45513f; line-height: 1.8; word-break: break-all; }
+  /* ── views + reveal ── */
+  .view{display:none}
+  .view.on{display:block; animation:viewIn .3s ease both}
+  @keyframes viewIn{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+  .reveal{opacity:0; transform:translateY(14px); animation:revealSafety 0s 2.5s forwards}
+  .reveal.in{opacity:1; transform:none; transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.3,1)}
+  @keyframes revealSafety{to{opacity:1; transform:none}}
+  @media(prefers-reduced-motion:reduce){.reveal,.reveal.in{opacity:1;transform:none;transition:none;animation:none}}
 
-  /* ───── mobile ───── */
-  @media (max-width: 560px) {
-    body { padding-bottom: 60px; }
-    .wrap { padding: 0 14px; }
-    .hero { padding: 10px 12px 0; margin-bottom: 20px; }
-    .beta-tag {
-    font-family: var(--display); font-weight: 700; font-size: 10px;
-    letter-spacing: 0.28em; color: var(--brand);
-    border: 1px solid var(--brand-lo); border-radius: 3px;
-    padding: 5px 9px 5px 11px; background: var(--brand-deep);
-    text-transform: uppercase; cursor: default; user-select: none;
-  }
-  .top { margin-bottom: 16px; }
-    .ctrls { width: 100%; }
-    .chip { flex: 1; justify-content: center; }
-    #connect { flex: 1; }
-    .thesis { font-size: 21px; line-height: 1.25; }
-    .sub { font-size: 12px; margin-bottom: 28px; }
-    .console { padding: 12px; margin-bottom: 26px; }
-    .tabs { gap: 4px; }
-    .tab { padding: 12px 6px; font-size: 10px; letter-spacing: 0.08em; }
-    .row { padding: 12px; }
-    .ledger-h { padding: 9px 12px; }
-    .key-go { padding: 16px; font-size: 13px; letter-spacing: 0.14em; }
-    footer { margin-top: 40px; }
-  }
+  footer{margin:56px 0 40px; padding-top:22px; border-top:1px solid var(--line-2);
+    font-family:var(--mono); font-size:11px; color:var(--faint); line-height:1.9; overflow-wrap:anywhere}
 
-  /* ══════════════════════════════════════════════════════════════════
-     APP SHELL  (v2)
-     Everything above this line is the original component CSS and is
-     still used by the JS that renders feeds, tokens, trade panels and
-     result boxes. Below is the shell that turns the single page into
-     an app: pill navigation, aurora backdrop, views, cards.
-     ══════════════════════════════════════════════════════════════════ */
-
-  /* aurora backdrop, fixed behind everything, cheap and GPU friendly */
-  .aurora {
-    position: fixed; inset: -20vh -10vw auto -10vw; height: 120vh;
-    z-index: -2; pointer-events: none; opacity: 0.55;
-    background:
-      radial-gradient(38vw 30vw at 18% 12%, rgba(123,221,52,0.20), transparent 62%),
-      radial-gradient(34vw 26vw at 82% 18%, rgba(222,107,94,0.16), transparent 60%),
-      radial-gradient(46vw 34vw at 50% 78%, rgba(143,212,255,0.10), transparent 66%);
-    filter: blur(28px);
-    animation: drift 26s ease-in-out infinite alternate;
-  }
-  @keyframes drift {
-    0%   { transform: translate3d(0,0,0) scale(1); }
-    50%  { transform: translate3d(-2.5%, 2%, 0) scale(1.06); }
-    100% { transform: translate3d(2.5%, -1.5%, 0) scale(1.03); }
-  }
-  @media (prefers-reduced-motion: reduce) { .aurora { animation: none; } }
-
-  /* ── pill navigation ─────────────────────────────────────────────── */
-  .nav-outer {
-    position: sticky; top: 0; z-index: 60;
-    padding: 14px 16px 10px;
-    display: flex; justify-content: center;
-    background: linear-gradient(180deg, rgba(3,5,3,0.92) 40%, rgba(3,5,3,0));
-  }
-  .nav {
-    display: flex; align-items: center; gap: 6px;
-    padding: 6px; border-radius: 999px;
-    background: rgba(10,15,8,0.72);
-    border: 1px solid var(--edge);
-    backdrop-filter: blur(14px) saturate(1.3);
-    -webkit-backdrop-filter: blur(14px) saturate(1.3);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.55);
-    max-width: 100%;
-  }
-  .nav-brand {
-    display: flex; align-items: center; gap: 8px;
-    padding: 0 12px 0 8px; font-family: 'Chakra Petch', sans-serif;
-    font-weight: 700; letter-spacing: 0.04em; font-size: 14px; color: #fff;
-    white-space: nowrap;
-  }
-  .nav-brand img { width: 26px; height: 26px; border-radius: 7px; display: block; }
-  .nav-brand b { color: var(--brand); font-weight: 700; }
-  .nav-links { display: flex; gap: 2px; }
-  .nav-link {
-    appearance: none; border: 0; cursor: pointer;
-    background: transparent; color: var(--mute);
-    font-family: 'IBM Plex Mono', monospace; font-size: 11px;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    padding: 9px 14px; border-radius: 999px;
-    transition: color .18s ease, background .18s ease;
-    white-space: nowrap;
-  }
-  .nav-link:hover { color: #dff5cf; background: rgba(123,221,52,0.07); }
-  .nav-link[aria-current="page"] {
-    color: var(--void); background: var(--brand);
-    box-shadow: 0 0 22px rgba(123,221,52,0.35);
-  }
-  .nav-right { display: flex; align-items: center; gap: 8px; padding-left: 6px; }
-  @media (max-width: 780px) {
-    .nav { border-radius: 18px; flex-wrap: wrap; justify-content: center; }
-    .nav-brand { width: 100%; justify-content: center; padding: 4px 0 2px; }
-    .nav-link { padding: 8px 10px; font-size: 10px; letter-spacing: 0.08em; }
-  }
-
-  /* ── views ───────────────────────────────────────────────────────── */
-  .view { display: none; }
-  .view.on { display: block; animation: viewIn .32s ease both; }
-  @keyframes viewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-
-  /* staggered reveal for anything tagged .reveal */
-  /* fallback: if the script ever fails before the reveal runs, the content
-     must not stay invisible. This unhides everything after 2.5 seconds. */
-  .reveal { opacity: 0; transform: translateY(14px); animation: revealSafety 0s 2.5s forwards; }
-  @keyframes revealSafety { to { opacity: 1; transform: none; } }
-  .reveal.in { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s cubic-bezier(.2,.7,.3,1); }
-  @media (prefers-reduced-motion: reduce) { .reveal, .reveal.in { opacity: 1; transform: none; transition: none; } }
-
-  /* ── shiny headline ──────────────────────────────────────────────── */
-  .shiny {
-    background: linear-gradient(100deg, #dff5cf 20%, #ffffff 42%, var(--brand-hi) 55%, #dff5cf 78%);
-    background-size: 260% 100%;
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    animation: shine 5.5s linear infinite;
-  }
-  @keyframes shine { 0% { background-position: 180% 0; } 100% { background-position: -80% 0; } }
-  @media (prefers-reduced-motion: reduce) { .shiny { animation: none; } }
-
-  /* ── stat tiles ──────────────────────────────────────────────────── */
-  .stats {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-    margin: 30px 0 10px;
-  }
-  .tile {
-    position: relative; overflow: hidden;
-    border: 1px solid var(--edge); border-radius: 12px;
-    background: linear-gradient(180deg, rgba(17,26,14,0.9), rgba(10,15,8,0.9));
-    padding: 16px 16px 14px;
-  }
-  .tile::before {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 0%), rgba(123,221,52,0.16), transparent 60%);
-    opacity: 0; transition: opacity .25s ease;
-  }
-  .tile:hover::before { opacity: 1; }
-  .tile .k {
-    font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--mute); margin-bottom: 8px;
-  }
-  .tile .v {
-    font-family: 'Chakra Petch', sans-serif; font-weight: 700;
-    font-size: 26px; line-height: 1; color: #fff;
-  }
-  .tile .v small { font-size: 12px; color: var(--mute); font-weight: 600; margin-left: 4px; }
-  @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, 1fr); } .tile .v { font-size: 21px; } }
-
-  /* ── generic card ────────────────────────────────────────────────── */
-  .card {
-    border: 1px solid var(--edge); border-radius: 12px;
-    background: var(--panel); padding: 20px; margin-bottom: 18px;
-  }
-  .card h3 {
-    font-family: 'Chakra Petch', sans-serif; font-size: 15px; letter-spacing: 0.04em;
-    margin: 0 0 6px; color: #fff;
-  }
-  .card .card-sub { font-size: 11.5px; color: var(--mute); margin: 0 0 16px; line-height: 1.6; }
-
-  /* ── launch mode switch ──────────────────────────────────────────── */
-  .modes { display: flex; gap: 6px; margin: 0 0 18px; }
-  .mode {
-    flex: 1; cursor: pointer; text-align: left;
-    border: 1px solid var(--edge); border-radius: 10px;
-    background: var(--panel); color: var(--mute);
-    padding: 12px 14px; transition: border-color .2s ease, background .2s ease, color .2s ease;
-  }
-  .mode b {
-    display: block; font-family: 'Chakra Petch', sans-serif; font-size: 12.5px;
-    letter-spacing: 0.04em; color: #cfe9bd; margin-bottom: 3px;
-  }
-  .mode span { font-size: 10.5px; line-height: 1.5; display: block; }
-  .mode[aria-pressed="true"] {
-    border-color: var(--brand); background: rgba(123,221,52,0.08); color: #dff5cf;
-  }
-  .mode[aria-pressed="true"] b { color: var(--brand-hi); }
-  @media (max-width: 640px) { .modes { flex-direction: column; } }
-
-  /* ── quote token picker ──────────────────────────────────────────── */
-  .quote-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
-    gap: 8px; max-height: 268px; overflow-y: auto; padding: 2px;
-  }
-  .quote-opt {
-    display: flex; align-items: center; gap: 9px; cursor: pointer; text-align: left;
-    border: 1px solid var(--edge); border-radius: 9px; background: var(--panel-hi);
-    padding: 9px 10px; color: #cfe9bd; transition: border-color .15s ease, transform .15s ease;
-  }
-  .quote-opt:hover { border-color: var(--edge-lit); transform: translateY(-1px); }
-  .quote-opt[aria-pressed="true"] { border-color: var(--brand); background: rgba(123,221,52,0.09); }
-  .quote-opt img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; background: #0d140a; flex: none; }
-  .quote-opt .qs { min-width: 0; }
-  .quote-opt .qs b { display: block; font-size: 11.5px; letter-spacing: 0.03em; }
-  .quote-opt .qs small { display: block; font-size: 9.5px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-  /* ── basket rows (dividend coin) ─────────────────────────────────── */
-  .basket-row { display: flex; gap: 8px; margin-bottom: 8px; }
-  .basket-row input { flex: 1; }
-  .basket-row .key { flex: none; }
-
-  .warn {
-    border: 1px solid rgba(222,107,94,0.4); border-left-width: 3px;
-    background: rgba(222,107,94,0.07); border-radius: 8px;
-    padding: 12px 14px; font-size: 11.5px; line-height: 1.65; color: #f0c9c2;
-    margin-bottom: 16px;
-  }
-  .warn b { color: var(--coral-hi); }
-
-  .mini-list { display: flex; flex-direction: column; gap: 8px; }
-  .mini {
-    display: flex; align-items: center; gap: 11px;
-    border: 1px solid var(--edge); border-radius: 9px;
-    background: var(--panel-hi); padding: 11px 13px;
-  }
-  .mini img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; background: #0d140a; flex: none; }
-  .mini .mi { flex: 1; min-width: 0; }
-  .mini .mi b { display: block; font-size: 12px; color: #dff5cf; }
-  .mini .mi small { display: block; font-size: 10px; color: var(--mute); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mini .amt { font-family: 'Chakra Petch', sans-serif; font-size: 14px; color: #fff; white-space: nowrap; }
+  /* ── curve SVG (rendered by the engine) ── */
+  .curve-line{fill:none; stroke:var(--grn); stroke-width:2; stroke-linecap:round}
+  .curve-area{fill:url(#curveFill); opacity:.9}
+  .curve-ahead{fill:none; stroke:var(--line); stroke-width:1.5; stroke-dasharray:3 4}
+  .curve-target{stroke:var(--gold); stroke-width:1; stroke-dasharray:2 3; opacity:.55}
+  .curve-dot circle{fill:var(--grn-bright)}
+  .curve-stats div.hl b{color:var(--grn-bright)}
+  .curve-stats b{color:var(--ink)}
+  .trade-alt{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11.5px; color:var(--muted);
+    border:1px solid var(--line); border-radius:9px; padding:8px 12px; margin-top:10px}
+  .trade-alt:hover{color:var(--grn); border-color:var(--grn)}
+  .row.vault .amt{color:var(--muted)}
+  .claim-note{margin-top:14px}
 </style>
 </head>
 <body>
 
-<div class="aurora"></div>
-
-<div class="nav-outer">
-  <nav class="nav">
-    <div class="nav-brand"><img src="mascot.png" alt="" />FINN<b>PUTER</b></div>
-    <div class="nav-links">
-      <button class="nav-link" data-view="explore"   aria-current="page">Explore</button>
-      <button class="nav-link" data-view="launch">Launch</button>
-      <button class="nav-link" data-view="portfolio">Portfolio</button>
-      <button class="nav-link" data-view="creator">Creator</button>
-    </div>
-    <div class="nav-right">
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#/explore"><img src="mascot.png" alt="" /> <span>FINN<b>PUTER</b></span></a>
+    <nav class="tabs-main">
+      <button data-view="explore" aria-current="page">Explore</button>
+      <button data-view="launch">Launch</button>
+      <button data-view="portfolio">Portfolio</button>
+      <button data-view="creator">Creator</button>
+    </nav>
+    <div class="nav-r">
       <div class="chip" id="chainChip"><i class="led"></i><span id="chainTxt">No chain</span></div>
-      <button class="key" id="connect">Connect wallet</button>
+      <button class="key key-sm" id="connect">Connect wallet</button>
     </div>
-  </nav>
-</div>
+  </div>
+</header>
 
 <div class="wrap">
-
-  <div class="console"><div class="status" id="status">Wallet not connected</div></div>
 
   <!-- ══════════════════ EXPLORE ══════════════════ -->
   <section class="view on" id="v-explore">
@@ -792,27 +403,34 @@
       <div class="fallback" id="bannerFallback">FINNPUTER<small>LAUNCHPAD · ROBINHOOD CHAIN + SOLANA</small></div>
     </div>
 
-    <h1 class="thesis reveal"><span class="shiny">Launch a token on Robinhood Chain or Solana</span> and keep <em>1% of every trade</em>, forever.</h1>
-    <p class="sub reveal">Bonding curve to Uniswap v4, or straight into a pool paired with a tokenised stock. Locked liquidity. No cut taken from your side.</p>
+    <section class="top">
+      <span class="eyebrow reveal">Robinhood Chain and Solana</span>
+      <h1 class="page reveal">Launch a token and keep <em>1% of every trade</em>, forever.</h1>
+      <p class="sub reveal">Bonding curve to Uniswap v4, or straight into a locked pool paired with a tokenised stock. You sign every transaction yourself, and this page never holds your keys.</p>
+      <div class="console reveal"><div class="status" id="status">Wallet not connected</div></div>
 
-    <div class="stats reveal">
-      <div class="tile"><div class="k">Tokens on the factory</div><div class="v" data-count id="stTokens">0</div></div>
-      <div class="tile"><div class="k">Top volume, lifetime</div><div class="v" data-count id="stVolume">0<small>ETH</small></div></div>
-      <div class="tile"><div class="k">Graduated</div><div class="v" data-count id="stGrad">0</div></div>
-      <div class="tile"><div class="k">Creation fee</div><div class="v" id="stFee">-</div></div>
-    </div>
+      <div class="stat-grid reveal">
+        <div class="tile"><div class="k">Tokens on the factory</div><div class="v" id="stTokens">0</div></div>
+        <div class="tile"><div class="k">Top volume, lifetime</div><div class="v" id="stVolume">0</div></div>
+        <div class="tile"><div class="k">Graduated</div><div class="v" id="stGrad">0</div></div>
+        <div class="tile"><div class="k">Creation fee</div><div class="v" id="stFee">-</div></div>
+      </div>
+    </section>
 
-    <div class="sec-wrap" style="margin-top:46px;"><div class="sec">Launched through FINNPUTER</div></div>
+    <div class="sec-wrap"><div class="sec">Launched through FINNPUTER</div></div>
     <div id="feed" class="reveal"><p class="empty">Reading the chain…</p></div>
 
-    <div class="sec-wrap" style="margin-top:46px;"><div class="sec">Top volume on Robinhood Chain</div></div>
+    <div class="sec-wrap"><div class="sec">Top volume on Robinhood Chain</div></div>
     <div id="topVol" class="reveal"><p class="empty">Loading…</p></div>
   </section>
 
   <!-- ══════════════════ LAUNCH ══════════════════ -->
   <section class="view" id="v-launch">
-    <h1 class="thesis reveal" style="margin-top:26px;"><span class="shiny">Launch a token</span></h1>
-    <p class="sub reveal">Pick a chain, fill the form, sign it yourself. This page never holds your keys.</p>
+    <section class="top">
+      <span class="eyebrow">One signature</span>
+      <h1 class="page">Launch a token</h1>
+      <p class="sub">Pick a chain, fill the form, sign it yourself. <span class="beta-tag">BETA</span></p>
+    </section>
 
     <div id="guard"></div>
 
@@ -914,7 +532,7 @@
     <div class="modes" id="solModes" hidden>
       <button class="mode" id="mode-sol" aria-pressed="true">
         <b>Standard, quoted in SOL</b>
-        <span>Bonding curve first, graduates into a pool. The classic launch.</span>
+        <span>Bonding curve first, graduates into a pool. Fee splits, presets and an optional initial buy.</span>
       </button>
       <button class="mode" id="mode-pair" aria-pressed="false">
         <b>Paired with a token or stock</b>
@@ -973,9 +591,44 @@
     <div class="out" id="solOut"></div>
   </div>
 
+    <div class="panel-b" id="p-sol-extra" hidden>
+      <div class="field">
+        <label>Fee claimers, must total 100%</label>
+        <div id="solClaimers"></div>
+        <button class="key key-sm" id="solAddClaimer">+ Add claimer</button>
+        <div class="bps-tally" id="solTally" data-ok="1">100.00 / 100%</div>
+        <p class="hint">Paste a Solana address, or type <b>@username</b> to send fees to someone's <b>X account</b>. Bags resolves the handle to their wallet. Up to 15 claimers here, each unique.</p>
+      </div>
+
+      <details>
+        <summary>Curve preset, changes the fee split and the supply</summary>
+        <div class="details-body">
+          <div class="field">
+            <label for="sol-config">Preset</label>
+            <select id="sol-config"></select>
+            <p class="hint" id="solConfigHint">The standard curve. Leave it alone unless you know why you are changing it, the choice is baked into the launch.</p>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Priority tip, optional</summary>
+        <div class="details-body">
+          <div class="field">
+            <label for="sol-tip">Tip in lamports</label>
+            <input id="sol-tip" placeholder="0" inputmode="numeric" />
+            <p class="hint" id="solTipHint">Speeds up inclusion when the network is busy. 1 SOL is 1,000,000,000 lamports.</p>
+          </div>
+        </div>
+      </details>
+
+      <button class="key key-go" id="solGo" disabled>Connect a wallet to launch</button>
+      <div class="out" id="solGoOut"></div>
+    </div>
+
     <div class="panel-b" id="p-pair" hidden>
       <div class="sol-connect">
-        <span class="sol-status" id="pairWallet">Connect your wallet in the standard tab first, it is the same wallet.</span>
+        <span class="sol-status" id="pairWallet">Connect your Solana wallet in the standard tab, it is the same wallet.</span>
       </div>
 
       <div class="warn">
@@ -986,7 +639,7 @@
         <label class="drop" id="pairDrop">
           <input type="file" id="pair-image" accept="image/png,image/jpeg,image/webp,image/gif" hidden />
           <img id="pairPreview" alt="" />
-          <div class="drop-cue"><b>▲</b>Preview image</div>
+          <div class="drop-cue"><b>▲</b>Upload image</div>
         </label>
         <div class="coin-fields">
           <div class="field" style="margin:0"><label for="pair-name">Name</label><input id="pair-name" placeholder="Finnputer Cat" maxlength="64" /></div>
@@ -1000,19 +653,13 @@
       </div>
 
       <div class="field">
-        <label for="pair-imgurl">Image URL</label>
-        <input id="pair-imgurl" placeholder="https://… (link to your token image)" />
-        <p class="hint">Bags hosts the image from a URL on Solana. The preview box above is only for you.</p>
-      </div>
-
-      <div class="field">
         <label>Pair token</label>
         <div class="quote-grid" id="quoteGrid"><p class="empty">Loading the supported list…</p></div>
         <p class="hint">Only badged mints can be used as a pair, and the list changes. Decimals differ per token, the amount below is converted for you.</p>
       </div>
 
       <details>
-        <summary>Social links (optional)</summary>
+        <summary>Social links, optional</summary>
         <div class="details-body">
           <div class="field"><label for="pair-web">Website</label><input id="pair-web" placeholder="https://…" /></div>
           <div class="field"><label for="pair-tw">X / Twitter</label><input id="pair-tw" placeholder="https://x.com/…" /></div>
@@ -1021,7 +668,7 @@
       </details>
 
       <div class="field">
-        <label for="pair-buy">Initial buy, in the pair token (optional)</label>
+        <label for="pair-buy">Initial buy, in the pair token, optional</label>
         <input id="pair-buy" placeholder="0" inputmode="decimal" />
         <p class="hint" id="pairBuyHint">Pick a pair token first. The amount is spent from your balance of that token.</p>
       </div>
@@ -1043,8 +690,11 @@
 
   <!-- ══════════════════ PORTFOLIO ══════════════════ -->
   <section class="view" id="v-portfolio">
-    <h1 class="thesis reveal" style="margin-top:26px;"><span class="shiny">Your tokens</span></h1>
-    <p class="sub reveal">Live price, bonding progress, trade activity and the fees waiting for you.</p>
+    <section class="top">
+      <span class="eyebrow">Your account</span>
+      <h1 class="page">Portfolio</h1>
+      <p class="sub">Live price, bonding progress, trade activity and the fees waiting for you.</p>
+    </section>
       <div class="dash-box">
     <div class="dash-connect">
       <p class="claim-intro" id="dashIntro">Connect your wallet to see your launched tokens, live price, bonding progress, trade activity and the fees waiting for you. Everything on this page, no leaving the pad.</p>
@@ -1058,20 +708,38 @@
 
   <!-- ══════════════════ CREATOR ══════════════════ -->
   <section class="view" id="v-creator">
-    <h1 class="thesis reveal" style="margin-top:26px;"><span class="shiny">Creator</span></h1>
-    <p class="sub reveal">Everything on the Solana side of the pad, plus dividend coins on Robinhood Chain.</p>
+    <section class="top">
+      <span class="eyebrow">Creator fees</span>
+      <h1 class="page">Creator</h1>
+      <p class="sub">Everything you have earned, on both chains, claimable from here.</p>
+    </section>
+
+    <div class="card reveal">
+      <h3>Robinhood Chain</h3>
+      <p class="card-sub">Fees accrue in WETH on each token's fee-share contract. Claiming unwraps them to ETH in your wallet.</p>
+      <button class="key" id="rhClaimLoad">Load my positions</button>
+      <div id="rhClaimBox" style="margin-top:16px;"></div>
+    </div>
+
+    <div class="card reveal">
+      <h3>Solana</h3>
+      <p class="card-sub">Positions from paired launches, plus the partner and deployer vaults. Connect a Solana wallet in the Launch view first.</p>
+      <button class="key" id="claimLoad">Load my positions</button>
+      <div id="claimBox" style="margin-top:16px;"></div>
+    </div>
 
     <div class="card reveal">
       <h3>Paired launches</h3>
-      <p class="card-sub">Confirmed launches quoted in a token instead of SOL, newest first, across the whole DAMM v2 direct feed.</p>
+      <p class="card-sub">Confirmed launches quoted in a token instead of SOL, newest first.</p>
       <div id="pairFeed"><p class="empty">Loading…</p></div>
     </div>
 
     <div class="card reveal">
-      <h3>Claimable fees on Solana</h3>
-      <p class="card-sub">Fee positions from paired launches, plus the partner and deployer vaults. Connect a Solana wallet in the Launch view first.</p>
-      <button class="key" id="claimLoad">Load my positions</button>
-      <div id="claimBox" style="margin-top:14px;"></div>
+      <h3>Dexscreener token info</h3>
+      <p class="card-sub">Pay once to put an icon, a header image, a description and your links on a token's Dexscreener page. Bags sets the price, you sign the payment.</p>
+      <div class="field"><label for="dx-token">Token mint</label><input id="dx-token" placeholder="Solana mint address" /></div>
+      <button class="key key-sm" id="dxCheck">Check availability</button>
+      <div id="dxBox" style="margin-top:16px;"></div>
     </div>
 
     <div class="card reveal" id="divCard" hidden>
@@ -2119,71 +1787,57 @@ solArm();
 
 
 /* ══════════════════════════════════════════════════════════════════════
-   APP SHELL  (v2)
-   Everything above is the original engine and is untouched. What follows
-   is the app around it: routing, the explore numbers, the paired launch
-   on Solana, the creator tools and dividend coins on Robinhood Chain.
+   APP LAYER
+   Everything above is the proven engine: the viem launch on Robinhood, the
+   feed, the curve reader, the trade panel, the wallet detection. Nothing
+   there is touched. What follows is the app around it, plus the parts of
+   the Bags launch that the old single-page form never had.
    ══════════════════════════════════════════════════════════════════════ */
 
 /* ── routing ─────────────────────────────────────────────────────────── */
 const VIEWS = ['explore', 'launch', 'portfolio', 'creator'];
-const seen = new Set();
+const opened = new Set();
 
 function showView(name) {
   const v = VIEWS.includes(name) ? name : 'explore';
   VIEWS.forEach(id => $('v-' + id).classList.toggle('on', id === v));
-  document.querySelectorAll('.nav-link').forEach(b => {
+  document.querySelectorAll('.tabs-main button').forEach(b => {
     if (b.dataset.view === v) b.setAttribute('aria-current', 'page');
     else b.removeAttribute('aria-current');
   });
   scrollTo(0, 0);
   revealIn($('v-' + v));
-  // load a view's data the first time it is opened, never on every switch
-  if (!seen.has(v)) { seen.add(v); onFirstOpen(v); }
+  if (!opened.has(v)) { opened.add(v); onFirstOpen(v); }
 }
 function onFirstOpen(v) {
   if (v === 'explore') { loadStatTiles(); loadTopVolume(); }
+  if (v === 'launch')  { loadConfigTypes(); }
   if (v === 'creator') { loadPairFeed(); checkIndexFeature(); }
 }
-document.querySelectorAll('.nav-link').forEach(b => {
+document.querySelectorAll('.tabs-main button').forEach(b => {
   b.addEventListener('click', () => { location.hash = '#/' + b.dataset.view; });
 });
 addEventListener('hashchange', () => showView(location.hash.replace('#/', '')));
-showView(location.hash.replace('#/', ''));
 
-/* ── staggered reveal ────────────────────────────────────────────────── */
 function revealIn(root) {
-  const items = root.querySelectorAll('.reveal');
-  items.forEach((el, i) => setTimeout(() => el.classList.add('in'), 60 * i));
+  root.querySelectorAll('.reveal').forEach((el, i) => setTimeout(() => el.classList.add('in'), 55 * i));
 }
 
-/* ── count up ────────────────────────────────────────────────────────── */
 function countUp(el, target, suffix = '') {
   if (!el) return;
   const dur = 900, t0 = performance.now();
   const dp = target < 10 && target % 1 !== 0 ? 3 : 0;
   const step = (t) => {
     const p = Math.min(1, (t - t0) / dur);
-    const eased = 1 - Math.pow(1 - p, 3);
-    const val = target * eased;
+    const val = target * (1 - Math.pow(1 - p, 3));
     el.innerHTML = val.toLocaleString('en-US', { maximumFractionDigits: dp }) + suffix;
     if (p < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
 }
 
-/* spotlight follows the pointer on the stat tiles */
-document.querySelectorAll('.tile').forEach(t => {
-  t.addEventListener('pointermove', (e) => {
-    const r = t.getBoundingClientRect();
-    t.style.setProperty('--mx', `${e.clientX - r.left}px`);
-    t.style.setProperty('--my', `${e.clientY - r.top}px`);
-  }, { passive: true });
-});
-
 /* ── explore numbers ─────────────────────────────────────────────────── */
 async function loadStatTiles() {
-  // exact, straight from the factory
   try {
     const len = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'allTokensLength' });
     countUp($('stTokens'), Number(len));
@@ -2195,20 +1849,18 @@ async function loadStatTiles() {
     $('stFee').innerHTML = eth === 0 ? 'free' : `${eth.toLocaleString('en-US', { maximumFractionDigits: 4 })}<small>ETH</small>`;
   } catch { $('stFee').textContent = '-'; }
 
-  // a sample, not a total: say so on the label rather than pretend
+  // a sample, not a total: the label says so rather than pretending
   try {
     const data = await rhApi('tokens', { limit: 100, orderBy: 'createdAtTimestamp', orderDirection: 'desc' });
     const items = data.items || [];
-    const grad = items.filter(t => t.migrated).length;
     $('stGrad').closest('.tile').querySelector('.k').textContent = `Graduated, last ${items.length}`;
-    countUp($('stGrad'), grad);
+    countUp($('stGrad'), items.filter(t => t.migrated).length);
   } catch { $('stGrad').textContent = '-'; }
 
   try {
     const top = await rhApi('top-volume', { limit: 1 });
     const first = (top.items || top || [])[0];
-    const eth = weiToEth(first?.volumeEthWei || 0);
-    countUp($('stVolume'), eth, '<small>ETH</small>');
+    countUp($('stVolume'), weiToEth(first?.volumeEthWei || 0), '<small>ETH</small>');
   } catch { $('stVolume').textContent = '-'; }
 }
 
@@ -2218,46 +1870,243 @@ async function loadTopVolume() {
     const top = await rhApi('top-volume', { limit: 10 });
     const items = top.items || top || [];
     if (!items.length) { box.innerHTML = '<p class="empty">No volume recorded yet.</p>'; return; }
-    box.innerHTML = '<div class="mini-list">' + items.map(t => {
-      const img = t.metadata?.image || '';
-      return `<div class="mini">
-        ${img ? `<img src="${img}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+    box.innerHTML = '<div class="mini-list">' + items.map(t => `
+      <div class="mini">
+        ${t.metadata?.image ? `<img src="${t.metadata.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
         <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · ${shorten(t.address)}</small></div>
         <div class="amt">${ethStr(t.volumeEthWei, 2)} ETH</div>
-      </div>`;
-    }).join('') + '</div>';
+      </div>`).join('') + '</div>';
   } catch (e) {
     box.innerHTML = `<p class="empty">Could not load the ranking, ${e.message}</p>`;
   }
 }
 
-/* ── Solana launch modes ─────────────────────────────────────────────── */
-// The standard tab keeps its own button and handler. The paired launch is a
-// separate panel with its own button, so neither path can interfere with the
-// other and the tested SOL flow stays exactly as it was.
+/* ══════════════════ SOLANA LAUNCH, full version ══════════════════
+ * The original page could only send a name, a ticker and an image URL. The
+ * proxy could always do more. This form now covers what bags.fm itself
+ * offers: fee claimers with @X handles and percentages, a real image
+ * upload, the curve presets and an optional priority tip.
+ */
 let pairMode = false;
 let quoteTokens = [];
 let quotePick = null;
+
+$('solLaunch').style.display = 'none';   // replaced by #solGo below
 
 function paintSolMode() {
   $('mode-sol').setAttribute('aria-pressed', String(!pairMode));
   $('mode-pair').setAttribute('aria-pressed', String(pairMode));
   const solTabOpen = $('tab-sol').getAttribute('aria-selected') === 'true';
   $('p-sol').hidden = !solTabOpen || pairMode;
+  $('p-sol-extra').hidden = !solTabOpen || pairMode;
   $('p-pair').hidden = !solTabOpen || !pairMode;
   if (pairMode && !quoteTokens.length) loadQuoteTokens();
-  pairArm();
+  solGoArm(); pairArm();
 }
 $('mode-sol').addEventListener('click', () => { pairMode = false; paintSolMode(); });
 $('mode-pair').addEventListener('click', () => { pairMode = true; paintSolMode(); });
-
-// the original tab handler already toggles p-rh and p-sol, this rides along
 ['tab-rh', 'tab-sol'].forEach(t => $(t).addEventListener('click', () => {
-  const solOpen = t === 'tab-sol';
-  $('solModes').hidden = !solOpen;
+  $('solModes').hidden = t !== 'tab-sol';
   paintSolMode();
 }));
 
+/* image upload: pin it ourselves, then hand Bags the URL it wants */
+$('sol-image').addEventListener('change', async () => {
+  const f = $('sol-image').files[0];
+  if (!f) return;
+  const url = $('sol-imgurl');
+  url.value = '';
+  url.placeholder = 'Uploading…';
+  try {
+    const fd = new FormData();
+    fd.append('image', f);
+    fd.append('name', $('sol-name').value.trim() || 'token');
+    fd.append('symbol', $('sol-symbol').value.trim() || 'TOKEN');
+    const r = await fetch(`${PROXY_BASE}/api/pin`, { method: 'POST', body: fd });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Upload failed.');
+    url.value = j.imageURI;
+    url.placeholder = 'https://…';
+  } catch (e) {
+    url.placeholder = 'Upload failed, paste a link instead';
+    console.error('[sol upload]', e);
+  }
+  solGoArm();
+});
+
+/* fee claimers on Solana */
+const solClaimerList = [{ input: '', pct: 100, resolved: null, avatar: '', name: '' }];
+
+function renderSolClaimers() {
+  $('solClaimers').innerHTML = solClaimerList.map((c, i) => `
+    <div class="claimer-row">
+      <div class="claimer-id">
+        <input data-si="${i}" data-sk="input" placeholder="Solana address or @X-username" value="${c.input}" />
+        ${c.resolved ? `<div class="resolved">${c.input.startsWith('@') ? '<b class="x-badge">𝕏</b>' : ''}${c.avatar ? `<img src="${c.avatar}" alt="">` : ''}<span>${c.name || shorten(c.resolved)}</span></div>` : ''}
+      </div>
+      <div class="pct-input"><input data-si="${i}" data-sk="pct" placeholder="0" inputmode="decimal" value="${c.pct}" /><span>%</span></div>
+      <button class="key" data-srm="${i}" ${solClaimerList.length === 1 ? 'disabled' : ''} title="Remove">×</button>
+    </div>`).join('');
+
+  $('solClaimers').querySelectorAll('input[data-si]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      const i = +inp.dataset.si;
+      if (inp.dataset.sk === 'pct') solClaimerList[i].pct = inp.value;
+      else { solClaimerList[i].input = inp.value.trim(); solClaimerList[i].resolved = null; }
+      solTally(); solGoArm();
+    });
+    if (inp.dataset.sk === 'input') inp.addEventListener('blur', () => resolveSolHandle(+inp.dataset.si));
+  });
+  $('solClaimers').querySelectorAll('[data-srm]').forEach(b =>
+    b.addEventListener('click', () => { solClaimerList.splice(+b.dataset.srm, 1); renderSolClaimers(); solTally(); solGoArm(); }));
+  solTally();
+}
+$('solAddClaimer').addEventListener('click', () => {
+  if (solClaimerList.length >= 15) return;
+  solClaimerList.push({ input: '', pct: 0, resolved: null, avatar: '', name: '' });
+  renderSolClaimers();
+});
+
+async function resolveSolHandle(i) {
+  const c = solClaimerList[i];
+  if (!c || !c.input.startsWith('@')) return;
+  const handle = c.input.slice(1).trim();
+  if (!handle) return;
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/resolve?provider=twitter&chain=SOL&username=${encodeURIComponent(handle)}`);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'not found');
+    c.resolved = j.wallet; c.avatar = j.avatarUrl || ''; c.name = j.displayName || j.username;
+    renderSolClaimers(); solGoArm();
+  } catch (e) {
+    c.resolved = null; c.name = ''; renderSolClaimers();
+  }
+}
+
+function solTally() {
+  const sum = solClaimerList.reduce((a, c) => a + (Number(c.pct) || 0), 0);
+  const el = $('solTally');
+  el.textContent = `${sum.toFixed(2)} / 100%`;
+  el.dataset.ok = Math.round(sum * 100) === 10000 ? '1' : '0';
+  return sum;
+}
+
+function solClaimerTarget(c) {
+  return c.input.startsWith('@') ? c.resolved : c.input;
+}
+
+function validateSol() {
+  if (Math.round(solTally() * 100) !== 10000) return 'The claimer shares must add up to exactly 100%.';
+  const seen = new Set();
+  for (const c of solClaimerList) {
+    const a = solClaimerTarget(c);
+    if (!a) return c.input.startsWith('@') ? `@${c.input.slice(1)} could not be resolved to a wallet.` : 'Every claimer needs an address or a resolved handle.';
+    if (seen.has(a)) return 'Claimer addresses must be unique.';
+    seen.add(a);
+    if ((Number(c.pct) || 0) < 0.01) return 'Each claimer needs at least 0.01%.';
+  }
+  return null;
+}
+
+/* curve presets */
+async function loadConfigTypes() {
+  const sel = $('sol-config');
+  if (sel.options.length) return;
+  const LABELS = {
+    DEFAULT: 'Standard curve',
+    BPS25PRE_BPS100POST: 'Low fee before graduation, full after',
+    BPS100PRE_BPS25POST: 'Full fee before graduation, low after',
+    BPS1000PRE_BPS1000POST: 'High fee both phases, compounding',
+    BPS200PRE_BPS200POST_85LOCK: 'Both phases equal, 85% of supply locked',
+    DEFAULT_1K_SUPPLY: 'Standard, 1000 total supply',
+    DEFAULT_96_LOCKED: 'Standard, 96% of supply locked',
+  };
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/sol/config-types`);
+    const list = await r.json();
+    if (!Array.isArray(list)) throw new Error('bad list');
+    sel.innerHTML = list.map(k => `<option value="${k}">${LABELS[k] || k}</option>`).join('');
+  } catch {
+    sel.innerHTML = '<option value="DEFAULT">Standard curve</option>';
+  }
+}
+
+function solGoArm() {
+  const b = $('solGo');
+  if (!b) return;
+  if (!solPubkey) { b.disabled = true; b.textContent = 'Connect a wallet to launch'; return; }
+  if (!PROXY_BASE) { b.disabled = true; b.textContent = 'Server not configured'; return; }
+  b.disabled = false; b.textContent = 'Launch on Solana';
+}
+setInterval(solGoArm, 1500);   // the wallet is connected by the engine, not by us
+
+$('solGo').addEventListener('click', async () => {
+  if (!solWallet || !solPubkey) return;
+  const out = $('solGoOut');
+  const show = (html, err) => { out.className = 'out show' + (err ? ' err' : ''); out.innerHTML = html; };
+
+  const name = $('sol-name').value.trim();
+  const symbol = $('sol-symbol').value.trim();
+  const imageUrl = $('sol-imgurl').value.trim();
+  if (!name)     return show('<h4>Missing name</h4><p>Give the token a name.</p>', true);
+  if (!symbol)   return show('<h4>Missing ticker</h4><p>Give the token a ticker.</p>', true);
+  if (!imageUrl) return show('<h4>Missing image</h4><p>Upload one or paste a link in the Image URL field.</p>', true);
+  const bad = validateSol();
+  if (bad) return show(`<h4>Claimer config rejected</h4><p>${bad}</p>`, true);
+
+  // the launching wallet is claimer number one unless the user changed it;
+  // everything else is sent as an explicit claimer with its share
+  const extra = solClaimerList
+    .filter(c => solClaimerTarget(c) !== solPubkey)
+    .map(c => c.input.startsWith('@')
+      ? { provider: 'twitter', username: c.input.slice(1), bps: toBps(c.pct) }
+      : { wallet: c.input, bps: toBps(c.pct) });
+
+  $('solGo').disabled = true;
+  try {
+    show('<h4>Building the launch…</h4><p>Talking to the server.</p>');
+    const body = {
+      name, symbol,
+      description: $('sol-desc').value.trim(),
+      imageUrl,
+      twitter: $('sol-tw').value.trim() || undefined,
+      website: $('sol-web').value.trim() || undefined,
+      telegram: $('sol-tg').value.trim() || undefined,
+      initialBuySol: $('sol-buy').value.trim() || 0,
+      launcher: solPubkey,
+      configType: $('sol-config').value || undefined,
+      tipLamports: Number($('sol-tip').value.trim()) || undefined,
+      feeClaimers: extra.length ? extra : undefined,
+    };
+    const r = await fetch(`${PROXY_BASE}/api/sol/build-launch`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `Build failed (${r.status}).`);
+
+    const { VersionedTransaction } = await import('https://esm.sh/@solana/web3.js@1.95.0');
+    let lastSig = '';
+    for (let i = 0; i < j.transactions.length; i++) {
+      show(`<h4>Sign ${i + 1} of ${j.transactions.length}</h4><p>Approve it in your wallet.</p>`);
+      const tx = VersionedTransaction.deserialize(Uint8Array.from(atob(j.transactions[i]), c => c.charCodeAt(0)));
+      const signed = await solWallet.signAndSendTransaction(tx);
+      lastSig = signed.signature || signed;
+      if (i < j.transactions.length - 1) await new Promise(res => setTimeout(res, 3000));
+    }
+
+    show(`<h4>$${symbol.toUpperCase()} launched on Solana</h4>
+      <dl class="kv">
+        <dt>Mint</dt><dd><a href="https://bags.fm/${j.mint}" target="_blank" rel="noopener">${j.mint}</a></dd>
+        <dt>Preset</dt><dd>${j.configApplied || 'DEFAULT'}</dd>
+        <dt>Tx</dt><dd><a href="https://solscan.io/tx/${lastSig}" target="_blank" rel="noopener">${String(lastSig).slice(0, 10)}…</a></dd>
+      </dl>
+      <div class="trade-row"><a class="trade-link" href="https://bags.fm/${j.mint}" target="_blank" rel="noopener">Trade ↗</a></div>`);
+  } catch (e) {
+    show(`<h4>Launch failed</h4><p style="word-break:break-word;">${e.message || e}</p>`, true);
+  } finally { solGoArm(); }
+});
+
+/* ══════════════════ PAIRED LAUNCH ══════════════════ */
 async function loadQuoteTokens() {
   const grid = $('quoteGrid');
   try {
@@ -2291,13 +2140,29 @@ function pairArm() {
   if (!quotePick) { b.disabled = true; b.textContent = 'Pick a pair token'; return; }
   b.disabled = false; b.textContent = `Launch paired with ${quotePick.symbol || 'the selected token'}`;
 }
-setInterval(pairArm, 1500);   // picks up a wallet connected in the other tab
+setInterval(pairArm, 1500);
 
-/* preview only, Bags hosts the real image from the URL field */
 const pairDrop = $('pairDrop'), pairFile = $('pair-image');
-pairFile?.addEventListener('change', () => {
+pairFile.addEventListener('change', async () => {
   const f = pairFile.files[0];
-  if (f) { $('pairPreview').src = URL.createObjectURL(f); pairDrop.classList.add('has'); pairDrop.querySelector('.drop-cue').textContent = f.name; }
+  if (!f) return;
+  $('pairPreview').src = URL.createObjectURL(f);
+  pairDrop.classList.add('has');
+  pairDrop.querySelector('.drop-cue').textContent = 'Uploading…';
+  try {
+    const fd = new FormData();
+    fd.append('image', f);
+    fd.append('name', $('pair-name').value.trim() || 'token');
+    fd.append('symbol', $('pair-symbol').value.trim() || 'TOKEN');
+    const r = await fetch(`${PROXY_BASE}/api/pin`, { method: 'POST', body: fd });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Upload failed.');
+    $('pair-imgurl') && ($('pair-imgurl').value = j.imageURI);
+    pairDrop.dataset.url = j.imageURI;
+    pairDrop.querySelector('.drop-cue').textContent = f.name;
+  } catch (e) {
+    pairDrop.querySelector('.drop-cue').textContent = 'Upload failed';
+  }
 });
 
 $('pairLaunch').addEventListener('click', async () => {
@@ -2307,28 +2172,28 @@ $('pairLaunch').addEventListener('click', async () => {
 
   const name = $('pair-name').value.trim();
   const symbol = $('pair-symbol').value.trim();
-  const imageUrl = $('pair-imgurl').value.trim();
+  const imageUrl = pairDrop.dataset.url || '';
   if (!name)     return show('<h4>Missing name</h4><p>Give the token a name.</p>', true);
   if (!symbol)   return show('<h4>Missing ticker</h4><p>Give the token a ticker.</p>', true);
-  if (!imageUrl) return show('<h4>Image URL needed</h4><p>Paste a link to your token image.</p>', true);
+  if (!imageUrl) return show('<h4>Missing image</h4><p>Upload an image, it is pinned automatically.</p>', true);
 
   $('pairLaunch').disabled = true;
   try {
     show('<h4>Building the launch…</h4><p>Talking to the server.</p>');
-    const body = {
-      name, symbol,
-      description: $('pair-desc').value.trim(),
-      imageUrl,
-      twitter: $('pair-tw').value.trim() || undefined,
-      website: $('pair-web').value.trim() || undefined,
-      telegram: $('pair-tg').value.trim() || undefined,
-      quoteMint: quotePick.mint,
-      initialBuyQuote: $('pair-buy').value.trim() || 0,
-      launcher: solPubkey,
-      feeClaimerWallet: $('pair-claimer').value.trim() || undefined,
-    };
     const r = await fetch(`${PROXY_BASE}/api/sol/build-pair-launch`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, symbol,
+        description: $('pair-desc').value.trim(),
+        imageUrl,
+        twitter: $('pair-tw').value.trim() || undefined,
+        website: $('pair-web').value.trim() || undefined,
+        telegram: $('pair-tg').value.trim() || undefined,
+        quoteMint: quotePick.mint,
+        initialBuyQuote: $('pair-buy').value.trim() || 0,
+        launcher: solPubkey,
+        feeClaimerWallet: $('pair-claimer').value.trim() || undefined,
+      }),
     });
     const j = await r.json();
     if (!r.ok) throw new Error(j.error || `Build failed (${r.status}).`);
@@ -2341,52 +2206,80 @@ $('pairLaunch').addEventListener('click', async () => {
       const tx = VersionedTransaction.deserialize(Uint8Array.from(atob(step.tx), c => c.charCodeAt(0)));
       const signed = await solWallet.signAndSendTransaction(tx);
       lastSig = signed.signature || signed;
-      // each step depends on the one before it. The page has no Solana RPC of
-      // its own, so this waits a few seconds rather than confirming properly.
-      // If a step fails with "account not found", wait and retry the launch.
+      // each step depends on the one before it and this page has no Solana
+      // RPC of its own, so it waits instead of confirming properly
       if (i < j.transactions.length - 1) await new Promise(res => setTimeout(res, 3500));
     }
 
-    const price = j.launch?.launchPriceQuotePerToken;
-    const fdv = j.launch?.impliedLaunchFdvUsd;
     show(`<h4>$${symbol.toUpperCase()} launched, paired with ${j.quote?.symbol || 'the pair token'}</h4>
       <dl class="kv">
         <dt>Mint</dt><dd><a href="https://bags.fm/${j.mint}" target="_blank" rel="noopener">${j.mint}</a></dd>
         <dt>Pool</dt><dd>${j.launch?.pool || '-'}</dd>
-        <dt>Launch price</dt><dd>${price == null ? '-' : price} ${j.quote?.symbol || ''} per token</dd>
-        <dt>Implied FDV</dt><dd>${fdv == null ? '-' : '$' + Number(fdv).toLocaleString('en-US', { maximumFractionDigits: 0 })}</dd>
-        <dt>Tx</dt><dd><a href="https://solscan.io/tx/${lastSig}" target="_blank" rel="noopener">${String(lastSig).slice(0, 8)}…</a></dd>
+        <dt>Price</dt><dd>${j.launch?.launchPriceQuotePerToken ?? '-'} ${j.quote?.symbol || ''} per token</dd>
+        <dt>Tx</dt><dd><a href="https://solscan.io/tx/${lastSig}" target="_blank" rel="noopener">${String(lastSig).slice(0, 10)}…</a></dd>
       </dl>
       <div class="trade-row"><a class="trade-link" href="https://bags.fm/${j.mint}" target="_blank" rel="noopener">Trade ↗</a></div>
-      <p style="margin-top:12px;color:var(--mute);font-size:11.5px;">Your fees accrue in ${j.quote?.symbol || 'the pair token'} and are claimed under Creator.</p>`);
+      <p class="hint">Your fees accrue in ${j.quote?.symbol || 'the pair token'} and are claimed under Creator.</p>`);
   } catch (e) {
     show(`<h4>Launch failed</h4><p style="word-break:break-word;">${e.message || e}</p>`, true);
-  } finally {
-    pairArm();
+  } finally { pairArm(); }
+});
+
+/* ══════════════════ CREATOR: claiming ══════════════════ */
+
+/* Robinhood: read each of your tokens' fee-share contract straight from the
+   chain and claim there. No guessed API parameters, and it works for every
+   token you launched through this pad. */
+$('rhClaimLoad').addEventListener('click', async () => {
+  const box = $('rhClaimBox');
+  if (!account) { box.innerHTML = '<p class="empty">Connect your EVM wallet first, top right.</p>'; return; }
+  box.innerHTML = '<p class="empty">Reading the chain…</p>';
+  try {
+    const data = await rhApi('tokens', { creator: account, limit: 50, orderBy: 'createdAtTimestamp', orderDirection: 'desc' });
+    const items = data.items || [];
+    if (!items.length) { box.innerHTML = '<p class="empty">No tokens launched from this wallet yet.</p>'; return; }
+
+    const rows = await Promise.all(items.map(async t => {
+      try {
+        const feeShare = await publicClient.readContract({ address: ADDR.factory, abi: factoryAbi, functionName: 'feeShareForToken', args: [t.address] });
+        const claimable = await publicClient.readContract({ address: feeShare, abi: feeShareAbi, functionName: 'claimable', args: [account] });
+        return { t, feeShare, claimable };
+      } catch { return null; }
+    }));
+
+    const live = rows.filter(r => r && r.claimable > 0n);
+    if (!live.length) { box.innerHTML = '<p class="empty">Nothing claimable right now. Fees appear here as soon as your tokens trade.</p>'; return; }
+
+    box.innerHTML = '<div class="mini-list">' + live.map((r, i) => `
+      <div class="mini">
+        ${r.t.metadata?.image ? `<img src="${r.t.metadata.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        <div class="mi"><b>$${r.t.symbol || '?'}</b><small>${shorten(r.t.address)}</small></div>
+        <div class="amt">${ethStr(r.claimable, 5)} ETH</div>
+        <button class="key key-sm" data-rhclaim="${i}">Claim</button>
+      </div>`).join('') + '</div>';
+
+    box.querySelectorAll('[data-rhclaim]').forEach(b => b.addEventListener('click', async () => {
+      const r = live[+b.dataset.rhclaim];
+      b.disabled = true; b.textContent = '…';
+      try {
+        if (walletChainId !== CHAIN_ID) throw new Error('Switch to Robinhood Chain first.');
+        const { request } = await publicClient.simulateContract({
+          account, address: r.feeShare, abi: feeShareAbi, functionName: 'claim', args: [true],
+        });
+        const hash = await walletClient.writeContract(request);
+        await publicClient.waitForTransactionReceipt({ hash });
+        b.textContent = 'Claimed';
+      } catch (e) {
+        b.disabled = false; b.textContent = 'Retry';
+        console.error('[rh claim]', e);
+      }
+    }));
+  } catch (e) {
+    box.innerHTML = `<p class="empty">Could not load, ${e.message}</p>`;
   }
 });
 
-/* ── creator: paired launches feed ───────────────────────────────────── */
-async function loadPairFeed() {
-  const box = $('pairFeed');
-  try {
-    const r = await fetch(`${PROXY_BASE}/api/sol/pair-launches?limit=12`);
-    const j = await r.json();
-    if (!r.ok) throw new Error(j.error || `Failed (${r.status}).`);
-    const list = j.launches || [];
-    if (!list.length) { box.innerHTML = '<p class="empty">No paired launches confirmed yet.</p>'; return; }
-    box.innerHTML = '<div class="mini-list">' + list.map(t => `
-      <div class="mini">
-        ${t.image ? `<img src="${t.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
-        <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · quoted in ${shorten(t.quoteMint || '')}</small></div>
-        <a class="trade-link" href="https://bags.fm/${t.tokenMint}" target="_blank" rel="noopener">Open ↗</a>
-      </div>`).join('') + '</div>';
-  } catch (e) {
-    box.innerHTML = `<p class="empty">Could not load the feed, ${e.message}</p>`;
-  }
-}
-
-/* ── creator: claimable positions and vaults ─────────────────────────── */
+/* Solana: fee positions from paired launches, plus the vaults */
 $('claimLoad').addEventListener('click', async () => {
   const box = $('claimBox');
   if (!solPubkey) { box.innerHTML = '<p class="empty">Connect a Solana wallet in the Launch view first.</p>'; return; }
@@ -2398,13 +2291,11 @@ $('claimLoad').addEventListener('click', async () => {
     ]);
     const positions = await posR.json();
     const vaults = await vaultR.json();
-
     const direct = (Array.isArray(positions) ? positions : []).filter(p => p.launchType === 'DAMM_V2_DIRECT');
     const vlist = Array.isArray(vaults) ? vaults : [];
 
-    let html = '';
-    html += '<div class="mini-list">';
-    if (!direct.length) html += '<p class="empty">No paired-launch positions with fees waiting.</p>';
+    let html = '<div class="mini-list">';
+    if (!direct.length && !vlist.length) html += '<p class="empty" style="padding:18px">Nothing claimable right now.</p>';
     direct.forEach((p, i) => {
       html += `<div class="mini">
         <div class="mi"><b>${shorten(p.baseMint || '')}</b><small>paired launch position</small></div>
@@ -2412,7 +2303,6 @@ $('claimLoad').addEventListener('click', async () => {
         <button class="key key-sm" data-claim="${i}">Claim</button>
       </div>`;
     });
-    if (!vlist.length) html += '<p class="empty">No partner or deployer vault balance.</p>';
     vlist.forEach((v, i) => {
       html += `<div class="mini">
         <div class="mi"><b>${v.kind} vault</b><small>quoted in ${shorten(v.quoteMint || '')}</small></div>
@@ -2420,8 +2310,7 @@ $('claimLoad').addEventListener('click', async () => {
         <button class="key key-sm" data-vault="${i}">Sweep</button>
       </div>`;
     });
-    html += '</div>';
-    box.innerHTML = html;
+    box.innerHTML = html + '</div>';
 
     box.querySelectorAll('[data-claim]').forEach(b => b.addEventListener('click', () => claimPosition(direct[+b.dataset.claim], b)));
     box.querySelectorAll('[data-vault]').forEach(b => b.addEventListener('click', () => sweepVault(vlist[+b.dataset.vault], b)));
@@ -2471,16 +2360,101 @@ async function sweepVault(v, btn) {
   }
 }
 
-/* ── creator: dividend coins ─────────────────────────────────────────── */
-// Only shown when the server has owner wallets configured. The server checks
-// the signature and the wallet list, and Bags itself rejects any token whose
-// creator wallet does not belong to our API key's user.
+async function loadPairFeed() {
+  const box = $('pairFeed');
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/sol/pair-launches?limit=12`);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || `Failed (${r.status}).`);
+    const list = j.launches || [];
+    if (!list.length) { box.innerHTML = '<p class="empty">No paired launches confirmed yet.</p>'; return; }
+    box.innerHTML = '<div class="mini-list">' + list.map(t => `
+      <div class="mini">
+        ${t.image ? `<img src="${t.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · quoted in ${shorten(t.quoteMint || '')}</small></div>
+        <a class="trade-link" href="https://bags.fm/${t.tokenMint}" target="_blank" rel="noopener">Open ↗</a>
+      </div>`).join('') + '</div>';
+  } catch (e) {
+    box.innerHTML = `<p class="empty">Could not load the feed, ${e.message}</p>`;
+  }
+}
+
+/* ══════════════════ Dexscreener token info ══════════════════ */
+$('dxCheck').addEventListener('click', async () => {
+  const box = $('dxBox');
+  const tokenAddress = $('dx-token').value.trim();
+  if (!tokenAddress) { box.innerHTML = '<p class="empty">Enter the token mint.</p>'; return; }
+  box.innerHTML = '<p class="empty">Checking…</p>';
+  try {
+    const r = await fetch(`${PROXY_BASE}/api/sol/dexscreener/availability?tokenAddress=${encodeURIComponent(tokenAddress)}`);
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Check failed.');
+    if (!j.available) { box.innerHTML = '<p class="empty">No order available for this token, it may already have one.</p>'; return; }
+    box.innerHTML = `
+      <div class="field"><label for="dx-icon">Icon image URL</label><input id="dx-icon" placeholder="https://…"></div>
+      <div class="field"><label for="dx-header">Header image URL</label><input id="dx-header" placeholder="https://…"></div>
+      <div class="field"><label for="dx-desc">Description</label><textarea id="dx-desc" rows="3"></textarea></div>
+      <div class="field"><label for="dx-links">Links, one per line as label|url</label><textarea id="dx-links" rows="3" placeholder="Website|https://…"></textarea></div>
+      <button class="key key-go" id="dxOrder">Create the order and pay</button>
+      <div class="out" id="dxOut"></div>`;
+    $('dxOrder').addEventListener('click', () => createDexOrder(tokenAddress));
+  } catch (e) {
+    box.innerHTML = `<p class="empty">${e.message}</p>`;
+  }
+});
+
+async function createDexOrder(tokenAddress) {
+  const out = $('dxOut');
+  const show = (html, err) => { out.className = 'out show' + (err ? ' err' : ''); out.innerHTML = html; };
+  if (!solPubkey) return show('<h4>No wallet</h4><p>Connect a Solana wallet in the Launch view first.</p>', true);
+
+  const links = $('dx-links').value.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+    const [label, url] = l.split('|');
+    return url ? { label: label.trim(), url: url.trim() } : { url: label.trim() };
+  });
+
+  $('dxOrder').disabled = true;
+  try {
+    show('<h4>Creating the order…</h4>');
+    const r = await fetch(`${PROXY_BASE}/api/sol/dexscreener/order`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tokenAddress,
+        description: $('dx-desc').value.trim(),
+        iconImageUrl: $('dx-icon').value.trim(),
+        headerImageUrl: $('dx-header').value.trim(),
+        payerWallet: solPubkey,
+        links: links.length ? links : undefined,
+      }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error || 'Order failed.');
+
+    show(`<h4>Pay ${j.priceUSDC} USDC</h4><p>Approve the payment in your wallet.</p>`);
+    const sig = await sendSolTxB64(j.transaction);
+
+    show('<h4>Confirming the payment…</h4>');
+    const r2 = await fetch(`${PROXY_BASE}/api/sol/dexscreener/submit`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderUUID: j.orderUUID, paymentSignature: sig }),
+    });
+    const j2 = await r2.json();
+    if (!r2.ok) throw new Error(j2.error || 'Payment submission failed.');
+    show(`<h4>Order submitted</h4><dl class="kv"><dt>Order</dt><dd>${j.orderUUID}</dd><dt>Payment</dt><dd><a href="https://solscan.io/tx/${sig}" target="_blank" rel="noopener">${String(sig).slice(0, 10)}…</a></dd></dl>`);
+  } catch (e) {
+    show(`<h4>Order failed</h4><p style="word-break:break-word;">${e.message || e}</p>`, true);
+  } finally {
+    const b = $('dxOrder'); if (b) b.disabled = false;
+  }
+}
+
+/* ══════════════════ Dividend coins ══════════════════ */
 async function checkIndexFeature() {
   try {
     const r = await fetch(`${PROXY_BASE}/api/health`);
     const j = await r.json();
     if (j.indexTokens) { $('divCard').hidden = false; renderBasket(); armDiv(); }
-  } catch { /* feature simply stays hidden */ }
+  } catch { /* stays hidden */ }
 }
 
 const basket = [''];
@@ -2512,13 +2486,13 @@ function armDiv() {
   b.disabled = false; b.textContent = `Register with ${filled.length} asset${filled.length > 1 ? 's' : ''}`;
 }
 $('div-token').addEventListener('input', armDiv);
+setInterval(armDiv, 1500);
 
 $('divGo').addEventListener('click', async () => {
   const out = $('divOut');
   const show = (html, err) => { out.className = 'out show' + (err ? ' err' : ''); out.innerHTML = html; };
   const tokenAddress = $('div-token').value.trim();
   const tokens = basket.filter(Boolean);
-
   if (!confirm('This cannot be undone. The basket is fixed forever and the creator fees go to holders from now on. Continue?')) return;
 
   $('divGo').disabled = true;
@@ -2535,9 +2509,7 @@ $('divGo').addEventListener('click', async () => {
     });
     const j = await r.json();
     if (!r.ok) throw new Error(j.error || `Registration failed (${r.status}).`);
-
-    show(`<h4>Registered as a dividend coin</h4>
-      <p>Every trade now feeds the basket. The bot starts a cycle once the claimable creator fees reach 0.001 ETH, then buys the assets and pays holders pro rata.</p>`);
+    show('<h4>Registered as a dividend coin</h4><p>The bot starts a cycle once the claimable creator fees reach 0.001 ETH, then buys the basket and pays holders pro rata.</p>');
   } catch (e) {
     const m = e.shortMessage || e.message || String(e);
     let hint = '';
@@ -2568,8 +2540,9 @@ $('divCheckGo').addEventListener('click', async () => {
   }
 });
 
-/* keep the dividend button honest about the wallet state */
-setInterval(armDiv, 1500);
+/* ── boot ────────────────────────────────────────────────────────────── */
+renderSolClaimers();
+showView(location.hash.replace('#/', ''));
 </script>
 </body>
 </html>
