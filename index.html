@@ -851,6 +851,20 @@ const feeShareAbi = parseAbi([
   'function getClaimers() view returns (address[] addrs, uint16[] bps)',
 ]);
 
+/**
+ * Which injected provider do we talk to for the EVM side?
+ * Phantom injects window.ethereum too. If its selected account is Solana-only,
+ * even a harmless eth_chainId makes Phantom throw up an "unsupported account"
+ * modal. So: when several providers are present, take one that is not Phantom.
+ */
+function pickEvm() {
+  const e = window.ethereum;
+  if (!e) return null;
+  const list = Array.isArray(e.providers) && e.providers.length ? e.providers : [e];
+  return list.find(p => !p.isPhantom) || list[0];
+}
+const ETH = pickEvm();
+
 const publicClient = createPublicClient({ chain: robinhood, transport: http(), batch: { multicall: true } });
 let walletClient = null, account = null, walletChainId = null;
 
@@ -912,8 +926,8 @@ function paintChain() {
   else { chip.dataset.s = 'bad'; txt.textContent = 'Wrong chain: ' + walletChainId; }
 }
 async function readChain() {
-  if (!window.ethereum) return;
-  try { walletChainId = parseInt(await window.ethereum.request({ method: 'eth_chainId' }), 16); }
+  if (!ETH) return;
+  try { walletChainId = parseInt(await ETH.request({ method: 'eth_chainId' }), 16); }
   catch { walletChainId = null; }
   paintChain(); armButton();
 }
@@ -1054,7 +1068,7 @@ function validateClaimers() {
 
 /* wallet */
 async function connect() {
-  if (!window.ethereum) {
+  if (!ETH) {
     const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (mobile) {
       // No extensions on mobile browsers, open in MetaMask's in-app browser.
@@ -1066,13 +1080,13 @@ async function connect() {
   }
   try {
     setFace('working', 'Waiting for the wallet…');
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const accounts = await ETH.request({ method: 'eth_requestAccounts' });
     if (!accounts || !accounts.length) return setFace('fail', 'No account approved', 'bad');
     account = getAddress(accounts[0]);
 
     // Account is approved, reflect that NOW, before the chain switch, so a
     // declined network prompt can't roll the whole connection back to "not connected".
-    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
+    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(ETH) });
     $('connect').textContent = shorten(account);
     if (!claimers[0].input) { claimers[0].input = account; renderClaimers(); }
     await readChain();
@@ -1081,10 +1095,10 @@ async function connect() {
     // Now try to get them onto the right chain. Failure here is not fatal -
     // the chain badge and the launch button already gate on chainId.
     try {
-      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
+      await ETH.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
     } catch (err) {
       if (err.code === 4902 || err?.data?.originalError?.code === 4902) {
-        await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{
+        await ETH.request({ method: 'wallet_addEthereumChain', params: [{
           chainId: CHAIN_HEX, chainName: 'Robinhood Chain',
           nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
           rpcUrls: ['https://rpc.mainnet.chain.robinhood.com'],
@@ -1113,9 +1127,11 @@ function armButton() {
   b.disabled = false; b.textContent = 'Launch token';
 }
 $('connect').addEventListener('click', connect);
-window.ethereum?.on?.('accountsChanged', () => location.reload());
-window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
-readChain();
+ETH?.on?.('accountsChanged', () => location.reload());
+ETH?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
+// Deliberately NO readChain() here. Touching the EVM provider on load is what
+// made Phantom pop its "unsupported account" dialog at people who only wanted
+// to launch on Solana. The chain is read the moment they hit Connect.
 
 /* No wallet touch on load. Some wallets pop themselves open the moment a page
    builds a client or reads chain state on startup, so we do NOTHING here.
