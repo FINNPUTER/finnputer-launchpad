@@ -335,7 +335,7 @@
   /* ── solana wallet row ── */
   .sol-connect{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:20px}
   .wallet-connect-wrap{position:relative}
-  .wallet-menu{position:absolute; top:calc(100% + 7px); left:0; z-index:30; min-width:190px; padding:6px;
+  .wallet-menu{position:absolute; top:calc(100% + 7px); right:0; z-index:30; min-width:190px; padding:6px;
     background:var(--panel-solid); border:1px solid var(--line); border-radius:12px; box-shadow:0 24px 60px rgba(0,0,0,.6)}
   .wallet-opt{display:block; width:100%; text-align:left; background:none; border:0; color:var(--ink);
     font-family:var(--body); font-size:13.5px; padding:11px 13px; border-radius:9px; cursor:pointer}
@@ -390,7 +390,10 @@
     </nav>
     <div class="nav-r">
       <div class="chip" id="chainChip"><i class="led"></i><span id="chainTxt">No chain</span></div>
-      <button class="key key-sm" id="connect">Connect wallet</button>
+      <div class="wallet-connect-wrap">
+        <button class="key key-sm" id="connect">Connect wallet</button>
+        <div class="wallet-menu" id="evmMenu" hidden></div>
+      </div>
     </div>
   </div>
 </header>
@@ -874,25 +877,53 @@ function evmList() {
   if (!e) return [];
   return Array.isArray(e.providers) && e.providers.length ? e.providers : [e];
 }
+function evmName(p) {
+  if (!p) return 'unknown';
+  if (p.isMetaMask) return 'MetaMask';
+  if (p.isRabby) return 'Rabby';
+  if (p.isCoinbaseWallet) return 'Coinbase';
+  if (p.isBraveWallet) return 'Brave';
+  if (p.isTrust) return 'Trust';
+  if (p.isPhantom) return 'Phantom';
+  return 'Other wallet';
+}
+function useEvm(p) {
+  _evm = p;
+  console.log('[evm] using:', evmName(p));
+  p.on?.('accountsChanged', () => location.reload());
+  p.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
+  return p;
+}
 function evm() {
   if (_evm) return _evm;
   const e = window.ethereum;
   const list = evmList();
   if (!list.length) return null;             // extensions inject late, ask again next time
-  _evm =
-    (e && !e.isPhantom && !Array.isArray(e.providers) ? e : null) ||
+  const best =
     list.find(p => p.isMetaMask && !p.isPhantom) ||
     list.find(p => p.isRabby) ||
     list.find(p => p.isCoinbaseWallet) ||
     (e && !e.isPhantom ? e : null) ||
     list.find(p => !p.isPhantom) ||
     list[0];
-  console.log('[evm] providers:', list.length, 'using:',
-    _evm.isMetaMask ? 'MetaMask' : _evm.isRabby ? 'Rabby' : _evm.isCoinbaseWallet ? 'Coinbase' : _evm.isPhantom ? 'Phantom' : 'unknown');
-  _evm.on?.('accountsChanged', () => location.reload());
-  _evm.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
-  return _evm;
+  return useEvm(best);
 }
+/** Several wallets injected and none chosen yet: let the user say which one. */
+function showEvmPicker() {
+  const menu = $('evmMenu');
+  const list = evmList();
+  menu.innerHTML = list.map((p, i) => `<button class="wallet-opt" data-i="${i}">${evmName(p)}</button>`).join('');
+  menu.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    menu.hidden = true;
+    useEvm(list[+b.dataset.i]);
+    connect();
+  }));
+  menu.hidden = false;
+}
+document.addEventListener('click', (e) => {
+  const menu = $('evmMenu');
+  if (menu && !menu.hidden && !menu.contains(e.target) && e.target.id !== 'connect') menu.hidden = true;
+});
 /** A dead extension must not freeze the page. */
 function askWallet(args, ms = 20000) {
   return Promise.race([
@@ -1171,6 +1202,9 @@ $('connect').addEventListener('click', async () => {
   // the wallet extension is sitting on the request.
   const b = $('connect');
   const label = b.textContent;
+  // more than one wallet extension and no choice made yet: ask, do not guess.
+  // Guessing is what sent the request into a dead extension before.
+  if (!_evm && evmList().length > 1) { showEvmPicker(); return; }
   b.textContent = 'Opening wallet…';
   try {
     await connect();
