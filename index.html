@@ -337,6 +337,7 @@
   .wallet-connect-wrap{position:relative}
   .wallet-menu{position:absolute; top:calc(100% + 7px); right:0; z-index:30; min-width:190px; padding:6px;
     background:var(--panel-solid); border:1px solid var(--line); border-radius:12px; box-shadow:0 24px 60px rgba(0,0,0,.6)}
+  .menu-note{font-family:var(--mono); font-size:10.5px; color:var(--bad); padding:8px 11px 6px; line-height:1.5}
   .wallet-opt{display:block; width:100%; text-align:left; background:none; border:0; color:var(--ink);
     font-family:var(--body); font-size:13.5px; padding:11px 13px; border-radius:9px; cursor:pointer}
   .wallet-opt:hover{background:rgba(52,211,154,.09); color:var(--grn-bright)}
@@ -390,10 +391,7 @@
     </nav>
     <div class="nav-r">
       <div class="chip" id="chainChip"><i class="led"></i><span id="chainTxt">No chain</span></div>
-      <div class="wallet-connect-wrap">
-        <button class="key key-sm" id="connect">Connect wallet</button>
-        <div class="wallet-menu" id="evmMenu" hidden></div>
-      </div>
+      <button class="key key-sm" id="connect">Connect wallet</button>
     </div>
   </div>
 </header>
@@ -855,85 +853,6 @@ const feeShareAbi = parseAbi([
   'function getClaimers() view returns (address[] addrs, uint16[] bps)',
 ]);
 
-/**
- * Which injected provider do we talk to for the EVM side?
- * Phantom injects window.ethereum too. If its selected account is Solana-only,
- * even a harmless eth_chainId makes Phantom throw up an "unsupported account"
- * modal. So: when several providers are present, take one that is not Phantom.
- */
-/**
- * Which injected provider do we talk to for the EVM side?
- *
- * Order matters and it is not "the first one". A browser with several wallet
- * extensions exposes all of them, and some sit there dead: one of them answers
- * nothing at all and the request hangs forever ("Transport request timed out").
- * So: the browser's own default first, as long as it is not Phantom (Phantom
- * throws an unsupported-account dialog at Solana-only accounts), then the
- * wallets we can identify by name, and only then anything else.
- */
-let _evm = null;
-function evmList() {
-  const e = window.ethereum;
-  if (!e) return [];
-  return Array.isArray(e.providers) && e.providers.length ? e.providers : [e];
-}
-function evmName(p) {
-  if (!p) return 'unknown';
-  if (p.isMetaMask) return 'MetaMask';
-  if (p.isRabby) return 'Rabby';
-  if (p.isCoinbaseWallet) return 'Coinbase';
-  if (p.isBraveWallet) return 'Brave';
-  if (p.isTrust) return 'Trust';
-  if (p.isPhantom) return 'Phantom';
-  return 'Other wallet';
-}
-function useEvm(p) {
-  _evm = p;
-  console.log('[evm] using:', evmName(p));
-  p.on?.('accountsChanged', () => location.reload());
-  p.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
-  return p;
-}
-function evm() {
-  if (_evm) return _evm;
-  const e = window.ethereum;
-  const list = evmList();
-  if (!list.length) return null;             // extensions inject late, ask again next time
-  const best =
-    list.find(p => p.isMetaMask && !p.isPhantom) ||
-    list.find(p => p.isRabby) ||
-    list.find(p => p.isCoinbaseWallet) ||
-    (e && !e.isPhantom ? e : null) ||
-    list.find(p => !p.isPhantom) ||
-    list[0];
-  return useEvm(best);
-}
-/** Several wallets injected and none chosen yet: let the user say which one. */
-function showEvmPicker() {
-  const menu = $('evmMenu');
-  const list = evmList();
-  menu.innerHTML = list.map((p, i) => `<button class="wallet-opt" data-i="${i}">${evmName(p)}</button>`).join('');
-  menu.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
-    menu.hidden = true;
-    useEvm(list[+b.dataset.i]);
-    connect();
-  }));
-  menu.hidden = false;
-}
-document.addEventListener('click', (e) => {
-  const menu = $('evmMenu');
-  if (menu && !menu.hidden && !menu.contains(e.target) && e.target.id !== 'connect') menu.hidden = true;
-});
-/** A dead extension must not freeze the page. */
-function askWallet(args, ms = 20000) {
-  return Promise.race([
-    evm().request(args),
-    new Promise((_, rej) => setTimeout(() => rej(new Error(
-      'The wallet did not answer. Open the extension icon in your toolbar, the request is probably waiting there. If several wallet extensions are installed, switch the others off for this site.'
-    )), ms)),
-  ]);
-}
-
 const publicClient = createPublicClient({ chain: robinhood, transport: http(), batch: { multicall: true } });
 let walletClient = null, account = null, walletChainId = null;
 
@@ -995,8 +914,8 @@ function paintChain() {
   else { chip.dataset.s = 'bad'; txt.textContent = 'Wrong chain: ' + walletChainId; }
 }
 async function readChain() {
-  if (!evm()) return;
-  try { walletChainId = parseInt(await evm().request({ method: 'eth_chainId' }), 16); }
+  if (!window.ethereum) return;
+  try { walletChainId = parseInt(await window.ethereum.request({ method: 'eth_chainId' }), 16); }
   catch { walletChainId = null; }
   paintChain(); armButton();
 }
@@ -1137,7 +1056,7 @@ function validateClaimers() {
 
 /* wallet */
 async function connect() {
-  if (!evm()) {
+  if (!window.ethereum) {
     const mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (mobile) {
       // No extensions on mobile browsers, open in MetaMask's in-app browser.
@@ -1145,18 +1064,17 @@ async function connect() {
       window.location.href = 'https://metamask.app.link/dapp/' + location.host + location.pathname;
       return;
     }
-    $('connect').textContent = 'No EVM wallet';
     return setFace('fail', 'No EVM wallet found in this browser. MetaMask or Rabby is needed for Robinhood Chain; Solana is connected further down the Launch page.', 'bad');
   }
   try {
     setFace('working', 'Waiting for the wallet…');
-    const accounts = await askWallet({ method: 'eth_requestAccounts' });
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     if (!accounts || !accounts.length) return setFace('fail', 'No account approved', 'bad');
     account = getAddress(accounts[0]);
 
     // Account is approved, reflect that NOW, before the chain switch, so a
     // declined network prompt can't roll the whole connection back to "not connected".
-    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(evm()) });
+    walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
     $('connect').textContent = shorten(account);
     if (!claimers[0].input) { claimers[0].input = account; renderClaimers(); }
     await readChain();
@@ -1165,10 +1083,10 @@ async function connect() {
     // Now try to get them onto the right chain. Failure here is not fatal -
     // the chain badge and the launch button already gate on chainId.
     try {
-      await evm().request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
+      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_HEX }] });
     } catch (err) {
       if (err.code === 4902 || err?.data?.originalError?.code === 4902) {
-        await evm().request({ method: 'wallet_addEthereumChain', params: [{
+        await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [{
           chainId: CHAIN_HEX, chainName: 'Robinhood Chain',
           nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
           rpcUrls: ['https://rpc.mainnet.chain.robinhood.com'],
@@ -1196,28 +1114,10 @@ function armButton() {
   if (walletChainId !== CHAIN_ID) { b.disabled = true; b.textContent = 'Switch to Robinhood'; return; }
   b.disabled = false; b.textContent = 'Launch token';
 }
-$('connect').addEventListener('click', async () => {
-  // Visible proof that the click reached the script. If this text never
-  // changes, the page is broken; if it changes and nothing else happens,
-  // the wallet extension is sitting on the request.
-  const b = $('connect');
-  const label = b.textContent;
-  // more than one wallet extension and no choice made yet: ask, do not guess.
-  // Guessing is what sent the request into a dead extension before.
-  if (!_evm && evmList().length > 1) { showEvmPicker(); return; }
-  b.textContent = 'Opening wallet…';
-  try {
-    await connect();
-    if (!account) b.textContent = label;
-  } catch (e) {
-    b.textContent = 'Wallet error';
-    setFace('fail', e?.message || String(e), 'bad');
-    console.error('[connect]', e);
-  }
-});
-// Deliberately NO readChain() here. Touching the EVM provider on load is what
-// made Phantom pop its "unsupported account" dialog at people who only wanted
-// to launch on Solana. The chain is read the moment they hit Connect.
+$('connect').addEventListener('click', connect);
+window.ethereum?.on?.('accountsChanged', () => location.reload());
+window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
+readChain();
 
 /* No wallet touch on load. Some wallets pop themselves open the moment a page
    builds a client or reads chain state on startup, so we do NOTHING here.
