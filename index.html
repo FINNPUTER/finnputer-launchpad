@@ -1123,8 +1123,32 @@ $('connect').addEventListener('click', () => {
   const solOpen = $('tab-sol')?.getAttribute('aria-selected') === 'true';
   return solOpen ? solConnect() : connect();
 });
-window.ethereum?.on?.('accountsChanged', () => location.reload());
-window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
+/**
+ * Never reload the page from a wallet event.
+ *
+ * This used to be location.reload(). Phantom occupies window.ethereum when it
+ * is set as the default app wallet, and it fires accountsChanged the moment it
+ * opens its own approval window. The page then reloaded itself, the caller
+ * waiting for Phantom's answer was gone, and Phantom's window sat there
+ * spinning forever. Handle the change in place instead.
+ */
+window.ethereum?.on?.('accountsChanged', (accs) => {
+  const next = Array.isArray(accs) ? accs[0] : null;
+  console.log('[evm] accountsChanged:', next || 'none');
+  if (!next) {                        // disconnected on the EVM side
+    account = null; walletClient = null;
+    $('connect').textContent = 'Connect wallet';
+    paintChain(); armButton(); paintConnectLabel();
+    return;
+  }
+  if (account && next.toLowerCase() === account.toLowerCase()) return;
+  if (!account) return;               // we were never connected on EVM, ignore it
+  account = next;
+  walletClient = createWalletClient({ account, chain: robinhood, transport: custom(window.ethereum) });
+  $('connect').textContent = `${account.slice(0, 6)}…${account.slice(-4)}`;
+  readChain().then(() => { paintChain(); armButton(); paintConnectLabel(); });
+});
+window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); paintConnectLabel(); });
 readChain();
 
 /* No wallet touch on load. Some wallets pop themselves open the moment a page
@@ -1686,8 +1710,42 @@ function solArm() {
 
 async function connectSolWallet(entry) {
   try {
+    // 1) Already approved in this session? Then there is nothing to ask for,
+    //    and no popup that could hang.
+    if (entry.obj.isConnected && entry.obj.publicKey) {
+      solWallet = entry.obj;
+      solPubkey = entry.obj.publicKey.toString();
+      $('solConnect').textContent = `${entry.name} · ${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
+      solSet('Connected on Solana', 'ok');
+      solArm(); paintConnectLabel();
+      return;
+    }
+
+    // 2) Approved earlier but not in this tab: this restores it silently.
+    try {
+      const trusted = await Promise.race([
+        entry.obj.connect({ onlyIfTrusted: true }),
+        new Promise(r => setTimeout(() => r(null), 2500)),
+      ]);
+      if (trusted?.publicKey) {
+        solWallet = entry.obj;
+        solPubkey = trusted.publicKey.toString();
+        $('solConnect').textContent = `${entry.name} · ${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
+        solSet('Connected on Solana', 'ok');
+        solArm(); paintConnectLabel();
+        return;
+      }
+    } catch { /* not trusted yet, fall through to the normal request */ }
+
+    // 3) Normal request, with a limit so a stuck extension does not leave the
+    //    page silent forever.
     solSet(`Connecting ${entry.name}…`);
-    const resp = await entry.obj.connect();
+    const resp = await Promise.race([
+      entry.obj.connect(),
+      new Promise((_, rej) => setTimeout(() => rej(new Error(
+        'no answer. Close the wallet window, click the extension icon in the toolbar, unlock it, then try again. If it keeps spinning, remove this site under Settings, Connected apps and reload.'
+      )), 30000)),
+    ]);
     solWallet = entry.obj;
     solPubkey = (resp?.publicKey || entry.obj.publicKey).toString();
     $('solConnect').textContent = `${entry.name} · ${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
