@@ -316,6 +316,9 @@
   .mini{display:flex; align-items:center; gap:14px; padding:15px 18px; border-top:1px solid var(--line-2)}
   .mini:first-child{border-top:0}
   .mini img{width:36px; height:36px; border-radius:10px; object-fit:cover; background:var(--panel2); flex:none}
+  .mono-ic{width:36px; height:36px; border-radius:10px; flex:none; display:flex; align-items:center; justify-content:center;
+    font-family:var(--disp); font-weight:600; font-size:15px; color:var(--grn-bright);
+    background:linear-gradient(180deg,rgba(52,211,154,.16),rgba(52,211,154,.05)); border:1px solid var(--line)}
   .mini .mi{flex:1; min-width:0}
   .mini .mi b{display:block; font-weight:600; font-size:14px}
   .mini .mi small{display:block; font-family:var(--mono); font-size:11px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
@@ -328,6 +331,9 @@
   .quote-opt:hover{border-color:var(--grn-dim); transform:translateY(-1px)}
   .quote-opt[aria-pressed="true"]{border-color:var(--grn); background:rgba(52,211,154,.08)}
   .quote-opt img{width:26px; height:26px; border-radius:50%; object-fit:cover; background:var(--panel2); flex:none}
+  .mono-ic-sm{width:26px; height:26px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
+    font-family:var(--disp); font-weight:600; font-size:11px; color:var(--grn-bright);
+    background:linear-gradient(180deg,rgba(52,211,154,.18),rgba(52,211,154,.05)); border:1px solid var(--line)}
   .quote-opt .qs{min-width:0}
   .quote-opt .qs b{display:block; font-size:13px; font-weight:600}
   .quote-opt .qs small{display:block; font-family:var(--mono); font-size:10px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
@@ -703,6 +709,15 @@
       <span class="eyebrow">Your account</span>
       <h1 class="page">Portfolio</h1>
       <p class="sub">Live price, bonding progress, trade activity and the fees waiting for you.</p>
+
+      <div class="card" id="solPortfolioCard" hidden>
+        <h3>Solana</h3>
+        <p class="card-sub">Fee positions and vaults for the connected Solana wallet.</p>
+        <div id="solPortfolio"><p class="empty">Loading…</p></div>
+      </div>
+
+      <div class="sec-wrap"><div class="sec">Robinhood Chain</div></div>
+      <p class="sub" style="margin-bottom:16px;">The dashboard below reads Robinhood Chain and needs an EVM wallet.</p>
     </section>
       <div class="dash-box">
     <div class="dash-connect">
@@ -1901,6 +1916,7 @@ function onFirstOpen(v) {
   if (v === 'explore') { loadStatTiles(); loadTopVolume(); loadSolFeed(); loadRhFeed(); }
   if (v === 'launch')  { loadConfigTypes(); }
   if (v === 'creator') { loadPairFeed(); checkIndexFeature(); }
+  if (v === 'portfolio' && solPubkey) { $('solPortfolioCard').hidden = false; loadSolPositions('solPortfolio'); }
 }
 document.querySelectorAll('.tabs-main button').forEach(b => {
   b.addEventListener('click', () => { location.hash = '#/' + b.dataset.view; });
@@ -1955,12 +1971,12 @@ async function loadStatTiles() {
 async function loadTopVolume() {
   const box = $('topVol');
   try {
-    const top = await rhApi('top-volume');
+    const [top] = await Promise.all([rhApi('top-volume'), rhImageMap()]);
     const items = (top.items || top || []).slice(0, 10);
     if (!items.length) { box.innerHTML = '<p class="empty">No volume recorded yet.</p>'; return; }
     box.innerHTML = '<div class="mini-list">' + items.map(t => `
       <div class="mini">
-        ${t.metadata?.image ? `<img src="${t.metadata.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        ${icon(rhImg(t.address, t.metadata?.image), t.symbol)}
         <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · ${shorten(t.address)}</small></div>
         <div class="amt">${ethStr(t.volumeEthWei, 2)} ETH</div>
       </div>`).join('') + '</div>';
@@ -2024,6 +2040,10 @@ function paintConnectLabel() {
   }
 
   b.textContent = `${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
+  if ($('solPortfolioCard')?.hidden) {     // connected later than the first visit
+    $('solPortfolioCard').hidden = false;
+    loadSolPositions('solPortfolio');
+  }
   chip.dataset.s = 'ok';
   $('chainTxt').textContent = 'Solana';
   const st = $('status');
@@ -2242,7 +2262,7 @@ async function loadQuoteTokens() {
     if (!quoteTokens.length) { grid.innerHTML = '<p class="empty">Bags lists no pair tokens right now.</p>'; return; }
     grid.innerHTML = quoteTokens.map((t, i) => `
       <button class="quote-opt" data-i="${i}" aria-pressed="false">
-        ${t.image ? `<img src="${t.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        ${iconSm(t.image, t.symbol)}
         <div class="qs"><b>${t.symbol || '?'}</b><small>${t.name || shorten(t.mint)}</small></div>
       </button>`).join('');
     grid.querySelectorAll('.quote-opt').forEach(b => b.addEventListener('click', () => {
@@ -2377,7 +2397,7 @@ $('rhClaimLoad').addEventListener('click', async () => {
 
     box.innerHTML = '<div class="mini-list">' + live.map((r, i) => `
       <div class="mini">
-        ${r.t.metadata?.image ? `<img src="${r.t.metadata.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        ${icon(r.t.metadata?.image, r.t.symbol)}
         <div class="mi"><b>$${r.t.symbol || '?'}</b><small>${shorten(r.t.address)}</small></div>
         <div class="amt">${ethStr(r.claimable, 5)} ETH</div>
         <button class="key key-sm" data-rhclaim="${i}">Claim</button>
@@ -2405,9 +2425,11 @@ $('rhClaimLoad').addEventListener('click', async () => {
 });
 
 /* Solana: fee positions from paired launches, plus the vaults */
-$('claimLoad').addEventListener('click', async () => {
-  const box = $('claimBox');
-  if (!solPubkey) { box.innerHTML = '<p class="empty">Connect a Solana wallet in the Launch view first.</p>'; return; }
+$('claimLoad').addEventListener('click', () => loadSolPositions('claimBox'));
+
+async function loadSolPositions(boxId) {
+  const box = $(boxId);
+  if (!solPubkey) { box.innerHTML = '<p class="empty">Connect a Solana wallet first, the button is top right.</p>'; return; }
   box.innerHTML = '<p class="empty">Loading…</p>';
   try {
     const [posR, vaultR] = await Promise.all([
@@ -2442,7 +2464,7 @@ $('claimLoad').addEventListener('click', async () => {
   } catch (e) {
     box.innerHTML = `<p class="empty">Could not load, ${e.message}</p>`;
   }
-});
+}
 
 async function sendSolTxB64(b64) {
   const { VersionedTransaction } = await import('https://esm.sh/@solana/web3.js@1.95.0');
@@ -2495,7 +2517,7 @@ async function loadPairFeed() {
     if (!list.length) { box.innerHTML = '<p class="empty">No paired launches confirmed yet.</p>'; return; }
     box.innerHTML = '<div class="mini-list">' + list.map(t => `
       <div class="mini">
-        ${t.image ? `<img src="${t.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        ${icon(t.image, t.symbol)}
         <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · quoted in ${shorten(t.quoteMint || '')}</small></div>
         <a class="trade-link" href="https://bags.fm/${t.tokenMint}" target="_blank" rel="noopener">Open ↗</a>
       </div>`).join('') + '</div>';
@@ -2665,6 +2687,19 @@ $('divCheckGo').addEventListener('click', async () => {
   }
 });
 
+/** Most tokens on 4663 carry no image. An empty grey square looks broken, a
+ *  letter does not. */
+/** Round variant for the pair token picker. */
+function iconSm(url, symbol) {
+  const letter = (symbol || '?').replace(/[^A-Za-z0-9]/g, '').slice(0, 1).toUpperCase() || '?';
+  if (url) return `<img src="${url}" alt="" onerror="this.outerHTML='<div class=\'mono-ic-sm\'>${letter}</div>'">`;
+  return `<div class="mono-ic-sm">${letter}</div>`;
+}
+function icon(url, symbol) {
+  if (url) return `<img src="${url}" alt="" onerror="this.outerHTML='<div class=\'mono-ic\'>${(symbol || '?').replace(/[^A-Za-z0-9]/g, '').slice(0, 1).toUpperCase() || '?'}</div>'">`;
+  return `<div class="mono-ic">${(symbol || '?').replace(/[^A-Za-z0-9]/g, '').slice(0, 1).toUpperCase() || '?'}</div>`;
+}
+
 /* ── live launches, everywhere, not just through this pad ──────────────
    The pad's own feed stays below. These two show what is actually being
    launched right now, so the page has a pulse even before your first
@@ -2681,7 +2716,7 @@ async function loadSolFeed() {
     if (!list.length) { box.innerHTML = '<p class="empty">The feed is empty right now.</p>'; return; }
     box.innerHTML = '<div class="mini-list">' + list.map(t => `
       <div class="mini">
-        ${t.image ? `<img src="${t.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        ${icon(t.image, t.symbol)}
         <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · ${shorten(t.tokenMint || '')}</small></div>
         <div class="amt">${STATUS_LABEL[t.status] || (t.status || '').toLowerCase()}</div>
         <a class="trade-link" href="https://bags.fm/${t.tokenMint}" target="_blank" rel="noopener">Open ↗</a>
@@ -2691,17 +2726,45 @@ async function loadSolFeed() {
   }
 }
 
+/**
+ * Robinhood image lookup.
+ * token-creations and top-volume come back without metadata, so their rows had
+ * no images at all. The tokens endpoint does carry metadata, so it is fetched
+ * once and used as an address to image map for every list on the page.
+ */
+let rhImages = null;
+async function rhImageMap() {
+  if (rhImages) return rhImages;
+  rhImages = new Map();
+  try {
+    const j = await rhApi('tokens', { limit: 100, orderBy: 'createdAtTimestamp', orderDirection: 'desc' });
+    for (const t of (j.items || [])) {
+      const img = t.metadata?.image || t.image || t.imageUrl;
+      if (t.address && img) rhImages.set(t.address.toLowerCase(), img);
+    }
+    const v = await rhApi('top-volume');
+    for (const t of (v.items || v || [])) {
+      const img = t.metadata?.image || t.image || t.imageUrl;
+      if (t.address && img) rhImages.set(t.address.toLowerCase(), img);
+    }
+  } catch (e) { console.warn('[rh images]', e.message); }
+  return rhImages;
+}
+function rhImg(addr, direct) {
+  return direct || rhImages?.get(String(addr || '').toLowerCase()) || '';
+}
+
 async function loadRhFeed() {
   const box = $('rhFeed');
   try {
-    const j = await rhApi('token-creations');
+    const [j] = await Promise.all([rhApi('tokens', { limit: 12, orderBy: 'createdAtTimestamp', orderDirection: 'desc' }), rhImageMap()]);
     const list = (j.items || j || []).slice(0, 12);
     if (!list.length) { box.innerHTML = '<p class="empty">Nothing launched on 4663 yet today.</p>'; return; }
     box.innerHTML = '<div class="mini-list">' + list.map(t => {
       const addr = t.address || t.token || '';
       const prog = t.bondingProgressPct != null ? Math.round(t.bondingProgressPct) + '%' : (t.migrated ? 'graduated' : '');
       return `<div class="mini">
-        ${t.metadata?.image ? `<img src="${t.metadata.image}" alt="" onerror="this.style.visibility='hidden'">` : '<img alt="">'}
+        ${icon(rhImg(addr, t.metadata?.image), t.symbol)}
         <div class="mi"><b>$${t.symbol || '?'}</b><small>${t.name || ''} · ${shorten(addr)}</small></div>
         <div class="amt">${prog}</div>
         <a class="trade-link" href="${BAGS_APP}/${addr}" target="_blank" rel="noopener">Open ↗</a>
