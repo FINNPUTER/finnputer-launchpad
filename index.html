@@ -1114,7 +1114,15 @@ function armButton() {
   if (walletChainId !== CHAIN_ID) { b.disabled = true; b.textContent = 'Switch to Robinhood'; return; }
   b.disabled = false; b.textContent = 'Launch token';
 }
-$('connect').addEventListener('click', connect);
+/**
+ * One button, two chains. Which one it means depends on the tab that is open,
+ * because a single "Connect wallet" that always means EVM sends Solana users
+ * straight into Phantom's unsupported-network dialog.
+ */
+$('connect').addEventListener('click', () => {
+  const solOpen = $('tab-sol')?.getAttribute('aria-selected') === 'true';
+  return solOpen ? solConnect() : connect();
+});
 window.ethereum?.on?.('accountsChanged', () => location.reload());
 window.ethereum?.on?.('chainChanged', (hex) => { walletChainId = parseInt(hex, 16); paintChain(); armButton(); });
 readChain();
@@ -1929,7 +1937,22 @@ $('mode-pair').addEventListener('click', () => { pairMode = true; paintSolMode()
 ['tab-rh', 'tab-sol'].forEach(t => $(t).addEventListener('click', () => {
   $('solModes').hidden = t !== 'tab-sol';
   paintSolMode();
+  paintConnectLabel();
 }));
+
+/** Keep the header button honest about which chain it will connect. */
+function paintConnectLabel() {
+  const b = $('connect');
+  const solOpen = $('tab-sol')?.getAttribute('aria-selected') === 'true';
+  if (solOpen) {
+    if (!solPubkey) b.textContent = 'Connect Solana';
+    else b.textContent = `${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
+  } else if (!account) {
+    b.textContent = 'Connect wallet';
+  }
+}
+setInterval(paintConnectLabel, 1500);
+paintConnectLabel();
 
 /* image upload: pin it ourselves, then hand Bags the URL it wants */
 $('sol-image').addEventListener('change', async () => {
