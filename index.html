@@ -1693,8 +1693,9 @@ async function connectSolWallet(entry) {
     $('solConnect').textContent = `${entry.name} · ${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
     solSet('Connected on Solana', 'ok');
     solArm();
+    paintConnectLabel();
     // reflect account/disconnect changes
-    entry.obj.on?.('disconnect', () => { solPubkey = null; solWallet = null; $('solConnect').textContent = 'Connect wallet'; solSet('Wallet disconnected', 'bad'); solArm(); });
+    entry.obj.on?.('disconnect', () => { solPubkey = null; solWallet = null; $('solConnect').textContent = 'Connect wallet'; solSet('Wallet disconnected', 'bad'); solArm(); paintConnectLabel(); });
     entry.obj.on?.('accountChanged', (pk) => { if (pk) { solPubkey = pk.toString(); $('solConnect').textContent = `${entry.name} · ${solPubkey.slice(0,4)}…${solPubkey.slice(-4)}`; } });
   } catch (e) {
     console.error('[sol connect]', e);
@@ -1940,15 +1941,37 @@ $('mode-pair').addEventListener('click', () => { pairMode = true; paintSolMode()
   paintConnectLabel();
 }));
 
-/** Keep the header button honest about which chain it will connect. */
+/**
+ * The header shows one wallet state, but there are two chains. Everything up
+ * there (button, chain badge, status line) belongs to the EVM side by origin,
+ * which is why a connected Solana wallet still read "Wrong chain: 1" and
+ * "Wallet not connected". On the Solana tab the header now describes Solana.
+ */
 function paintConnectLabel() {
   const b = $('connect');
+  const chip = $('chainChip');
   const solOpen = $('tab-sol')?.getAttribute('aria-selected') === 'true';
-  if (solOpen) {
-    if (!solPubkey) b.textContent = 'Connect Solana';
-    else b.textContent = `${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
-  } else if (!account) {
-    b.textContent = 'Connect wallet';
+
+  if (!solOpen) {
+    if (!account) b.textContent = 'Connect wallet';
+    paintChain();                       // hand the header back to the EVM side
+    return;
+  }
+
+  if (!solPubkey) {
+    b.textContent = 'Connect Solana';
+    chip.dataset.s = '';
+    $('chainTxt').textContent = 'Solana';
+    return;
+  }
+
+  b.textContent = `${solPubkey.slice(0, 4)}…${solPubkey.slice(-4)}`;
+  chip.dataset.s = 'ok';
+  $('chainTxt').textContent = 'Solana';
+  const st = $('status');
+  if (!account) {                       // no EVM wallet in play, so no EVM message
+    st.textContent = 'Connected on Solana';
+    st.dataset.tone = 'ok';
   }
 }
 setInterval(paintConnectLabel, 1500);
